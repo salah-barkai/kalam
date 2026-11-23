@@ -1,5 +1,6 @@
 """Point d'entrée : `python -m kalam fichier.klm` ou `python -m kalam` (REPL)."""
 
+import os
 import sys
 
 from . import __version__
@@ -8,7 +9,7 @@ from .interpreter import Interpreter, to_text
 from .lexer import strip_accents, tokenize
 from .parser import parse
 
-BLOCK_OPENERS = {"kan", "tulma", "kulla", "khidime"}
+BLOCK_OPENERS = {"kan", "tulma", "kulla", "khidime", "jarrib"}
 
 
 def run_file(path):
@@ -19,7 +20,7 @@ def run_file(path):
         print(f"Mushkila: al-file '{path}' da ma ligênah (fichier introuvable)", file=sys.stderr)
         return 1
     try:
-        Interpreter().run(parse(tokenize(source)))
+        Interpreter(base_dir=os.path.dirname(os.path.abspath(path))).run(parse(tokenize(source)))
     except KalamError as e:
         print(e, file=sys.stderr)
         return 1
@@ -95,13 +96,15 @@ def main(argv=None):
         # `--check -` lit le code sur l'entrée standard.
         import json
         from .checker import check
+        # `--check - chemin.klm` : code sur stdin, chemin utilisé pour les 'jib'.
         path = argv[1] if len(argv) > 1 else "-"
+        real_path = argv[2] if len(argv) > 2 else (None if path == "-" else path)
         if path == "-":
             source = sys.stdin.buffer.read().decode("utf-8", errors="replace")
         else:
             with open(path, encoding="utf-8") as f:
                 source = f.read()
-        sys.stdout.write(json.dumps(check(source), ensure_ascii=False))
+        sys.stdout.write(json.dumps(check(source, real_path), ensure_ascii=False))
         return 0
     if argv and argv[0] in ("-v", "--version"):
         print(f"Kalam {__version__}")

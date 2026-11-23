@@ -1,0 +1,61 @@
+# Dukkân — gestion d'une petite boutique au marché
+jib "adawat"
+
+khalli dukkan = {
+    sukkar: {taman: 750, kammiye: 20},
+    shay: {taman: 250, kammiye: 50},
+    dagig: {taman: 600, kammiye: 0},
+    zêt: {taman: 1200, kammiye: 8},
+}
+
+khidime warri_al_bada'a()
+    ori(khatt(32))
+    ori("Al-bada'a fi d-dukkân —", al_yom())
+    ori(khatt(32))
+    kulla haja fi rattib(mafatih(dukkan))
+        khalli b = dukkan[haja]
+        kan b.kammiye == 0
+            ori(" ", haja, ":", riyal(b.taman), "— kammal!")
+        walla
+            ori(" ", haja, ":", riyal(b.taman), "—", b.kammiye, "fi l-makhzan")
+        khalas
+    khalas
+khalas
+
+khidime bi'(haja, kammiye)
+    kan ma haja fi dukkan
+        zagil "'" + haja + "' ma indina fi d-dukkân"
+    khalas
+    khalli b = dukkan[haja]
+    kan kammiye > b.kammiye
+        zagil "ma indina " + kammiye + " " + haja + ", fi " + b.kammiye + " bas"
+    khalas
+    b.kammiye -= kammiye
+    rajja b.taman * kammiye
+khalas
+
+warri_al_bada'a()
+
+khalli talabât = [["sukkar", 2], ["shay", 4], ["dagig", 1], ["laban", 1], ["zêt", 3]]
+khalli fâtûra = []
+
+kulla talab fi talabât
+    jarrib
+        khalli taman = bi'(talab[0], talab[1])
+        zid(fâtûra, taman)
+        ori("✔", talab[1], talab[0], "=", riyal(taman))
+    mushkila m
+        ori("✘ Mushkila:", m)
+    khalas
+khalas
+
+ori(khatt(32))
+ori("Al-jumla:", riyal(jumla(fâtûra)), "—", gadur(fâtûra), "bada'a")
+kan jumla(fâtûra) >= 5000
+    ori("Mabrûk! Indak takhfîd 10%:", riyal(garrib(jumla(fâtûra) * 0.9)))
+khalas
+
+# Hifz al-fâtûra fi file (sauvegarder la facture)
+aktib("fatura.txt", "Fâtûra " + al_yom() + " " + as_sa() + "\n")
+aktib("fatura.txt", "Al-jumla: " + riyal(jumla(fâtûra)) + "\n", sahi)
+ori("Al-fâtûra maktûba fi fatura.txt")

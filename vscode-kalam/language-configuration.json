@@ -22,12 +22,12 @@
   ],
   "wordPattern": "[\\p{L}_'][\\p{L}\\p{N}_']*",
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(k[aâ]n|t[uû]lm[aâ]|k[uû]ll[aâ]|khid[iî]m[eê]|w[aâ]ll[aâ])\\b(?!.*\\bkh[aâ]l[aâ]s\\b).*$",
-    "decreaseIndentPattern": "^\\s*(kh[aâ]l[aâ]s|w[aâ]ll[aâ])\\b"
+    "increaseIndentPattern": "^\\s*(k[aâ]n|t[uû]lm[aâ]|k[uû]ll[aâ]|khid[iî]m[eê]|w[aâ]ll[aâ]|j[aâ]rr[iî]b|m[uû]shk[iî]l[aâ])\\b(?!.*\\bkh[aâ]l[aâ]s\\b).*$",
+    "decreaseIndentPattern": "^\\s*(kh[aâ]l[aâ]s|w[aâ]ll[aâ]|m[uû]shk[iî]l[aâ])\\b"
   },
   "folding": {
     "markers": {
-      "start": "^\\s*(k[aâ]n|t[uû]lm[aâ]|k[uû]ll[aâ]|khid[iî]m[eê])\\b",
+      "start": "^\\s*(k[aâ]n|t[uû]lm[aâ]|k[uû]ll[aâ]|khid[iî]m[eê]|j[aâ]rr[iî]b)\\b",
       "end": "^\\s*kh[aâ]l[aâ]s\\b"
     }
   }

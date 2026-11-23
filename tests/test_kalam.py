@@ -109,6 +109,88 @@ ori(l, gadur(l), d.usum, d["umur"], d.madina)
             run("agif")
 
 
+class TestRichFeatures(unittest.TestCase):
+    def test_compound_assign(self):
+        self.assertEqual(run("khalli x = 5\nx += 3\nx -= 1\nx *= 2\nx /= 7\nori(x)"), ["2"])
+        self.assertEqual(run('khalli l = [1]\nl[0] += 4\nkhalli t = "a"\nt += "b"\nori(l, t)'), ["[5] ab"])
+
+    def test_dict_keys_keep_accents(self):
+        self.assertEqual(run('khalli d = {zêt: 1}\nori(d["zêt"], d.zêt, "zêt" fi d)'), ["1 1 sahi"])
+
+    def test_membership(self):
+        self.assertEqual(
+            run('ori(2 fi [1, 2], "x" fi "bamya", "a" fi {a: 1}, ma 5 fi [1])'),
+            ["sahi ghalat sahi sahi"],
+        )
+
+    def test_math(self):
+        self.assertEqual(
+            run("ori(aktar(3, 9, 2), agall([4, 1]), jumla([1, 2, 3]), garrib(2.6), mutlag(-3))"),
+            ["9 1 6 3 3"],
+        )
+
+    def test_text_and_lists(self):
+        src = 'ori(fattish("bamya", "y"), fattish([5, 6], 6), ghayyir("salam", "a", "o"), ' \
+              'gata("Ndjamena", 1, 3), gallib("abc"), naddif(" x "), bada_be("Sarh", "Sa"))'
+        self.assertEqual(run(src), ["3 1 solom dj cba x sahi"])
+
+    def test_try_catch_builtin_error(self):
+        src = "jarrib\n    ori(1 / 0)\n    ori(\"la\")\nmushkila m\n    ori(\"ligêna:\", m)\nkhalas"
+        self.assertEqual(run(src), ["ligêna: ma tagdar tigassim be sifir (division par zéro)"])
+
+    def test_throw_any_value(self):
+        src = "jarrib\n    zagil {kod: 7}\nmushkila e\n    ori(e.kod)\nkhalas"
+        self.assertEqual(run(src), ["7"])
+        with self.assertRaises(KalamError) as ctx:
+            run('zagil "khalas"')
+        self.assertIn("khalas", str(ctx.exception))
+
+    def test_try_does_not_swallow_control_flow(self):
+        src = """
+khidime f()
+    kulla i fi min 1 lahaddi 5
+        jarrib
+            kan i == 3
+                rajja i
+            khalas
+        mushkila
+            ori("la")
+        khalas
+    khalas
+khalas
+ori(f())
+"""
+        self.assertEqual(run(src), ["3"])
+
+    def test_import_and_files(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "adawat.klm"), "w", encoding="utf-8") as f:
+                f.write("khidime marratên(x)\n    rajja x * 2\nkhalas\n")
+            out = []
+            interp = Interpreter(output=out.append, base_dir=d)
+            run_source('jib "adawat"\njib "adawat.klm"\nori(marratên(21))\n'
+                       'aktib("a.txt", "salam")\naktib("a.txt", "!", sahi)\nori(agri("a.txt"))',
+                       interp)
+            self.assertEqual(out, ["42", "salam!"])
+            with self.assertRaises(KalamError):
+                run_source('jib "mafi"', Interpreter(base_dir=d))
+
+
+class TestDocs(unittest.TestCase):
+    def test_vscode_docs_cover_everything(self):
+        """Chaque mot-clé et chaque fonction doit avoir son aide dans VS Code."""
+        import json
+        import os
+        from kalam.lexer import KEYWORDS
+        path = os.path.join(os.path.dirname(__file__), "..", "vscode-kalam", "docs.json")
+        with open(path, encoding="utf-8") as f:
+            docs = json.load(f)
+        self.assertEqual(set(docs["keywords"]), KEYWORDS)
+        self.assertEqual(set(docs["builtins"]), set(Interpreter().globals.vars))
+
+
 class TestChecker(unittest.TestCase):
     def test_valid_program_has_no_problems(self):
         src = "khidime f(a)\n    rajja a * 2\nkhalas\nkulla i fi min 1 lahaddi 3\n    ori(f(i))\nkhalas\n"
@@ -126,6 +208,13 @@ class TestChecker(unittest.TestCase):
         src = "ori(y)\nagif\nrajja 1\nori(gadur(1, 2))\nkhidime f(a)\n    rajja a + b\nkhalas\n"
         found = [(d["line"], d["col"]) for d in check(src)]
         self.assertEqual(found, [(1, 4), (2, 0), (3, 0), (4, 4), (6, 14)])
+
+    def test_try_variable_is_defined(self):
+        self.assertEqual(check("jarrib\n    zagil 1\nmushkila m\n    ori(m)\nkhalas\n"), [])
+
+    def test_unknown_import_disables_undefined_check(self):
+        # Sans chemin, on ne peut pas lire le fichier importé : pas de fausse alerte.
+        self.assertEqual(check('jib "adawat"\nori(salam(1))\n'), [])
 
     def test_user_function_shadows_builtin(self):
         self.assertEqual(check("khidime gadur(a, b)\n    rajja a\nkhalas\nori(gadur(1, 2))\n"), [])

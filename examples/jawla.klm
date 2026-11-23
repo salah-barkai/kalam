@@ -19,11 +19,11 @@ ori("Fi s-sûg indina", gadur(khudar), "khudâr:", lumm(khudar, ", "))
 
 # Dikt : at-taman (les prix en FCFA)
 khalli taman = {bamya: 500, tamatim: 300, basal: 250, kawal: 1000}
-khalli jumla = 0
+khalli kull_al_taman = []
 kulla haja fi taman
-    jumla = jumla + taman[haja]
+    zid(kull_al_taman, taman[haja])
 khalas
-ori("Al-jumla:", jumla, "FCFA")
+ori("Al-jumla:", jumla(kull_al_taman), "FCFA —", "al-ghâli:", aktar(kull_al_taman))
 
 # Dôra tulma (tant que) ma'a agif (break) wa fut (continue)
 khalli n = 0

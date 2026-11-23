@@ -1,6 +1,9 @@
 """Interpréteur : exécute l'arbre syntaxique Kalam."""
 
+import math
+import os
 import random
+import time
 
 from .errors import KalamError
 
@@ -115,9 +118,11 @@ def truthy(value):
 # ---------- interpréteur ----------
 
 class Interpreter:
-    def __init__(self, output=print, input_fn=input):
+    def __init__(self, output=print, input_fn=input, base_dir="."):
         self.output = output
         self.input_fn = input_fn
+        self.base_dir = base_dir   # dossier utilisé par 'jib' et par les fichiers
+        self.imported = set()
         self.globals = Environment()
         self._install_builtins()
 
@@ -181,7 +186,149 @@ class Interpreter:
             except TypeError:
                 raise KalamError("rattib : ma nagdar nirattib ashyâ shakalhum mâ wâhid (types différents)")
 
+        # ----- nombres -----
+        def numbers_of(args, fname):
+            values = args[0] if len(args) == 1 and isinstance(args[0], list) else list(args)
+            if not values:
+                raise KalamError(f"{fname} bidôr ashyâ (au moins une valeur)")
+            if not all(is_number(v) for v in values):
+                raise KalamError(f"{fname} bidôr nimar bas (des nombres seulement)")
+            return values
+
+        def aktar(*args):
+            return max(numbers_of(args, "aktar"))
+
+        def agall(*args):
+            return min(numbers_of(args, "agall"))
+
+        def jumla(lst):
+            return sum(numbers_of([lst], "jumla")) if lst else 0
+
+        def garrib(x, digits=0):
+            if not is_number(x):
+                raise KalamError("garrib bidôr nimra")
+            result = round(x, int(digits))
+            return int(result) if int(digits) == 0 else result
+
+        def mutlag(x):
+            if not is_number(x):
+                raise KalamError("mutlag bidôr nimra")
+            return abs(x)
+
+        # ----- textes et listes -----
+        def fattish(where, what):
+            if isinstance(where, str):
+                return where.find(to_text(what))
+            if isinstance(where, list):
+                for i, v in enumerate(where):
+                    if v == what and type_name(v) == type_name(what):
+                        return i
+                return -1
+            raise KalamError("fattish bidôr kitaba walla liste")
+
+        def ghayyir(text, old, new):
+            return str(text).replace(to_text(old), to_text(new))
+
+        def gata(x, start, end=None):
+            if not isinstance(x, (str, list)):
+                raise KalamError("gata bidôr kitaba walla liste")
+            return x[int(start):] if end is None else x[int(start):int(end)]
+
+        def gallib(x):
+            if isinstance(x, str):
+                return x[::-1]
+            if isinstance(x, list):
+                return x[::-1]
+            raise KalamError("gallib bidôr kitaba walla liste")
+
+        def naddif(text):
+            return str(text).strip()
+
+        def bada_be(text, prefix):
+            return str(text).startswith(to_text(prefix))
+
+        def kammal_be(text, suffix):
+            return str(text).endswith(to_text(suffix))
+
+        def azil(lst):
+            if not isinstance(lst, (list, str)) or not lst:
+                raise KalamError("azil bidôr liste al-indaha haja")
+            return random.choice(lst)
+
+        def khalbit(lst):
+            if not isinstance(lst, list):
+                raise KalamError("khalbit bidôr liste")
+            random.shuffle(lst)
+            return lst
+
+        def giyam(d):
+            if not isinstance(d, dict):
+                raise KalamError("giyam bidôr dikt (dictionnaire attendu)")
+            return list(d.values())
+
+        def nuskha(x):
+            if isinstance(x, list):
+                return list(x)
+            if isinstance(x, dict):
+                return dict(x)
+            return x
+
+        # ----- wakit (temps) -----
+        def wakit():
+            return time.time()
+
+        def agod(seconds):
+            if not is_number(seconds) or seconds < 0:
+                raise KalamError("agod bidôr nimra (secondes)")
+            time.sleep(seconds)
+
+        def al_yom():
+            return time.strftime("%d/%m/%Y")
+
+        def as_sa():
+            return time.strftime("%H:%M")
+
+        # ----- files (fichiers) -----
+        def file_path(path):
+            return os.path.join(self.base_dir, to_text(path))
+
+        def agri(path):
+            try:
+                with open(file_path(path), encoding="utf-8") as f:
+                    return f.read()
+            except OSError:
+                raise KalamError(f"al-file '{to_text(path)}' da ma ligênah (fichier introuvable)")
+
+        def aktib(path, text, add=False):
+            try:
+                with open(file_path(path), "a" if truthy(add) else "w", encoding="utf-8") as f:
+                    f.write(to_text(text))
+            except OSError:
+                raise KalamError(f"ma gidirna naktubu fi '{to_text(path)}'")
+
         builtins = {
+            "aktar": (aktar, None),      # le plus grand
+            "agall": (agall, None),      # le plus petit
+            "jumla": (jumla, 1),         # somme
+            "garrib": (garrib, None),    # arrondir
+            "mutlag": (mutlag, 1),       # valeur absolue
+            "fattish": (fattish, 2),     # chercher (position, -1 si absent)
+            "ghayyir": (ghayyir, 3),     # remplacer dans un texte
+            "gata": (gata, None),        # couper un morceau (slice)
+            "gallib": (gallib, 1),       # inverser
+            "naddif": (naddif, 1),       # enlever les espaces autour
+            "bada_be": (bada_be, 2),     # commence par
+            "kammal_be": (kammal_be, 2), # finit par
+            "azil": (azil, 1),           # choisir au hasard
+            "khalbit": (khalbit, 1),     # mélanger
+            "giyam": (giyam, 1),         # valeurs d'un dikt
+            "nuskha": (nuskha, 1),       # copie
+            "wakit": (wakit, 0),         # heure actuelle (secondes)
+            "agod": (agod, 1),           # attendre
+            "al_yom": (al_yom, 0),       # date du jour
+            "as_sa": (as_sa, 0),         # heure (HH:MM)
+            "agri": (agri, 1),           # lire un fichier
+            "aktib": (aktib, None),      # écrire dans un fichier
             "ori": (ori, None),          # afficher
             "asal": (asal, None),        # demander (input)
             "gadur": (gadur, 1),         # taille / longueur
@@ -201,6 +348,7 @@ class Interpreter:
         }
         for name, (fn, arity) in builtins.items():
             self.globals.define(name, Builtin(name, fn, arity))
+        self.globals.define("PI", math.pi)
 
     # ----- exécution -----
     def run(self, program):
@@ -285,6 +433,51 @@ class Interpreter:
     def exec_Continue(self, node, env):
         raise ContinueSignal()
 
+    def exec_Try(self, node, env):
+        try:
+            self.exec_block(node.body, env)
+            return
+        except KalamError as e:
+            caught = e.thrown if hasattr(e, "thrown") else e.message
+        except RecursionError:
+            caught = "al-khidime nâdat nafisha katîr marra (récursion trop profonde)"
+        if node.name:
+            env.assign(node.name, caught)
+        self.exec_block(node.handler, env)
+
+    def exec_Throw(self, node, env):
+        value = self.evaluate(node.value, env)
+        err = KalamError(to_text(value), node.line, node.col, node.length)
+        err.thrown = value
+        raise err
+
+    def exec_Import(self, node, env):
+        from .lexer import tokenize
+        from .parser import parse
+
+        path = node.path if node.path.endswith(".klm") else node.path + ".klm"
+        full = os.path.normpath(os.path.join(self.base_dir, path))
+        if full in self.imported:
+            return
+        self.imported.add(full)
+        try:
+            with open(full, encoding="utf-8") as f:
+                source = f.read()
+        except OSError:
+            raise KalamError(f"al-file '{path}' da ma ligênah (fichier introuvable)",
+                             node.line, node.col, node.length)
+        old_dir = self.base_dir
+        self.base_dir = os.path.dirname(full)
+        try:
+            self.exec_block(parse(tokenize(source)).body, self.globals)
+        except KalamError as e:
+            if hasattr(e, "thrown"):
+                raise
+            raise KalamError(f"fi '{path}' satir {e.line}: {e.message}", node.line,
+                             node.col, node.length)
+        finally:
+            self.base_dir = old_dir
+
     # ----- évaluation -----
     def evaluate(self, node, env):
         return getattr(self, "eval_" + node.kind)(node, env)
@@ -332,6 +525,12 @@ class Interpreter:
         op = node.op
         line = node.line
 
+        if op == "fi":
+            if isinstance(b, str):
+                return to_text(a) in b
+            if isinstance(b, (list, dict)):
+                return any(a == x and type_name(a) == type_name(x) for x in b)
+            raise KalamError(f"ma tagdar tifattish fi {type_name(b)}", line)
         if op == "==":
             return a == b and type_name(a) == type_name(b)
         if op == "!=":

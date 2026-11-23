@@ -97,17 +97,52 @@ class Parser:
                 "rajja": self.return_stmt,
                 "agif": self.simple("Break"),
                 "fut": self.simple("Continue"),
+                "jarrib": self.try_stmt,
+                "zagil": self.throw_stmt,
+                "jib": self.import_stmt,
             }.get(t.value)
             if handler:
                 return handler()
 
         expr = self.expression()
-        if self.match("OP", "="):
+        op_tok = self.tok
+        if op_tok.type == "OP" and op_tok.value in ("=", "+=", "-=", "*=", "/="):
+            self.advance()
             if expr.kind not in ("Var", "Index"):
-                raise KalamError("ma tagdar tisawwi '=' hini (affectation invalide)").at(t)
+                raise KalamError(
+                    f"ma tagdar tisawwi '{op_tok.value}' hini (affectation invalide)"
+                ).at(op_tok)
             value = self.expression()
+            if op_tok.value != "=":
+                # x += 1  ->  x = x + 1
+                value = Node("Binary", op_tok.line, op=op_tok.value[0], left=expr, right=value)
             return Node("Assign", t.line, target=expr, value=value)
         return Node("ExprStmt", t.line, expr=expr)
+
+    def try_stmt(self):
+        # jarrib
+        #     ...
+        # mushkila m
+        #     ...
+        # khalas
+        t = self.advance()
+        body = self.block(t, "mushkila")
+        self.expect("KW", "mushkila")
+        name = None
+        if self.check("ID"):
+            name = self.advance().value
+        handler = self.block(t, "khalas")
+        self.expect("KW", "khalas")
+        return Node("Try", t.line, body=body, name=name, handler=handler)
+
+    def throw_stmt(self):
+        t = self.advance()
+        return Node("Throw", t.line, value=self.expression(), col=t.col, length=t.length)
+
+    def import_stmt(self):
+        t = self.advance()
+        path = self.expect("STR", what='usum al-file ("fichier.klm")')
+        return Node("Import", t.line, path=path.value, col=path.col, length=path.length)
 
     def simple(self, kind):
         def parse():
@@ -178,7 +213,7 @@ class Parser:
         t = self.advance()
         value = None
         if not (self.check("NL") or self.check("EOF") or self.check("KW", "khalas")
-                or self.check("KW", "walla")):
+                or self.check("KW", "walla") or self.check("KW", "mushkila")):
             value = self.expression()
         return Node("Return", t.line, value=value, col=t.col, length=t.length)
 
@@ -208,8 +243,10 @@ class Parser:
 
     def comparison(self):
         left = self.additive()
-        while self.tok.type == "OP" and self.tok.value in ("==", "!=", "<", ">", "<=", ">="):
+        while (self.tok.type == "OP" and self.tok.value in ("==", "!=", "<", ">", "<=", ">=")) \
+                or self.check("KW", "fi"):
             t = self.advance()
+            # "x fi liste" : est-ce que x se trouve dans la liste / le texte / le dikt ?
             left = Node("Binary", t.line, op=t.value, left=left, right=self.additive())
         return left
 
@@ -252,7 +289,7 @@ class Parser:
                 expr = Node("Index", t.line, obj=expr, index=index)
             elif self.check("OP", "."):
                 t = self.advance()
-                key = self.expect("ID", what="usum").value
+                key = self.expect("ID", what="usum").raw
                 expr = Node("Index", t.line, obj=expr, index=Node("Literal", t.line, value=key))
             else:
                 return expr
@@ -305,7 +342,7 @@ class Parser:
     def dict_pair(self):
         if self.check("ID") and self.peek().type == "OP" and self.peek().value == ":":
             key_tok = self.advance()
-            key = Node("Literal", key_tok.line, value=key_tok.value)
+            key = Node("Literal", key_tok.line, value=key_tok.raw)
         else:
             key = self.expression()
         self.expect("OP", ":")

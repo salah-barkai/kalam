@@ -45,7 +45,7 @@
     "keyword": {
       "patterns": [
         {
-          "match": "(?<![\\p{L}\\p{N}_'])(k[aâ]n|w[aâ]ll[aâ]|kh[aâ]l[aâ]s|t[uû]lm[aâ]|k[uû]ll[aâ]|f[iî]|m[iî]n|l[aâ]h[aâ]dd[iî]|r[aâ]jj[aâ]|[aâ]g[iî]f|f[uû]t)(?![\\p{L}\\p{N}_'])",
+          "match": "(?<![\\p{L}\\p{N}_'])(k[aâ]n|w[aâ]ll[aâ]|kh[aâ]l[aâ]s|t[uû]lm[aâ]|k[uû]ll[aâ]|f[iî]|m[iî]n|l[aâ]h[aâ]dd[iî]|r[aâ]jj[aâ]|[aâ]g[iî]f|f[uû]t|j[aâ]rr[iî]b|m[uû]shk[iî]l[aâ]|z[aâ]g[iî]l|j[iî]b)(?![\\p{L}\\p{N}_'])",
           "name": "keyword.control.kalam"
         },
         {
@@ -63,7 +63,7 @@
       ]
     },
     "constant": {
-      "match": "(?<![\\p{L}\\p{N}_'])(s[aâ]h[iî]|gh[aâ]l[aâ]t|m[aâ]f[iî])(?![\\p{L}\\p{N}_'])",
+      "match": "(?<![\\p{L}\\p{N}_'])(s[aâ]h[iî]|gh[aâ]l[aâ]t|m[aâ]f[iî]|PI)(?![\\p{L}\\p{N}_'])",
       "name": "constant.language.kalam"
     },
     "number": {
@@ -71,7 +71,7 @@
       "name": "constant.numeric.kalam"
     },
     "builtin": {
-      "match": "(?<![\\p{L}\\p{N}_'.])([oô]r[iî]|[aâ]s[aâ]l|g[aâ]d[uû]r|n[iî]mr[aâ]|k[iî]t[aâ]b[aâ]|sh[aâ]k[aâ]l|z[iî]d|sh[iî]l|m[aâ]f[aâ]t[iî]h|s[uû]df[aâ]|j[iî]d[iî]r|g[aâ]ss[iî]m|l[uû]mm|r[aâ]tt[iî]b|k[aâ]b[iî]r|s[aâ]gh[aâ]yy[aâ]r)(?=\\s*\\()",
+      "match": "(?<![\\p{L}\\p{N}_'.])([oô]r[iî]|[aâ]s[aâ]l|g[aâ]d[uû]r|n[iî]mr[aâ]|k[iî]t[aâ]b[aâ]|sh[aâ]k[aâ]l|z[iî]d|sh[iî]l|m[aâ]f[aâ]t[iî]h|s[uû]df[aâ]|j[iî]d[iî]r|g[aâ]ss[iî]m|l[uû]mm|r[aâ]tt[iî]b|k[aâ]b[iî]r|s[aâ]gh[aâ]yy[aâ]r|[aâ]kt[aâ]r|[aâ]g[aâ]ll|j[uû]ml[aâ]|g[aâ]rr[iî]b|m[uû]tl[aâ]g|f[aâ]tt[iî]sh|gh[aâ]yy[iî]r|g[aâ]t[aâ]|g[aâ]ll[iî]b|n[aâ]dd[iî]f|b[aâ]d[aâ]_be|k[aâ]mm[aâ]l_be|[aâ]z[iî]l|kh[aâ]lb[iî]t|g[iî]y[aâ]m|n[uû]skh[aâ]|w[aâ]k[iî]t|[aâ]g[oô]d|[aâ]l_y[oô]m|[aâ]s_s[aâ]|[aâ]gr[iî]|[aâ]kt[iî]b)(?=\\s*\\()",
       "name": "support.function.builtin.kalam"
     },
     "call": {

@@ -25,9 +25,13 @@ KEYWORDS = {
     "wa",       # and       – et
     "aw",       # or        – ou
     "ma",       # not       – non
+    "jarrib",   # try       – essaie
+    "mushkila", # catch     – en cas de problème
+    "zagil",    # throw     – lancer une erreur (jeter)
+    "jib",      # import    – apporter un autre fichier
 }
 
-TWO_CHAR_OPS = {"==", "!=", "<=", ">="}
+TWO_CHAR_OPS = {"==", "!=", "<=", ">=", "+=", "-=", "*=", "/="}
 ONE_CHAR_OPS = set("+-*/%<>=()[]{},:.")
 ESCAPES = {"n": "\n", "t": "\t", "\\": "\\", '"': '"', "'": "'"}
 
@@ -39,10 +43,11 @@ def strip_accents(text):
 
 
 class Token:
-    __slots__ = ("type", "value", "line", "col", "length")
+    __slots__ = ("type", "value", "line", "col", "length", "raw")
 
-    def __init__(self, type_, value, line, col=0, length=1):
+    def __init__(self, type_, value, line, col=0, length=1, raw=None):
         self.type = type_
+        self.raw = raw          # texte exact (pour les clés de dikt : accents gardés)
         self.value = value
         self.line = line
         self.col = col          # colonne 0-based
@@ -61,7 +66,8 @@ def tokenize(source):
     n = len(source)
 
     def add(type_, value, start):
-        tokens.append(Token(type_, value, line, start - line_start, max(1, i - start)))
+        tokens.append(Token(type_, value, line, start - line_start, max(1, i - start),
+                            source[start:i]))
 
     while i < n:
         c = source[i]

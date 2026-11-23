@@ -19,7 +19,9 @@ function runCheck(document) {
     return;
   }
   const version = document.version;
-  const proc = spawn(pythonPath(), ["-m", "kalam", "--check", "-"], {
+  const args = ["-m", "kalam", "--check", "-"];
+  if (document.uri.scheme === "file") args.push(document.fileName); // pour les 'jib'
+  const proc = spawn(pythonPath(), args, {
     env: { ...process.env, PYTHONIOENCODING: "utf-8" },
     windowsHide: true,
   });
@@ -91,6 +93,124 @@ function scheduleCheck(document, delay = 300) {
   }, delay));
 }
 
+// ---------- Autocomplétion et aide au survol ----------
+
+const DOCS = require("./docs.json");
+
+function stripAccents(text) {
+  return text.normalize("NFD").replace(/\p{Mn}/gu, "").replace(/'/g, "");
+}
+
+function keywordMarkdown(name, k) {
+  const md = new vscode.MarkdownString();
+  md.appendMarkdown(`**${name}** — *${k.sens}*\n\n${k.doc}\n\n`);
+  md.appendCodeblock(k.exemple, "kalam");
+  return md;
+}
+
+function builtinMarkdown(b) {
+  const md = new vscode.MarkdownString();
+  md.appendCodeblock(b.sig, "kalam");
+  md.appendMarkdown(b.doc);
+  return md;
+}
+
+// Noms définis par l'utilisateur dans le fichier (khalli x, khidime f, kulla i …)
+function userNames(document) {
+  const names = new Map();
+  const re = /\b(khall[iî]|khid[iî]m[eê]|k[uû]ll[aâ])\s+([\p{L}_][\p{L}\p{N}_']*)/gu;
+  const text = document.getText();
+  let m;
+  while ((m = re.exec(text))) {
+    const kind = stripAccents(m[1]).startsWith("khidime") ? "khidime" : "variable";
+    if (!names.has(m[2])) names.set(m[2], kind);
+  }
+  return names;
+}
+
+const completionProvider = {
+  provideCompletionItems(document) {
+    const items = [];
+    for (const [name, k] of Object.entries(DOCS.keywords)) {
+      const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Keyword);
+      item.detail = k.sens;
+      item.documentation = keywordMarkdown(name, k);
+      items.push(item);
+    }
+    for (const [name, b] of Object.entries(DOCS.builtins)) {
+      const isConst = !b.sig.includes("(");
+      const item = new vscode.CompletionItem(
+        name,
+        isConst ? vscode.CompletionItemKind.Constant : vscode.CompletionItemKind.Function
+      );
+      item.detail = b.sig;
+      item.documentation = builtinMarkdown(b);
+      if (!isConst) {
+        item.insertText = new vscode.SnippetString(`${name}($0)`);
+        item.command = { command: "editor.action.triggerParameterHints", title: "" };
+      }
+      items.push(item);
+    }
+    for (const [name, kind] of userNames(document)) {
+      if (DOCS.keywords[name] || DOCS.builtins[name]) continue;
+      const item = new vscode.CompletionItem(
+        name,
+        kind === "khidime" ? vscode.CompletionItemKind.Method : vscode.CompletionItemKind.Variable
+      );
+      item.detail = kind === "khidime" ? "khidime (fi l-file da)" : "mutaghayyir (fi l-file da)";
+      items.push(item);
+    }
+    return items;
+  },
+};
+
+const hoverProvider = {
+  provideHover(document, position) {
+    const range = document.getWordRangeAtPosition(position, /[\p{L}_][\p{L}\p{N}_']*/u);
+    if (!range) return;
+    const word = document.getText(range);
+    const plain = stripAccents(word);
+    const k = DOCS.keywords[plain.toLowerCase()];
+    if (k) return new vscode.Hover(keywordMarkdown(plain.toLowerCase(), k), range);
+    const b = DOCS.builtins[plain];
+    if (b) return new vscode.Hover(builtinMarkdown(b), range);
+  },
+};
+
+const signatureProvider = {
+  provideSignatureHelp(document, position) {
+    // Remonte jusqu'à la parenthèse ouvrante pour trouver la fonction appelée.
+    const text = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+    let depth = 0;
+    let commas = 0;
+    for (let i = text.length - 1; i >= 0; i--) {
+      const c = text[i];
+      if (c === ")" || c === "]" || c === "}") depth++;
+      else if (c === "[" || c === "{") depth--;
+      else if (c === "(") {
+        if (depth === 0) {
+          const m = /([\p{L}_][\p{L}\p{N}_']*)\s*$/u.exec(text.slice(0, i));
+          const b = m && DOCS.builtins[stripAccents(m[1])];
+          if (!b) return;
+          const sig = new vscode.SignatureInformation(b.sig, new vscode.MarkdownString(b.doc));
+          const inner = b.sig.slice(b.sig.indexOf("(") + 1, b.sig.indexOf(")"));
+          sig.parameters = inner
+            .split(",")
+            .map((p) => p.trim())
+            .filter((p) => p && p !== "…")
+            .map((p) => new vscode.ParameterInformation(p));
+          const help = new vscode.SignatureHelp();
+          help.signatures = [sig];
+          help.activeSignature = 0;
+          help.activeParameter = Math.min(commas, Math.max(0, sig.parameters.length - 1));
+          return help;
+        }
+        depth--;
+      } else if (c === "," && depth === 0) commas++;
+    }
+  },
+};
+
 // ---------- Exécution (F5) ----------
 
 async function runFile() {
@@ -120,6 +240,9 @@ function activate(context) {
   context.subscriptions.push(diagnostics);
 
   context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider("kalam", completionProvider),
+    vscode.languages.registerHoverProvider("kalam", hoverProvider),
+    vscode.languages.registerSignatureHelpProvider("kalam", signatureProvider, "(", ","),
     vscode.commands.registerCommand("kalam.run", runFile),
     vscode.workspace.onDidOpenTextDocument((doc) => scheduleCheck(doc, 0)),
     vscode.workspace.onDidChangeTextDocument((e) => scheduleCheck(e.document)),

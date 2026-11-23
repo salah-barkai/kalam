@@ -1,42 +1,90 @@
 {
   "kan (if)": {
     "prefix": "kan",
-    "body": ["kan ${1:shart}", "\t$0", "khalas"],
+    "body": [
+      "kan ${1:shart}",
+      "\t$0",
+      "khalas"
+    ],
     "description": "kan … khalas (si)"
   },
   "kan … walla (if/else)": {
     "prefix": "kanw",
-    "body": ["kan ${1:shart}", "\t$2", "walla", "\t$0", "khalas"],
+    "body": [
+      "kan ${1:shart}",
+      "\t$2",
+      "walla",
+      "\t$0",
+      "khalas"
+    ],
     "description": "kan … walla … khalas (si / sinon)"
   },
   "tulma (while)": {
     "prefix": "tulma",
-    "body": ["tulma ${1:shart}", "\t$0", "khalas"],
+    "body": [
+      "tulma ${1:shart}",
+      "\t$0",
+      "khalas"
+    ],
     "description": "tulma … khalas (tant que)"
   },
   "kulla … fi (for each)": {
     "prefix": "kulla",
-    "body": ["kulla ${1:x} fi ${2:liste}", "\t$0", "khalas"],
+    "body": [
+      "kulla ${1:x} fi ${2:liste}",
+      "\t$0",
+      "khalas"
+    ],
     "description": "kulla x fi liste (pour chaque)"
   },
   "kulla … min … lahaddi (for range)": {
     "prefix": "kullamin",
-    "body": ["kulla ${1:i} fi min ${2:1} lahaddi ${3:10}", "\t$0", "khalas"],
+    "body": [
+      "kulla ${1:i} fi min ${2:1} lahaddi ${3:10}",
+      "\t$0",
+      "khalas"
+    ],
     "description": "kulla i fi min 1 lahaddi 10 (boucle de 1 à 10)"
   },
   "khidime (function)": {
     "prefix": "khidime",
-    "body": ["khidime ${1:usum}(${2})", "\t$0", "khalas"],
+    "body": [
+      "khidime ${1:usum}(${2})",
+      "\t$0",
+      "khalas"
+    ],
     "description": "khidime … khalas (fonction)"
   },
   "khalli (let)": {
     "prefix": "khalli",
-    "body": ["khalli ${1:usum} = ${0}"],
+    "body": [
+      "khalli ${1:usum} = ${0}"
+    ],
     "description": "Déclarer une variable"
   },
   "ori (print)": {
     "prefix": "ori",
-    "body": ["ori(${0})"],
+    "body": [
+      "ori(${0})"
+    ],
     "description": "Afficher"
+  },
+  "jarrib … mushkila (try/catch)": {
+    "prefix": "jarrib",
+    "body": [
+      "jarrib",
+      "\t$1",
+      "mushkila ${2:m}",
+      "\tori(\"Mushkila:\", ${2:m})$0",
+      "khalas"
+    ],
+    "description": "jarrib … mushkila … khalas (essayer / attraper une erreur)"
+  },
+  "jib (import)": {
+    "prefix": "jib",
+    "body": [
+      "jib \"${1:adawat}\""
+    ],
+    "description": "Importer un autre fichier .klm"
   }
 }
