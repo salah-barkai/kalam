@@ -1,0 +1,18 @@
+# Li'ib : khammin al-adad (devine le nombre)
+khalli sirr = sudfa(1, 100)
+khalli muhawalat = 0
+
+ori("Ana fakkart fi adad min 1 lahaddi 100. Khammin!")
+
+tulma sahi
+    khalli jawab = adad(asal("Adadak: "))
+    muhawalat = muhawalat + 1
+    kan jawab < sirr
+        ori("Zîd! (plus grand)")
+    walla kan jawab > sirr
+        ori("Nagis! (plus petit)")
+    walla
+        ori("Mabrûk! Ligît al-adad fi", muhawalat, "muhawalat.")
+        agif
+    khalas
+khalas

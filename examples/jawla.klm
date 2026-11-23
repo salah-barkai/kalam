@@ -1,0 +1,49 @@
+# Boucles, listes, fonctions — jawla fi Kalam
+
+# Fonction récursive : factorielle
+khidma factorielle(n)
+    kan n <= 1
+        rajja 1
+    khalas
+    rajja n * factorielle(n - 1)
+khalas
+
+kulla i fi min 1 lahaddi 5
+    ori(i, "! =", factorielle(i))
+khalas
+
+# Listes : al-khudar fi as-sûg
+khalli khudar = ["bamya", "tamatim", "basal"]
+zid(khudar, "fûl")
+ori("Fi as-sûg indina", gadur(khudar), "khudar:", lumm(khudar, ", "))
+
+# Dictionnaire : as-si'r (les prix en FCFA)
+khalli si'r = {bamya: 500, tamatim: 300, basal: 250, "fûl": 1000}
+khalli majmu = 0
+kulla haja fi si'r
+    majmu = majmu + si'r[haja]
+khalas
+ori("Al-majmû':", majmu, "FCFA")
+
+# Boucle tulma (tant que) avec agif (break) et fut (continue)
+khalli n = 0
+tulma sahi
+    n = n + 1
+    kan n % 2 == 0
+        fut
+    walla kan n > 9
+        agif
+    khalas
+    ori("fardi:", n)
+khalas
+
+# Fonctions d'ordre supérieur
+khidma sawwi_le_kull(liste, f)
+    khalli natija = []
+    kulla x fi liste
+        zid(natija, f(x))
+    khalas
+    rajja natija
+khalas
+
+ori(sawwi_le_kull([1, 2, 3, 4], khidma(x) rajja x * x khalas))
