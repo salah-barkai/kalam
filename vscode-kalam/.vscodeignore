@@ -1,0 +1,5 @@
+scripts/**
+images/logo.svg
+**/__pycache__/**
+**/*.pyc
+*.vsix

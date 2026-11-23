@@ -1,13 +1,44 @@
 const vscode = require("vscode");
 const { spawn } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 let terminal;
 let diagnostics;
 const timers = new Map();     // uri -> timer (anti-rebond pendant la frappe)
 let warnedMissingPython = false;
 
+// L'interpréteur Kalam est copié dans l'extension (dossier python/) à l'empaquetage.
+const BUNDLED = path.join(__dirname, "python");
+
 function pythonPath() {
-  return vscode.workspace.getConfiguration("kalam").get("python") || "python";
+  const configured = vscode.workspace.getConfiguration("kalam").get("python");
+  if (configured) return configured;
+  return process.platform === "win32" ? "python" : "python3";
+}
+
+function kalamEnv() {
+  const env = { ...process.env, PYTHONIOENCODING: "utf-8" };
+  if (fs.existsSync(BUNDLED)) {
+    env.PYTHONPATH = env.PYTHONPATH ? BUNDLED + path.delimiter + env.PYTHONPATH : BUNDLED;
+  }
+  return env;
+}
+
+async function warnPython(detail) {
+  if (warnedMissingPython) return;
+  warnedMissingPython = true;
+  const choice = await vscode.window.showWarningMessage(
+    `Kalam a besoin de Python 3.8+ (« ${pythonPath()} » : ${detail}). ` +
+      "Installez Python ou réglez kalam.python.",
+    "Télécharger Python",
+    "Réglages"
+  );
+  if (choice === "Télécharger Python") {
+    vscode.env.openExternal(vscode.Uri.parse("https://www.python.org/downloads/"));
+  } else if (choice === "Réglages") {
+    vscode.commands.executeCommand("workbench.action.openSettings", "kalam.python");
+  }
 }
 
 // ---------- Soulignement des erreurs ----------
@@ -22,7 +53,7 @@ function runCheck(document) {
   const args = ["-m", "kalam", "--check", "-"];
   if (document.uri.scheme === "file") args.push(document.fileName); // pour les 'jib'
   const proc = spawn(pythonPath(), args, {
-    env: { ...process.env, PYTHONIOENCODING: "utf-8" },
+    env: kalamEnv(),
     windowsHide: true,
   });
 
@@ -31,15 +62,7 @@ function runCheck(document) {
   proc.stdout.on("data", (d) => (stdout += d));
   proc.stderr.on("data", (d) => (stderr += d));
 
-  proc.on("error", (err) => {
-    if (!warnedMissingPython) {
-      warnedMissingPython = true;
-      vscode.window.showWarningMessage(
-        `Kalam : impossible de lancer « ${pythonPath()} » (${err.code || err.message}). ` +
-          "Vérifiez le réglage kalam.python."
-      );
-    }
-  });
+  proc.on("error", (err) => warnPython(err.code || err.message));
 
   proc.on("close", () => {
     // Le document a changé pendant la vérification : un nouveau résultat arrive.
@@ -48,13 +71,7 @@ function runCheck(document) {
     try {
       problems = JSON.parse(stdout);
     } catch {
-      if (stderr.includes("No module named kalam") && !warnedMissingPython) {
-        warnedMissingPython = true;
-        vscode.window.showWarningMessage(
-          "Kalam : le module Python « kalam » n'est pas installé. " +
-            "Lancez « python -m pip install -e . » dans le dossier du projet Kalam."
-        );
-      }
+      if (stderr.trim()) warnPython(stderr.trim().split("\n").pop());
       return;
     }
     diagnostics.set(document.uri, problems.map((p) => toDiagnostic(document, p)));
@@ -225,7 +242,11 @@ async function runFile() {
   const file = editor.document.fileName;
 
   if (!terminal || terminal.exitStatus !== undefined) {
-    terminal = vscode.window.createTerminal("Kalam");
+    const env = kalamEnv();
+    terminal = vscode.window.createTerminal({
+      name: "Kalam",
+      env: { PYTHONPATH: env.PYTHONPATH || "", PYTHONIOENCODING: "utf-8" },
+    });
   }
   terminal.show(true);
   const isPowerShell = /powershell|pwsh/i.test(vscode.env.shell || "");

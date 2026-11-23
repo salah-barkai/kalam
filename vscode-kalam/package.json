@@ -1,7 +1,8 @@
 {
   "name": "kalam",
-  "displayName": "Kalam",
-  "description": "Support du langage Kalam (arabe tchadien) : coloration, snippets, exécution",
+  "displayName": "Kalam — programmer en arabe tchadien",
+  "description": "Langage de programmation en arabe tchadien (lettres latines) : couleurs, erreurs en rouge, autocomplétion, aide en français et exécution avec F5.",
+  "keywords": ["kalam", "tchad", "chad", "arabe", "arabic", "tchadien", "éducation", "langage", "klm"],
   "version": "0.1.0",
   "publisher": "salah-barkai",
   "license": "MIT",
@@ -13,8 +14,11 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "categories": ["Programming Languages", "Snippets"],
+  "categories": ["Programming Languages", "Snippets", "Education"],
   "main": "./extension.js",
+  "scripts": {
+    "vscode:prepublish": "node scripts/copy-kalam.js"
+  },
   "activationEvents": [],
   "contributes": {
     "languages": [
@@ -70,8 +74,8 @@
       "properties": {
         "kalam.python": {
           "type": "string",
-          "default": "python",
-          "description": "Chemin de l'exécutable Python qui a le module kalam installé."
+          "default": "",
+          "description": "Commande ou chemin de Python 3.8+. Vide = « python » sous Windows, « python3 » ailleurs."
         },
         "kalam.verifier": {
           "type": "boolean",
