@@ -1,6 +1,7 @@
 import unittest
 
 from kalam import Interpreter, KalamError, run_source
+from kalam.checker import check
 
 
 def run(source, inputs=()):
@@ -106,6 +107,28 @@ ori(l, gadur(l), d.ism, d["umur"], d.madina)
             run('ori("a" - 1)')
         with self.assertRaises(KalamError):
             run("agif")
+
+
+class TestChecker(unittest.TestCase):
+    def test_valid_program_has_no_problems(self):
+        src = "khidma f(a)\n    rajja a * 2\nkhalas\nkulla i fi min 1 lahaddi 3\n    ori(f(i))\nkhalas\n"
+        self.assertEqual(check(src), [])
+
+    def test_syntax_error_position(self):
+        [d] = check("khalli x = 1\nkan x > 1\n    ori(x)\n")
+        self.assertEqual((d["line"], d["col"], d["length"]), (2, 0, 3))
+
+    def test_unterminated_string(self):
+        [d] = check('ori("abc\n')
+        self.assertEqual((d["line"], d["col"]), (1, 4))
+
+    def test_static_problems(self):
+        src = "ori(y)\nagif\nrajja 1\nori(gadur(1, 2))\nkhidma f(a)\n    rajja a + b\nkhalas\n"
+        found = [(d["line"], d["col"]) for d in check(src)]
+        self.assertEqual(found, [(1, 4), (2, 0), (3, 0), (4, 4), (6, 14)])
+
+    def test_user_function_shadows_builtin(self):
+        self.assertEqual(check("khidma gadur(a, b)\n    rajja a\nkhalas\nori(gadur(1, 2))\n"), [])
 
 
 if __name__ == "__main__":

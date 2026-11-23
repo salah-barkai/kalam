@@ -72,6 +72,11 @@
           "type": "string",
           "default": "python",
           "description": "Chemin de l'exécutable Python qui a le module kalam installé."
+        },
+        "kalam.verifier": {
+          "type": "boolean",
+          "default": true,
+          "description": "Souligner les erreurs en rouge pendant la frappe."
         }
       }
     }

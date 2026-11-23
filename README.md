@@ -22,6 +22,7 @@ Il faut seulement Python 3.8 ou plus récent.
 ```sh
 python -m kalam examples/salam.klm   # exécuter un fichier .klm
 python -m kalam                      # mode interactif (REPL), taper "marug" pour sortir
+python -m kalam --check fichier.klm  # vérifier sans exécuter (sortie JSON)
 python -m unittest discover tests    # lancer les tests
 ```
 
@@ -36,6 +37,9 @@ python -m pip install -e .
 Le dossier [vscode-kalam/](vscode-kalam/) contient une extension qui apporte :
 
 - la coloration syntaxique des fichiers `.klm` (mots-clés, fonctions, textes, commentaires) ;
+- **les erreurs soulignées en rouge pendant la frappe** : erreurs de syntaxe, variables non définies,
+  mauvais nombre d'arguments, `agif`/`fut` hors d'une boucle, `rajja` hors d'une fonction
+  (réglage `kalam.verifier` pour désactiver) ;
 - l'indentation automatique après `kan`, `tulma`, `kulla`, `khidma`, `walla` ;
 - le pliage des blocs et `Ctrl+/` pour commenter ;
 - des snippets : `kan`, `kanw`, `tulma`, `kulla`, `kullamin`, `khidma`, `khalli`, `ori` ;
@@ -140,6 +144,7 @@ Ghalat fi satir 3: 'z' ma ma'arûf (variable non définie)
 kalam/lexer.py        découpe le texte en jetons (mots-clés, nombres, textes…)
 kalam/parser.py       construit l'arbre syntaxique
 kalam/interpreter.py  exécute le programme
+kalam/checker.py      trouve les erreurs sans exécuter (utilisé par VS Code)
 kalam/__main__.py     ligne de commande et REPL
 examples/             programmes d'exemple (.klm)
 tests/                tests unitaires

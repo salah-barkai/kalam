@@ -48,7 +48,7 @@ class Parser:
             return self.advance()
         wanted = what or (repr(value) if value else type_)
         got = self.tok.value if self.tok.value is not None else describe(self.tok.type)
-        raise KalamError(f"nidôr {wanted}, ligît {got!r} (attendu {wanted})", self.tok.line)
+        raise KalamError(f"nidôr {wanted}, ligît {got!r} (attendu {wanted})").at(self.tok)
 
     def skip_newlines(self):
         while self.match("NL"):
@@ -69,15 +69,15 @@ class Parser:
         self.expect("NL", what="satir jadîd (fin de ligne)")
         self.skip_newlines()
 
-    def block(self, *terminators):
+    def block(self, opener, *terminators):
         """Lit des instructions jusqu'à un mot-clé terminal (sans le consommer)."""
         self.skip_newlines()
         stmts = []
         while not any(self.check("KW", t) for t in terminators):
             if self.check("EOF"):
                 raise KalamError(
-                    "al-bloc ma khalas — nassêt 'khalas' ? (bloc non terminé)", self.tok.line
-                )
+                    f"'{opener.value}' hini ma indah 'khalas' (bloc non terminé)"
+                ).at(opener)
             stmts.append(self.statement())
             # Permet les blocs sur une seule ligne : khidma(x) rajja x * 2 khalas
             if not any(self.check("KW", t) for t in terminators):
@@ -104,7 +104,7 @@ class Parser:
         expr = self.expression()
         if self.match("OP", "="):
             if expr.kind not in ("Var", "Index"):
-                raise KalamError("ma tagdar tusawwi '=' hini (affectation invalide)", t.line)
+                raise KalamError("ma tagdar tusawwi '=' hini (affectation invalide)").at(t)
             value = self.expression()
             return Node("Assign", t.line, target=expr, value=value)
         return Node("ExprStmt", t.line, expr=expr)
@@ -112,7 +112,7 @@ class Parser:
     def simple(self, kind):
         def parse():
             t = self.advance()
-            return Node(kind, t.line)
+            return Node(kind, t.line, col=t.col, length=t.length)
         return parse
 
     def let_stmt(self):
@@ -123,13 +123,13 @@ class Parser:
 
     def if_stmt(self):
         t = self.advance()  # kan
-        branches = [(self.expression(), self.block("walla", "khalas"))]
+        branches = [(self.expression(), self.block(t, "walla", "khalas"))]
         else_body = None
         while self.match("KW", "walla"):
             if self.match("KW", "kan"):
-                branches.append((self.expression(), self.block("walla", "khalas")))
+                branches.append((self.expression(), self.block(t, "walla", "khalas")))
             else:
-                else_body = self.block("khalas")
+                else_body = self.block(t, "khalas")
                 break
         self.expect("KW", "khalas")
         return Node("If", t.line, branches=branches, else_body=else_body)
@@ -137,7 +137,7 @@ class Parser:
     def while_stmt(self):
         t = self.advance()
         cond = self.expression()
-        body = self.block("khalas")
+        body = self.block(t, "khalas")
         self.expect("KW", "khalas")
         return Node("While", t.line, cond=cond, body=body)
 
@@ -152,7 +152,7 @@ class Parser:
             iterable = Node("Range", t.line, start=start, end=end)
         else:
             iterable = self.expression()
-        body = self.block("khalas")
+        body = self.block(t, "khalas")
         self.expect("KW", "khalas")
         return Node("For", t.line, name=name, iterable=iterable, body=body)
 
@@ -160,7 +160,7 @@ class Parser:
         t = self.advance()
         name = self.expect("ID", what="ism al-khidma (nom de fonction)").value
         params = self.param_list()
-        body = self.block("khalas")
+        body = self.block(t, "khalas")
         self.expect("KW", "khalas")
         return Node("FuncDef", t.line, name=name, params=params, body=body)
 
@@ -180,7 +180,7 @@ class Parser:
         if not (self.check("NL") or self.check("EOF") or self.check("KW", "khalas")
                 or self.check("KW", "walla")):
             value = self.expression()
-        return Node("Return", t.line, value=value)
+        return Node("Return", t.line, value=value, col=t.col, length=t.length)
 
     # ---------- expressions ----------
     def expression(self):
@@ -269,12 +269,12 @@ class Parser:
             # khidma anonyme : khidma(x) rajja x * 2 khalas
             self.advance()
             params = self.param_list()
-            body = self.block("khalas")
+            body = self.block(t, "khalas")
             self.expect("KW", "khalas")
             return Node("Lambda", t.line, params=params, body=body)
         if t.type == "ID":
             self.advance()
-            return Node("Var", t.line, name=t.value)
+            return Node("Var", t.line, name=t.value, col=t.col, length=t.length)
         if self.match("OP", "("):
             expr = self.expression()
             self.expect("OP", ")")
@@ -300,7 +300,7 @@ class Parser:
             self.expect("OP", "}")
             return Node("Dict", t.line, pairs=pairs)
         got = t.value if t.value is not None else describe(t.type)
-        raise KalamError(f"ma fahamt {got!r} (expression attendue)", t.line)
+        raise KalamError(f"ma fahamt {got!r} (expression attendue)").at(t)
 
     def dict_pair(self):
         if self.check("ID") and self.peek().type == "OP" and self.peek().value == ":":

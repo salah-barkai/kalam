@@ -90,6 +90,19 @@ def main(argv=None):
     if argv and argv[0] in ("-h", "--help", "musa'ada"):
         print("Isti'mâl : python -m kalam [file.klm]")
         return 0
+    if argv and argv[0] == "--check":
+        # Analyse sans exécuter ; sortie JSON (utilisée par l'extension VS Code).
+        # `--check -` lit le code sur l'entrée standard.
+        import json
+        from .checker import check
+        path = argv[1] if len(argv) > 1 else "-"
+        if path == "-":
+            source = sys.stdin.buffer.read().decode("utf-8", errors="replace")
+        else:
+            with open(path, encoding="utf-8") as f:
+                source = f.read()
+        sys.stdout.write(json.dumps(check(source), ensure_ascii=False))
+        return 0
     if argv and argv[0] in ("-v", "--version"):
         print(f"Kalam {__version__}")
         return 0

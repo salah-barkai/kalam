@@ -29,6 +29,7 @@ KEYWORDS = {
 
 TWO_CHAR_OPS = {"==", "!=", "<=", ">="}
 ONE_CHAR_OPS = set("+-*/%<>=()[]{},:.")
+ESCAPES = {"n": "\n", "t": "\t", "\\": "\\", '"': '"', "'": "'"}
 
 
 def strip_accents(text):
@@ -38,32 +39,39 @@ def strip_accents(text):
 
 
 class Token:
-    __slots__ = ("type", "value", "line")
+    __slots__ = ("type", "value", "line", "col", "length")
 
-    def __init__(self, type_, value, line):
+    def __init__(self, type_, value, line, col=0, length=1):
         self.type = type_
         self.value = value
         self.line = line
+        self.col = col          # colonne 0-based
+        self.length = length    # nombre de caractères dans le source
 
     def __repr__(self):
-        return f"Token({self.type}, {self.value!r}, satir={self.line})"
+        return f"Token({self.type}, {self.value!r}, satir={self.line}:{self.col})"
 
 
 def tokenize(source):
     tokens = []
     i = 0
     line = 1
-    depth = 0  # à l'intérieur de () [] {} les retours à la ligne sont ignorés
+    line_start = 0  # index du début de la ligne courante
+    depth = 0       # à l'intérieur de () [] {} les retours à la ligne sont ignorés
     n = len(source)
+
+    def add(type_, value, start):
+        tokens.append(Token(type_, value, line, start - line_start, max(1, i - start)))
 
     while i < n:
         c = source[i]
 
         if c == "\n":
             if depth == 0:
-                tokens.append(Token("NL", None, line))
+                tokens.append(Token("NL", None, line, i - line_start, 1))
             line += 1
             i += 1
+            line_start = i
             continue
 
         if c in " \t\r":
@@ -75,57 +83,54 @@ def tokenize(source):
                 i += 1
             continue
 
+        start = i
+
         if c.isdigit():
-            start = i
             while i < n and source[i].isdigit():
                 i += 1
             if i + 1 < n and source[i] == "." and source[i + 1].isdigit():
                 i += 1
                 while i < n and source[i].isdigit():
                     i += 1
-                tokens.append(Token("NUM", float(source[start:i]), line))
+                add("NUM", float(source[start:i]), start)
             else:
-                tokens.append(Token("NUM", int(source[start:i]), line))
+                add("NUM", int(source[start:i]), start)
             continue
 
         if c.isalpha() or c == "_":
-            start = i
             while i < n and (source[i].isalnum() or source[i] in "_'"):
                 i += 1
             word = source[start:i]
-            plain = strip_accents(word).replace("'", "").lower()
-            if plain in KEYWORDS:
-                tokens.append(Token("KW", plain, line))
+            plain = strip_accents(word).replace("'", "")
+            if plain.lower() in KEYWORDS:
+                add("KW", plain.lower(), start)
             else:
-                tokens.append(Token("ID", strip_accents(word).replace("'", ""), line))
+                add("ID", plain, start)
             continue
 
         if c in "\"'":
             quote = c
-            start_line = line
             i += 1
             chars = []
-            escapes = {"n": "\n", "t": "\t", "\\": "\\", '"': '"', "'": "'"}
-            while i < n and source[i] != quote:
-                ch = source[i]
-                if ch == "\n":
-                    raise KalamError("al-kalam ma khalas (guillemet fermant manquant)", start_line)
-                if ch == "\\" and i + 1 < n:
+            while i < n and source[i] not in (quote, "\n"):
+                if source[i] == "\\" and i + 1 < n and source[i + 1] != "\n":
                     i += 1
-                    chars.append(escapes.get(source[i], "\\" + source[i]))
+                    chars.append(ESCAPES.get(source[i], "\\" + source[i]))
                 else:
-                    chars.append(ch)
+                    chars.append(source[i])
                 i += 1
-            if i >= n:
-                raise KalamError("al-kalam ma khalas (guillemet fermant manquant)", start_line)
+            if i >= n or source[i] != quote:
+                raise KalamError(
+                    "al-kalam ma khalas (guillemet fermant manquant)",
+                    line, start - line_start, max(1, i - start),
+                )
             i += 1
-            tokens.append(Token("STR", "".join(chars), start_line))
+            add("STR", "".join(chars), start)
             continue
 
-        two = source[i:i + 2]
-        if two in TWO_CHAR_OPS:
-            tokens.append(Token("OP", two, line))
+        if source[i:i + 2] in TWO_CHAR_OPS:
             i += 2
+            add("OP", source[start:i], start)
             continue
 
         if c in ONE_CHAR_OPS:
@@ -133,12 +138,14 @@ def tokenize(source):
                 depth += 1
             elif c in ")]}":
                 depth = max(0, depth - 1)
-            tokens.append(Token("OP", c, line))
             i += 1
+            add("OP", c, start)
             continue
 
-        raise KalamError(f"harf ma ma'arûf : {c!r} (caractère inconnu)", line)
+        raise KalamError(
+            f"harf ma ma'arûf : {c!r} (caractère inconnu)", line, start - line_start, 1
+        )
 
-    tokens.append(Token("NL", None, line))
-    tokens.append(Token("EOF", None, line))
+    tokens.append(Token("NL", None, line, i - line_start, 1))
+    tokens.append(Token("EOF", None, line, i - line_start, 1))
     return tokens
