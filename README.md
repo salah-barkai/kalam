@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.png" width="160" alt="Logo Kalam"></p>
+
 # Kalam
 
 **Kalam** est un langage de programmation en **arabe tchadien**, écrit en **lettres latines**.

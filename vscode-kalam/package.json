@@ -5,6 +5,11 @@
   "version": "0.1.0",
   "publisher": "salah-barkai",
   "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#0A1F44",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -17,6 +22,10 @@
         "id": "kalam",
         "aliases": ["Kalam", "kalam"],
         "extensions": [".klm"],
+        "icon": {
+          "light": "./images/file-icon.svg",
+          "dark": "./images/file-icon.svg"
+        },
         "configuration": "./language-configuration.json"
       }
     ],

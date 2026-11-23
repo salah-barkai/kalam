@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <clipPath id="badge">
+      <rect width="256" height="256" rx="56"/>
+    </clipPath>
+    <clipPath id="k-box">
+      <rect x="0" y="44" width="256" height="148"/>
+    </clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12306B"/>
+      <stop offset="1" stop-color="#0A1F44"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#badge)">
+    <rect width="256" height="256" fill="url(#bg)"/>
+    <!-- Bande aux couleurs du drapeau du Tchad -->
+    <rect x="0" y="224" width="86" height="32" fill="#1D4ED8"/>
+    <rect x="85" y="224" width="86" height="32" fill="#FECB00"/>
+    <rect x="170" y="224" width="86" height="32" fill="#C60C30"/>
+  </g>
+  <g transform="translate(-8 0)">
+    <!-- La lettre K -->
+    <g clip-path="url(#k-box)" fill="none" stroke="#FFFFFF" stroke-width="34">
+      <line x1="72" y1="30" x2="72" y2="210"/>
+      <line x1="74" y1="138" x2="168" y2="36"/>
+      <line x1="104" y1="108" x2="172" y2="204"/>
+    </g>
+    <!-- Curseur jaune -->
+    <rect x="198" y="174" width="34" height="18" rx="3" fill="#FECB00"/>
+  </g>
+</svg>
