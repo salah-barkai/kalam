@@ -233,6 +233,9 @@ docs/cours.md         le cours complet (source du PDF)
 tools/build_site.py   construit le site, le terrain de jeu et le cours PDF
 tools/deploy_pages.py publie le site sur GitHub Pages (branche gh-pages)
 tools/ci/site.yml     workflow GitHub Actions (tests + déploiement automatique), à activer
+kalam/__main__.py     ligne de commande et REPL
+examples/             programmes d'exemple (.klm)
+tests/                tests unitaires
 ```
 
 ## Construire et publier le site
@@ -249,7 +252,6 @@ de modifier les workflows, puis déplacez le fichier :
 ```sh
 gh auth refresh -h github.com -s workflow
 git mv tools/ci/site.yml .github/workflows/site.yml
-kalam/__main__.py     ligne de commande et REPL
-examples/             programmes d'exemple (.klm)
-tests/                tests unitaires
 ```
+
+Puis, dans les réglages du dépôt GitHub (Settings → Pages), choisir la source « GitHub Actions ».
