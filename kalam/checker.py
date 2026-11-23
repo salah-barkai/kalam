@@ -6,7 +6,7 @@ Utilisé par l'extension VS Code pour souligner les erreurs en rouge.
 import os
 
 from .errors import KalamError
-from .interpreter import Builtin, Interpreter
+from .interpreter import Builtin, Interpreter, undefined_message
 from .lexer import tokenize
 from .parser import Node, parse
 
@@ -135,7 +135,7 @@ class Checker:
         kind = node.kind
 
         if kind == "Var" and node.name not in self.defined and not self.imports_unknown:
-            self.report(node, f"'{node.name}' da ma ligênah — sawwi 'khalli {node.name} = ...' awwal (variable non définie)")
+            self.report(node, undefined_message(getattr(node, "raw", node.name)))
 
         elif kind == "Call" and node.callee.kind == "Var":
             name = node.callee.name

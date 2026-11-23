@@ -5,6 +5,13 @@
 **Kalam** est un langage de programmation en **arabe tchadien**, écrit en **lettres latines**.
 Le but est que les Tchadiens puissent apprendre à programmer avec des mots qu'ils utilisent tous les jours.
 
+<p align="center">
+  <a href="https://salah-barkai.github.io/kalam/essayer.html"><b>▶ Essayer en ligne</b></a> ·
+  <a href="https://salah-barkai.github.io/kalam/cours.html"><b>📘 Le cours complet</b></a> ·
+  <a href="https://salah-barkai.github.io/kalam/kalam-cours.pdf"><b>Cours PDF</b></a> ·
+  <a href="https://github.com/salah-barkai/kalam/releases/latest"><b>Extension VS Code</b></a>
+</p>
+
 ```
 khidime salam(usum)
     ori("Salam aleykum, " + usum + "!")
@@ -221,6 +228,27 @@ kalam/lexer.py        découpe le texte en jetons (mots-clés, nombres, textes�
 kalam/parser.py       construit l'arbre syntaxique
 kalam/interpreter.py  exécute le programme
 kalam/checker.py      trouve les erreurs sans exécuter (utilisé par VS Code)
+vscode-kalam/         extension VS Code
+docs/cours.md         le cours complet (source du PDF)
+tools/build_site.py   construit le site, le terrain de jeu et le cours PDF
+tools/deploy_pages.py publie le site sur GitHub Pages (branche gh-pages)
+tools/ci/site.yml     workflow GitHub Actions (tests + déploiement automatique), à activer
+```
+
+## Construire et publier le site
+
+```sh
+python -m pip install markdown
+python tools/build_site.py     # site/ + site/kalam-cours.pdf (Chrome ou Edge requis pour le PDF)
+python tools/deploy_pages.py   # publie site/ sur https://salah-barkai.github.io/kalam/
+```
+
+Pour activer le déploiement automatique à chaque `git push`, donnez à `gh` le droit
+de modifier les workflows, puis déplacez le fichier :
+
+```sh
+gh auth refresh -h github.com -s workflow
+git mv tools/ci/site.yml .github/workflows/site.yml
 kalam/__main__.py     ligne de commande et REPL
 examples/             programmes d'exemple (.klm)
 tests/                tests unitaires

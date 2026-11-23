@@ -5,3 +5,4 @@ build/
 examples/*.txt
 vscode-kalam/python/
 *.vsix
+site/

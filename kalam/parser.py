@@ -311,7 +311,7 @@ class Parser:
             return Node("Lambda", t.line, params=params, body=body)
         if t.type == "ID":
             self.advance()
-            return Node("Var", t.line, name=t.value, col=t.col, length=t.length)
+            return Node("Var", t.line, name=t.value, raw=t.raw, col=t.col, length=t.length)
         if self.match("OP", "("):
             expr = self.expression()
             self.expect("OP", ")")

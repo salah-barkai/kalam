@@ -191,6 +191,19 @@ class TestDocs(unittest.TestCase):
         self.assertEqual(set(docs["builtins"]), set(Interpreter().globals.vars))
 
 
+class TestCourse(unittest.TestCase):
+    def test_every_course_program_runs(self):
+        """Tous les programmes du cours (docs/cours.md) s'exécutent comme annoncé."""
+        import os
+        import sys
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
+        import build_site
+        with open(build_site.COURSE_MD, encoding="utf-8") as f:
+            source = f.read()
+        _, _, count = build_site.process_course(source)
+        self.assertGreater(count, 90)
+
+
 class TestChecker(unittest.TestCase):
     def test_valid_program_has_no_problems(self):
         src = "khidime f(a)\n    rajja a * 2\nkhalas\nkulla i fi min 1 lahaddi 3\n    ori(f(i))\nkhalas\n"

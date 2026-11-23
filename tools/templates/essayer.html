@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Essayer Kalam</title>
+<meta name="description" content="Terrain de jeu Kalam : écrivez et exécutez du code en arabe tchadien directement dans le navigateur.">
+<link rel="icon" href="assets/logo.svg">
+<style>
+:root {
+  --navy: #0A1F44; --navy-2: #12306B; --blue: #1D4ED8; --yellow: #FECB00; --red: #C60C30;
+  --bg: #F4F6FB; --panel: #FFFFFF; --ink: #1A2030; --muted: #5B6475; --line: #DDE2EC;
+  --editor-bg: #FFFFFF; --out-bg: #0A1F44; --out-ink: #E7ECF6; --err: #FF8A9B;
+  --sans: "Segoe UI", system-ui, -apple-system, "Noto Sans", Roboto, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, "DejaVu Sans Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1220; --panel: #111A2E; --ink: #E6EAF2; --muted: #9AA6BD; --line: #24304A;
+    --editor-bg: #0E1628; --out-bg: #060C18;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1220; --panel: #111A2E; --ink: #E6EAF2; --muted: #9AA6BD; --line: #24304A;
+  --editor-bg: #0E1628; --out-bg: #060C18;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); display: flex; flex-direction: column; }
+header { background: var(--navy); color: #fff; display: flex; align-items: center; gap: 14px; padding: 10px 16px; flex-wrap: wrap; }
+header a.home { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 700; }
+header svg { width: 30px; height: 30px; }
+header .spacer { flex: 1; }
+select, button { font: inherit; border-radius: 8px; border: 1px solid var(--line); padding: 7px 12px; background: var(--panel); color: var(--ink); cursor: pointer; }
+header select { border-color: rgba(255,255,255,.25); background: var(--navy-2); color: #fff; }
+button.run { background: var(--yellow); color: var(--navy); border: none; font-weight: 750; padding: 8px 18px; }
+button.run:disabled { opacity: .55; cursor: wait; }
+button.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.3); }
+header a.link { color: #C9D3EA; text-decoration: none; font-size: 14px; }
+main { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px; min-height: 0; }
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.pane h2 { margin: 0; font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pane h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+textarea { flex: 1; width: 100%; border: 0; resize: none; padding: 14px 16px; background: var(--editor-bg); color: var(--ink); font: 14.5px/1.6 var(--mono); tab-size: 4; outline: none; min-height: 300px; }
+#out { flex: 1; margin: 0; padding: 14px 16px; background: var(--out-bg); color: var(--out-ink); font: 14px/1.55 var(--mono); white-space: pre-wrap; overflow: auto; min-height: 200px; }
+#out .err { color: var(--err); }
+#out .sys { color: #8FA3C8; font-style: italic; }
+#out .ask { color: var(--yellow); }
+.status { font-size: 13px; color: #C9D3EA; }
+.flag { height: 5px; display: flex; } .flag span { flex: 1; }
+@media (max-width: 800px) {
+  main { grid-template-columns: 1fr; }
+  textarea { min-height: 260px; }
+}
+</style>
+</head>
+<body>
+<div class="flag"><span style="background:#1D4ED8"></span><span style="background:#FECB00"></span><span style="background:#C60C30"></span></div>
+<header>
+  <a class="home" href="index.html">{{LOGO}} Kalam</a>
+  <select id="examples" aria-label="Exemples"><option value="">Amthila (exemples)…</option></select>
+  <span class="spacer"></span>
+  <span class="status" id="status">Tahmîl… (chargement)</span>
+  <button class="ghost" id="share" title="Copier un lien vers ce programme">Partager</button>
+  <button class="run" id="run" disabled title="Ctrl+Entrée">▶ Shaghghil</button>
+  <a class="link" href="cours.html">Cours</a>
+</header>
+<main>
+  <section class="pane">
+    <h2>Barnâmij (programme) <small>Ctrl+Entrée pour exécuter</small></h2>
+    <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code Kalam"></textarea>
+  </section>
+  <section class="pane">
+    <h2>Natîja (résultat) <button id="clear" style="padding:3px 10px;font-size:12px">Masah (effacer)</button></h2>
+    <pre id="out" aria-live="polite"></pre>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+const DEFAULT = `# Ahlan! Aktib barnâmijak hini, wa addi "Shaghghil".
+khidime salam(usum)
+    ori("Salam aleykum,", usum + "!")
+khalas
+
+kulla usum fi ["Mahamat", "Fatime", "Abakar"]
+    salam(usum)
+khalas
+
+khalli usumak = asal("Usumak shunu? ")
+salam(usumak)
+`;
+const $ = (id) => document.getElementById(id);
+const code = $("code"), out = $("out"), runBtn = $("run"), status = $("status");
+let runKalam = null;
+
+function store(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+
+function fromHash() {
+  const m = location.hash.match(/^#code=(.+)$/);
+  if (!m) return null;
+  try { return decodeURIComponent(escape(atob(decodeURIComponent(m[1])))); } catch (e) { return null; }
+}
+code.value = fromHash() || load("kalam-code") || DEFAULT;
+
+function write(text, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text + "\n";
+  out.appendChild(span);
+  out.scrollTop = out.scrollHeight;
+}
+
+code.addEventListener("input", () => store("kalam-code", code.value));
+code.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const s = code.selectionStart, t = code.selectionEnd;
+    code.setRangeText("    ", s, t, "end");
+  } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault(); run();
+  } else if (e.key === "Enter") {
+    // garde l'indentation et l'augmente après kan / kulla / tulma / khidime / walla / jarrib / mushkila
+    const s = code.selectionStart;
+    const lineStart = code.value.lastIndexOf("\n", s - 1) + 1;
+    const line = code.value.slice(lineStart, s);
+    let indent = line.match(/^\s*/)[0];
+    if (/^\s*(k[aâ]n|t[uû]lm[aâ]|k[uû]ll[aâ]|khid[iî]m[eê]|w[aâ]ll[aâ]|j[aâ]rr[iî]b|m[uû]shk[iî]l[aâ])\b/.test(line) && !/\bkh[aâ]l[aâ]s\b/.test(line)) indent += "    ";
+    e.preventDefault();
+    code.setRangeText("\n" + indent, s, code.selectionEnd, "end");
+    store("kalam-code", code.value);
+  }
+});
+
+function run() {
+  if (!runKalam) return;
+  out.textContent = "";
+  const t0 = performance.now();
+  const error = runKalam(code.value,
+    (line) => write(line),
+    (prompt) => {
+      const answer = window.prompt(prompt || "asal:");
+      if (answer !== null) write(prompt + answer, "ask");
+      return answer;
+    });
+  if (error) write(error, "err");
+  write(`— khalas (${Math.round(performance.now() - t0)} ms)`, "sys");
+}
+
+runBtn.addEventListener("click", run);
+$("clear").addEventListener("click", () => { out.textContent = ""; });
+$("share").addEventListener("click", async () => {
+  const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(code.value))));
+  const url = location.href.split("#")[0] + "#code=" + encoded;
+  history.replaceState(null, "", url);
+  try { await navigator.clipboard.writeText(url); status.textContent = "Al-link nasakhnah (lien copié)"; }
+  catch (e) { status.textContent = "Al-link fi l-adresse fôg"; }
+});
+
+async function fetchText(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(path + " : " + r.status);
+  return r.text();
+}
+
+async function init() {
+  try {
+    const pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
+    status.textContent = "Tahmîl Kalam…";
+    pyodide.FS.mkdirTree("/home/pyodide/kalam");
+    pyodide.FS.mkdirTree("/home/pyodide/work");
+    const lines = (text) => text.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+    const files = lines(await fetchText("py/manifest.txt"));
+    await Promise.all(files.map(async (f) => pyodide.FS.writeFile("/home/pyodide/kalam/" + f, await fetchText("py/kalam/" + f))));
+
+    // Exemples : menu + copies dans le dossier de travail (pour « jib »)
+    const examples = lines(await fetchText("exemples/liste.txt"));
+    const select = $("examples");
+    for (const name of examples) {
+      const text = await fetchText("exemples/" + name);
+      pyodide.FS.writeFile("/home/pyodide/work/" + name, text);
+      const opt = document.createElement("option");
+      opt.value = name; opt.textContent = name; opt.dataset.code = text;
+      select.appendChild(opt);
+    }
+    select.addEventListener("change", () => {
+      const opt = select.selectedOptions[0];
+      if (opt && opt.dataset.code) { code.value = opt.dataset.code; store("kalam-code", code.value); out.textContent = ""; }
+      select.value = "";
+    });
+
+    pyodide.runPython(`
+import sys, os
+sys.path.insert(0, "/home/pyodide")
+sys.setrecursionlimit(3000)
+os.chdir("/home/pyodide/work")
+from kalam import Interpreter, KalamError, run_source
+
+def run_kalam(source, out, ask):
+    def asal(prompt=""):
+        answer = ask(prompt)
+        if answer is None:
+            raise EOFError()
+        return answer
+    interp = Interpreter(output=lambda s: out(s), input_fn=asal, base_dir="/home/pyodide/work")
+    try:
+        run_source(source, interp)
+    except KalamError as e:
+        return str(e)
+    except RecursionError:
+        return "Mushkila: al-khidime nâdat nafisha katîr marra (récursion trop profonde)"
+    return None
+`);
+    runKalam = pyodide.globals.get("run_kalam");
+    runBtn.disabled = false;
+    status.textContent = "Jâhiz (prêt)";
+    write("Kalam jâhiz. Addi « Shaghghil » walla Ctrl+Entrée.", "sys");
+    if (new URLSearchParams(location.search).has("autotest")) {
+      code.value = 'khalli l = [3, 1, 2]\nori("autotest", rattib(l), gadur("Tchad"))';
+      run();
+      document.title = "AUTOTEST:" + out.textContent.split("\n")[0];
+    }
+  } catch (e) {
+    status.textContent = "Mushkila fi t-tahmîl";
+    write("Ma gidirna nahmulu Kalam : " + e.message + "\nShûfu al-internet wa jarribu marra tânye.", "err");
+  }
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+name: Tests et site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les outils
+        run: python -m pip install markdown
+
+      - name: Tests (interpréteur, vérificateur, programmes du cours)
+        run: python -m unittest discover tests -v
+
+      - name: Polices pour le PDF
+        run: sudo apt-get install -y --no-install-recommends fonts-noto-core fonts-dejavu-core
+
+      - name: Construire le site et le cours PDF
+        run: python tools/build_site.py --browser google-chrome
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

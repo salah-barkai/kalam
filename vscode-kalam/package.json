@@ -6,6 +6,15 @@
   "version": "0.1.0",
   "publisher": "salah-barkai",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/salah-barkai/kalam.git",
+    "directory": "vscode-kalam"
+  },
+  "homepage": "https://salah-barkai.github.io/kalam/",
+  "bugs": {
+    "url": "https://github.com/salah-barkai/kalam/issues"
+  },
   "icon": "images/icon.png",
   "galleryBanner": {
     "color": "#0A1F44",

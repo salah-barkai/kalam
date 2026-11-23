@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalam</title>
+<meta name="description" content="Kalam : le langage de programmation en arabe tchadien, écrit en lettres latines. Essayez-le en ligne, lisez le cours complet, installez l'extension VS Code.">
+<link rel="icon" href="assets/logo.svg">
+<style>
+:root {
+  --navy: #0A1F44; --navy-2: #12306B; --blue: #1D4ED8; --yellow: #FECB00; --red: #C60C30;
+  --bg: #FFFFFF; --bg-2: #F4F6FB; --ink: #1A2030; --muted: #5B6475; --line: #DDE2EC;
+  --card: #FFFFFF; --code-bg: #0A1F44; --code-ink: #E7ECF6;
+  --sans: "Segoe UI", system-ui, -apple-system, "Noto Sans", Roboto, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1220; --bg-2: #111A2E; --ink: #E6EAF2; --muted: #9AA6BD; --line: #24304A;
+    --card: #131D33; --code-bg: #060C18;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1220; --bg-2: #111A2E; --ink: #E6EAF2; --muted: #9AA6BD; --line: #24304A;
+  --card: #131D33; --code-bg: #060C18;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans); }
+a { color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+.hero { background: linear-gradient(180deg, var(--navy-2), var(--navy)); color: #fff; padding: 56px 0 64px; position: relative; overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+.brand svg { width: 52px; height: 52px; }
+.brand b { font-size: 22px; letter-spacing: 0.3px; }
+.hero h1 { font-size: 44px; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.8px; }
+.hero h1 em { font-style: normal; color: var(--yellow); }
+.hero p.lead { font-size: 18px; color: #C9D3EA; margin: 0 0 28px; max-width: 34em; }
+.btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 650; text-decoration: none; border: 2px solid transparent; }
+.btn.primary { background: var(--yellow); color: var(--navy); }
+.btn.ghost { border-color: rgba(255,255,255,.35); color: #fff; }
+.btn:hover { filter: brightness(1.06); }
+.flag { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; display: flex; }
+.flag span { flex: 1; }
+
+.sample { background: var(--code-bg); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.sample .bar { display: flex; gap: 6px; padding: 10px 14px; background: rgba(255,255,255,.06); font: 12px var(--mono); color: #9FB0D4; align-items: center; }
+.sample .bar i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.sample pre { margin: 0; padding: 16px 18px; font: 14px/1.6 var(--mono); color: var(--code-ink); overflow-x: auto; }
+.sample .res { border-top: 1px solid rgba(255,255,255,.1); padding: 12px 18px; font: 13px/1.5 var(--mono); color: #B8C4DD; }
+.sample .res b { color: var(--yellow); font: 700 11px var(--sans); letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.k { color: #7CB3FF; font-weight: 700; } .s { color: #8BE0A4; } .f { color: #D8B4FE; } .n { color: #FDBA74; } .c { color: #7D8BA6; font-style: italic; }
+
+section { padding: 64px 0; }
+section.alt { background: var(--bg-2); }
+h2 { font-size: 30px; margin: 0 0 10px; letter-spacing: -0.4px; }
+.sub { color: var(--muted); margin: 0 0 32px; max-width: 46em; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.card h3 { margin: 0 0 8px; font-size: 18px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+.card .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; font-weight: 800; color: var(--navy); }
+.words { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.word { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.word code { font: 700 16px var(--mono); color: var(--blue); }
+:root[data-theme="dark"] .word code { color: #7CB3FF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .word code { color: #7CB3FF; } }
+.word span { display: block; color: var(--muted); font-size: 14px; }
+.steps { counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; position: relative; }
+.step::before { counter-increment: s; content: counter(s); position: absolute; top: -14px; left: 20px; width: 28px; height: 28px; border-radius: 50%; background: var(--yellow); color: var(--navy); font-weight: 800; display: grid; place-items: center; }
+.step h3 { margin: 6px 0 6px; font-size: 17px; }
+.step p { margin: 0; color: var(--muted); font-size: 15px; }
+.step a { color: var(--blue); font-weight: 600; }
+footer { padding: 30px 0 40px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--ink); }
+
+@media (max-width: 860px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 34px; }
+  .grid, .steps { grid-template-columns: 1fr; }
+  .words { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="brand">{{LOGO}}<b>Kalam</b></div>
+      <h1>Programmer avec <em>les mots de chez nous</em></h1>
+      <p class="lead">Kalam est un langage de programmation en arabe tchadien, écrit en lettres latines. On y retrouve les mêmes idées que dans Python ou JavaScript, mais avec des mots familiers : <code style="color:#fff">kan</code>, <code style="color:#fff">kulla</code>, <code style="color:#fff">khidime</code>, <code style="color:#fff">khalas</code>.</p>
+      <div class="btns">
+        <a class="btn primary" href="essayer.html">▶ Essayer en ligne</a>
+        <a class="btn ghost" href="cours.html">Lire le cours</a>
+        <a class="btn ghost" href="kalam-cours.pdf">Cours PDF</a>
+      </div>
+    </div>
+    <div class="sample" aria-label="Exemple de programme Kalam">
+      <div class="bar"><i style="background:#1D4ED8"></i><i style="background:#FECB00"></i><i style="background:#C60C30"></i>&nbsp; salam.klm</div>
+<pre><span class="c"># Al-awwal barnâmij</span>
+<span class="k">khidime</span> salam(usum)
+    <span class="f">ori</span>(<span class="s">"Salam aleykum,"</span>, usum + <span class="s">"!"</span>)
+<span class="k">khalas</span>
+
+<span class="k">kulla</span> usum <span class="k">fi</span> [<span class="s">"Mahamat"</span>, <span class="s">"Fatime"</span>, <span class="s">"Abakar"</span>]
+    salam(usum)
+<span class="k">khalas</span>
+
+<span class="k">kan</span> <span class="f">gadur</span>(<span class="s">"Tchad"</span>) == <span class="n">5</span>
+    <span class="f">ori</span>(<span class="s">"Sahi!"</span>)
+<span class="k">khalas</span></pre>
+      <div class="res"><b>RÉSULTAT</b>Salam aleykum, Mahamat!<br>Salam aleykum, Fatime!<br>Salam aleykum, Abakar!<br>Sahi!</div>
+    </div>
+  </div>
+  <div class="flag"><span style="background:#1D4ED8"></span><span style="background:#FECB00"></span><span style="background:#C60C30"></span></div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Un vrai langage, pas un jouet</h2>
+    <p class="sub">Tout ce qu'il faut pour apprendre les bases de la programmation, puis écrire de vrais petits logiciels.</p>
+    <div class="grid">
+      <div class="card"><div class="ico" style="background:#DBE6FF">if</div><h3>Décider et répéter</h3><p>Conditions <code>kan / walla</code>, boucles <code>kulla</code> et <code>tulma</code>, <code>agif</code> et <code>fut</code>.</p></div>
+      <div class="card"><div class="ico" style="background:#FFF3C4">[ ]</div><h3>Listes et dictionnaires</h3><p>Ranger et parcourir des données : stock d'une boutique, notes d'une classe…</p></div>
+      <div class="card"><div class="ico" style="background:#FFD9DF">ƒ</div><h3>Fonctions</h3><p><code>khidime</code> et <code>rajja</code>, récursion, fonctions anonymes.</p></div>
+      <div class="card"><div class="ico" style="background:#DBE6FF">!</div><h3>Erreurs claires</h3><p>Messages en tchadien et en français, avec le numéro de ligne. <code>jarrib … mushkila</code> pour les gérer.</p></div>
+      <div class="card"><div class="ico" style="background:#FFF3C4">📄</div><h3>Fichiers et modules</h3><p>Lire et écrire des fichiers, découper un programme avec <code>jib</code>.</p></div>
+      <div class="card"><div class="ico" style="background:#FFD9DF">39</div><h3>Bibliothèque riche</h3><p>39 fonctions intégrées pour les textes, nombres, hasard, date et heure : <code>fattish</code>, <code>rattib</code>, <code>sudfa</code>, <code>al_yom</code>…</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Les mots de Kalam</h2>
+    <p class="sub">Les accents sont facultatifs : <code>khalâs</code> et <code>khalas</code> sont pareils.</p>
+    <div class="words">
+      <div class="word"><code>khalli</code><span>créer une variable</span></div>
+      <div class="word"><code>kan</code><span>si</span></div>
+      <div class="word"><code>walla</code><span>sinon</span></div>
+      <div class="word"><code>khalas</code><span>fin du bloc</span></div>
+      <div class="word"><code>kulla … fi</code><span>pour chaque … dans</span></div>
+      <div class="word"><code>tulma</code><span>tant que</span></div>
+      <div class="word"><code>khidime</code><span>fonction</span></div>
+      <div class="word"><code>rajja</code><span>renvoyer</span></div>
+      <div class="word"><code>jarrib</code><span>essayer</span></div>
+      <div class="word"><code>mushkila</code><span>en cas d'erreur</span></div>
+      <div class="word"><code>sahi / ghalat</code><span>vrai / faux</span></div>
+      <div class="word"><code>ori</code><span>afficher</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Commencer</h2>
+    <p class="sub">Trois façons d'utiliser Kalam, de la plus simple à la plus complète.</p>
+    <div class="steps">
+      <div class="step"><h3>Dans le navigateur</h3><p>Rien à installer. Écrivez et exécutez du Kalam tout de suite : <a href="essayer.html">ouvrir le terrain de jeu</a>.</p></div>
+      <div class="step"><h3>Avec le cours</h3><p>20 chapitres, 4 projets, des exercices corrigés. <a href="cours.html">Lire en ligne</a> ou <a href="kalam-cours.pdf">télécharger le PDF</a>.</p></div>
+      <div class="step"><h3>Dans VS Code</h3><p>Installez Python, puis l'extension Kalam : couleurs, erreurs en rouge, aide en français, F5 pour exécuter. <a href="https://github.com/salah-barkai/kalam/releases/latest">Télécharger l'extension</a>.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Kalam — logiciel libre, licence MIT</span>
+    <span><a href="https://github.com/salah-barkai/kalam">Code source sur GitHub</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -486,6 +486,9 @@ class Interpreter:
         return node.value
 
     def eval_Var(self, node, env):
+        if env.find(node.name) is None:
+            raise KalamError(undefined_message(getattr(node, "raw", node.name)),
+                             node.line, getattr(node, "col", None), getattr(node, "length", 1))
         return env.get(node.name, node.line)
 
     def eval_List(self, node, env):
@@ -635,6 +638,10 @@ class Interpreter:
                 return r.value
             return None
         raise KalamError(f"{type_name(fn)} da ma khidime (ce n'est pas une fonction)", line)
+
+
+def undefined_message(name):
+    return f"'{name}' da ma ligênah — sawwi 'khalli {name} = ...' awwal (variable non définie)"
 
 
 def is_int(v):

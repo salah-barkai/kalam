@@ -35,6 +35,14 @@ khalas
 
 L'interpréteur Kalam est déjà inclus dans l'extension, il n'y a rien d'autre à installer.
 
+## Apprendre Kalam
+
+- 📘 **Le cours complet, de A à Z** (20 chapitres, 4 projets, exercices corrigés) :
+  [lire en ligne](https://salah-barkai.github.io/kalam/cours.html) ou
+  [télécharger le PDF](https://salah-barkai.github.io/kalam/kalam-cours.pdf)
+- ▶ **Essayer sans rien installer** : [le terrain de jeu en ligne](https://salah-barkai.github.io/kalam/essayer.html)
+- 💻 **Code source** : [github.com/salah-barkai/kalam](https://github.com/salah-barkai/kalam)
+
 ## Les mots de Kalam
 
 | Kalam | Sens | | Kalam | Sens |
