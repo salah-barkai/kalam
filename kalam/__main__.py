@@ -5,10 +5,10 @@ import sys
 from . import __version__
 from .errors import KalamError
 from .interpreter import Interpreter, to_text
-from .lexer import tokenize
+from .lexer import strip_accents, tokenize
 from .parser import parse
 
-BLOCK_OPENERS = {"kan", "tulma", "kulla", "khidma"}
+BLOCK_OPENERS = {"kan", "tulma", "kulla", "khidime"}
 
 
 def run_file(path):
@@ -16,7 +16,7 @@ def run_file(path):
         with open(path, encoding="utf-8") as f:
             source = f.read()
     except OSError:
-        print(f"Ghalat: ma ligît al-file '{path}' (fichier introuvable)", file=sys.stderr)
+        print(f"Mushkila: al-file '{path}' da ma ligênah (fichier introuvable)", file=sys.stderr)
         return 1
     try:
         Interpreter().run(parse(tokenize(source)))
@@ -24,7 +24,7 @@ def run_file(path):
         print(e, file=sys.stderr)
         return 1
     except RecursionError:
-        print("Ghalat: al-khidma nâdat nafisha katîr (récursion trop profonde)", file=sys.stderr)
+        print("Mushkila: al-khidime nâdat nafisha katîr marra (récursion trop profonde)", file=sys.stderr)
         return 1
     except KeyboardInterrupt:
         return 130
@@ -50,12 +50,12 @@ def block_depth(source):
 
 
 def repl():
-    print(f"Kalam {__version__} — ahlan wa sahlan! Aktub 'marûg' wala Ctrl+C le tamrug.")
+    print(f"Kalam {__version__} — marhaba! Aktib 'amrug' walla Ctrl+C kan tidôr tamrug.")
     interp = Interpreter()
     while True:
         try:
             source = input("kalam> ")
-            if source.strip() in ("marug", "marûg", "exit", "quit"):
+            if strip_accents(source.strip()) in ("amrug", "murug", "marug", "exit", "quit"):
                 break
             while block_depth(source) > 0:
                 source += "\n" + input("  ...> ")
@@ -76,8 +76,8 @@ def repl():
         except KalamError as e:
             print(e)
         except RecursionError:
-            print("Ghalat: récursion trop profonde")
-    print("Ma'a s-salâma!")
+            print("Mushkila: al-khidime nâdat nafisha katîr marra (récursion trop profonde)")
+    print("Ma'a salâma!")
 
 
 def main(argv=None):
@@ -87,8 +87,8 @@ def main(argv=None):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
     argv = sys.argv[1:] if argv is None else argv
-    if argv and argv[0] in ("-h", "--help", "musa'ada"):
-        print("Isti'mâl : python -m kalam [file.klm]")
+    if argv and argv[0] in ("-h", "--help", "awinni"):
+        print("Kikkêf tisawwi : python -m kalam [file.klm]")
         return 0
     if argv and argv[0] == "--check":
         # Analyse sans exécuter ; sortie JSON (utilisée par l'extension VS Code).

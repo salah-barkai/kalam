@@ -86,7 +86,7 @@ class Checker:
         kind = node.kind
 
         if kind == "Var" and node.name not in self.defined:
-            self.report(node, f"'{node.name}' ma ma'arûf (variable non définie)")
+            self.report(node, f"'{node.name}' da ma ligênah — sawwi 'khalli {node.name} = ...' awwal (variable non définie)")
 
         elif kind == "Call" and node.callee.kind == "Var":
             name = node.callee.name
@@ -94,15 +94,15 @@ class Checker:
             if arity is not None and name not in self.user_defined and len(node.args) != arity:
                 self.report(
                     node.callee,
-                    f"{name} bidôr {arity} argument, ligît {len(node.args)}",
+                    f"{name} bidôr {arity} argument, inta antêtah {len(node.args)}",
                 )
 
         elif kind in ("Break", "Continue") and not in_loop:
             word = "agif" if kind == "Break" else "fut"
-            self.report(node, f"'{word}' barra min al-loop (hors d'une boucle)", 0)
+            self.report(node, f"'{word}' lâzim yabga juwa dôra (hors d'une boucle)", 0)
 
         elif kind == "Return" and not in_func:
-            self.report(node, "'rajja' barra min khidma (hors d'une fonction)", 0)
+            self.report(node, "'rajja' lâzim yabga juwa khidime (hors d'une fonction)", 0)
 
         if kind in ("While", "For"):
             in_loop = True

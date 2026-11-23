@@ -1,7 +1,7 @@
 # Boucles, listes, fonctions — jawla fi Kalam
 
-# Fonction récursive : factorielle
-khidma factorielle(n)
+# Khidime al-tinâdi nafisha : factorielle
+khidime factorielle(n)
     kan n <= 1
         rajja 1
     khalas
@@ -12,20 +12,20 @@ kulla i fi min 1 lahaddi 5
     ori(i, "! =", factorielle(i))
 khalas
 
-# Listes : al-khudar fi as-sûg
+# Liste : al-khudâr fi s-sûg
 khalli khudar = ["bamya", "tamatim", "basal"]
-zid(khudar, "fûl")
-ori("Fi as-sûg indina", gadur(khudar), "khudar:", lumm(khudar, ", "))
+zid(khudar, "kawal")
+ori("Fi s-sûg indina", gadur(khudar), "khudâr:", lumm(khudar, ", "))
 
-# Dictionnaire : as-si'r (les prix en FCFA)
-khalli si'r = {bamya: 500, tamatim: 300, basal: 250, "fûl": 1000}
-khalli majmu = 0
-kulla haja fi si'r
-    majmu = majmu + si'r[haja]
+# Dikt : at-taman (les prix en FCFA)
+khalli taman = {bamya: 500, tamatim: 300, basal: 250, kawal: 1000}
+khalli jumla = 0
+kulla haja fi taman
+    jumla = jumla + taman[haja]
 khalas
-ori("Al-majmû':", majmu, "FCFA")
+ori("Al-jumla:", jumla, "FCFA")
 
-# Boucle tulma (tant que) avec agif (break) et fut (continue)
+# Dôra tulma (tant que) ma'a agif (break) wa fut (continue)
 khalli n = 0
 tulma sahi
     n = n + 1
@@ -34,16 +34,16 @@ tulma sahi
     walla kan n > 9
         agif
     khalas
-    ori("fardi:", n)
+    ori("fard:", n)
 khalas
 
-# Fonctions d'ordre supérieur
-khidma sawwi_le_kull(liste, f)
-    khalli natija = []
+# Khidime al-tâkhud khidime
+khidime sawwi_le_kull(liste, f)
+    khalli jadîd = []
     kulla x fi liste
-        zid(natija, f(x))
+        zid(jadîd, f(x))
     khalas
-    rajja natija
+    rajja jadîd
 khalas
 
-ori(sawwi_le_kull([1, 2, 3, 4], khidma(x) rajja x * x khalas))
+ori(sawwi_le_kull([1, 2, 3, 4], khidime(x) rajja x * x khalas))

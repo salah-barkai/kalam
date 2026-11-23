@@ -15,12 +15,12 @@ KEYWORDS = {
     "fi",       # in        – dans
     "min",      # from      – de
     "lahaddi",  # until     – jusqu'à
-    "khidma",   # function  – fonction
+    "khidime",  # function  – fonction (travail)
     "rajja",    # return    – retourner
     "agif",     # break     – arrêter la boucle
     "fut",      # continue  – passer au suivant
     "sahi",     # true      – vrai
-    "khalat",   # false     – faux
+    "ghalat",   # false     – faux
     "mafi",     # null      – rien
     "wa",       # and       – et
     "aw",       # or        – ou
@@ -121,7 +121,7 @@ def tokenize(source):
                 i += 1
             if i >= n or source[i] != quote:
                 raise KalamError(
-                    "al-kalam ma khalas (guillemet fermant manquant)",
+                    "al-kitaba di ma indaha guillemet fôg al-akhir (guillemet fermant manquant)",
                     line, start - line_start, max(1, i - start),
                 )
             i += 1
@@ -143,7 +143,7 @@ def tokenize(source):
             continue
 
         raise KalamError(
-            f"harf ma ma'arûf : {c!r} (caractère inconnu)", line, start - line_start, 1
+            f"harf {c!r} da ma na'arfah (caractère inconnu)", line, start - line_start, 1
         )
 
     tokens.append(Token("NL", None, line, i - line_start, 1))

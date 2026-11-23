@@ -25,18 +25,18 @@ class TestKalam(unittest.TestCase):
 
     def test_if_elif_else(self):
         src = """
-khidma naw_adad(n)
+khidime wên_nimra(n)
     kan n < 0
-        rajja "salib"
+        rajja "tihit"
     walla kan n == 0
         rajja "sifir"
     walla
-        rajja "mujab"
+        rajja "fôg"
     khalas
 khalas
-ori(naw_adad(-3), naw_adad(0), naw_adad(4))
+ori(wên_nimra(-3), wên_nimra(0), wên_nimra(4))
 """
-        self.assertEqual(run(src), ["salib sifir mujab"])
+        self.assertEqual(run(src), ["tihit sifir fôg"])
 
     def test_for_range_and_list(self):
         self.assertEqual(run("kulla i fi min 1 lahaddi 3\nori(i)\nkhalas"), ["1", "2", "3"])
@@ -61,14 +61,14 @@ khalas
 
     def test_recursion_and_closures(self):
         src = """
-khidma fib(n)
+khidime fib(n)
     kan n < 2
         rajja n
     khalas
     rajja fib(n - 1) + fib(n - 2)
 khalas
-khidma addad(a)
-    rajja khidma(b) rajja a + b khalas
+khidime addad(a)
+    rajja khidime(b) rajja a + b khalas
 khalas
 khalli zid3 = addad(3)
 ori(fib(15), zid3(4))
@@ -80,9 +80,9 @@ ori(fib(15), zid3(4))
 khalli l = [1, 2]
 zid(l, 3)
 l[0] = 10
-khalli d = {ism: "Ali", umur: 30}
+khalli d = {usum: "Ali", umur: 30}
 d.madina = "Ndjamena"
-ori(l, gadur(l), d.ism, d["umur"], d.madina)
+ori(l, gadur(l), d.usum, d["umur"], d.madina)
 """
         self.assertEqual(run(src), ["[10, 2, 3] 3 Ali 30 Ndjamena"])
 
@@ -90,10 +90,10 @@ ori(l, gadur(l), d.ism, d["umur"], d.madina)
         self.assertEqual(run('ori("x=" + 5, 7 / 2, 6 / 3)'), ["x=5 3.5 2"])
 
     def test_logic(self):
-        self.assertEqual(run("ori(sahi wa ma khalat, khalat aw 0, 1 == 1.0)"), ["sahi 0 sahi"])
+        self.assertEqual(run("ori(sahi wa ma ghalat, ghalat aw 0, 1 == 1.0)"), ["sahi 0 sahi"])
 
     def test_input(self):
-        self.assertEqual(run('khalli x = adad(asal("?"))\nori(x * 2)', inputs=["21"]), ["42"])
+        self.assertEqual(run('khalli x = nimra(asal("?"))\nori(x * 2)', inputs=["21"]), ["42"])
 
     def test_errors(self):
         with self.assertRaises(KalamError) as ctx:
@@ -111,7 +111,7 @@ ori(l, gadur(l), d.ism, d["umur"], d.madina)
 
 class TestChecker(unittest.TestCase):
     def test_valid_program_has_no_problems(self):
-        src = "khidma f(a)\n    rajja a * 2\nkhalas\nkulla i fi min 1 lahaddi 3\n    ori(f(i))\nkhalas\n"
+        src = "khidime f(a)\n    rajja a * 2\nkhalas\nkulla i fi min 1 lahaddi 3\n    ori(f(i))\nkhalas\n"
         self.assertEqual(check(src), [])
 
     def test_syntax_error_position(self):
@@ -123,12 +123,12 @@ class TestChecker(unittest.TestCase):
         self.assertEqual((d["line"], d["col"]), (1, 4))
 
     def test_static_problems(self):
-        src = "ori(y)\nagif\nrajja 1\nori(gadur(1, 2))\nkhidma f(a)\n    rajja a + b\nkhalas\n"
+        src = "ori(y)\nagif\nrajja 1\nori(gadur(1, 2))\nkhidime f(a)\n    rajja a + b\nkhalas\n"
         found = [(d["line"], d["col"]) for d in check(src)]
         self.assertEqual(found, [(1, 4), (2, 0), (3, 0), (4, 4), (6, 14)])
 
     def test_user_function_shadows_builtin(self):
-        self.assertEqual(check("khidma gadur(a, b)\n    rajja a\nkhalas\nori(gadur(1, 2))\n"), [])
+        self.assertEqual(check("khidime gadur(a, b)\n    rajja a\nkhalas\nori(gadur(1, 2))\n"), [])
 
 
 if __name__ == "__main__":

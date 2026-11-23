@@ -24,14 +24,14 @@
     "body": ["kulla ${1:i} fi min ${2:1} lahaddi ${3:10}", "\t$0", "khalas"],
     "description": "kulla i fi min 1 lahaddi 10 (boucle de 1 à 10)"
   },
-  "khidma (function)": {
-    "prefix": "khidma",
-    "body": ["khidma ${1:ism}(${2})", "\t$0", "khalas"],
-    "description": "khidma … khalas (fonction)"
+  "khidime (function)": {
+    "prefix": "khidime",
+    "body": ["khidime ${1:usum}(${2})", "\t$0", "khalas"],
+    "description": "khidime … khalas (fonction)"
   },
   "khalli (let)": {
     "prefix": "khalli",
-    "body": ["khalli ${1:ism} = ${0}"],
+    "body": ["khalli ${1:usum} = ${0}"],
     "description": "Déclarer une variable"
   },
   "ori (print)": {

@@ -36,7 +36,7 @@
       ]
     },
     "function-def": {
-      "match": "\\b(khidm[aâ])\\s+([\\p{L}_][\\p{L}\\p{N}_']*)",
+      "match": "\\b(khid[iî]m[eê])\\s+([\\p{L}_][\\p{L}\\p{N}_']*)",
       "captures": {
         "1": { "name": "storage.type.function.kalam" },
         "2": { "name": "entity.name.function.kalam" }
@@ -53,7 +53,7 @@
           "name": "storage.type.kalam"
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_'])(khidm[aâ])(?![\\p{L}\\p{N}_'])",
+          "match": "(?<![\\p{L}\\p{N}_'])(khid[iî]m[eê])(?![\\p{L}\\p{N}_'])",
           "name": "storage.type.function.kalam"
         },
         {
@@ -63,7 +63,7 @@
       ]
     },
     "constant": {
-      "match": "(?<![\\p{L}\\p{N}_'])(s[aâ]h[iî]|kh[aâ]l[aâ]t|m[aâ]f[iî])(?![\\p{L}\\p{N}_'])",
+      "match": "(?<![\\p{L}\\p{N}_'])(s[aâ]h[iî]|gh[aâ]l[aâ]t|m[aâ]f[iî])(?![\\p{L}\\p{N}_'])",
       "name": "constant.language.kalam"
     },
     "number": {
@@ -71,7 +71,7 @@
       "name": "constant.numeric.kalam"
     },
     "builtin": {
-      "match": "(?<![\\p{L}\\p{N}_'.])([oô]r[iî]|[aâ]s[aâ]l|g[aâ]d[uû]r|[aâ]d[aâ]d|n[aâ]ss|n[aâ]w|z[iî]d|sh[iî]l|m[aâ]f[aâ]t[iî]h|s[uû]df[aâ]|j[aâ]zr|g[aâ]ss[iî]m|l[uû]mm|r[aâ]tt[iî]b|k[aâ]b[iî]r|s[aâ]gh[aâ]yy[aâ]r)(?=\\s*\\()",
+      "match": "(?<![\\p{L}\\p{N}_'.])([oô]r[iî]|[aâ]s[aâ]l|g[aâ]d[uû]r|n[iî]mr[aâ]|k[iî]t[aâ]b[aâ]|sh[aâ]k[aâ]l|z[iî]d|sh[iî]l|m[aâ]f[aâ]t[iî]h|s[uû]df[aâ]|j[iî]d[iî]r|g[aâ]ss[iî]m|l[uû]mm|r[aâ]tt[iî]b|k[aâ]b[iî]r|s[aâ]gh[aâ]yy[aâ]r)(?=\\s*\\()",
       "name": "support.function.builtin.kalam"
     },
     "call": {

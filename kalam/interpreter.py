@@ -37,7 +37,7 @@ class Environment:
     def get(self, name, line):
         env = self.find(name)
         if env is None:
-            raise KalamError(f"'{name}' ma ma'arûf (variable non définie)", line)
+            raise KalamError(f"'{name}' da ma ligênah — sawwi 'khalli {name} = ...' awwal (variable non définie)", line)
         return env.vars[name]
 
     def assign(self, name, value):
@@ -53,7 +53,7 @@ class Function:
         self.closure = closure
 
     def __repr__(self):
-        return f"<khidma {self.name}>"
+        return f"<khidime {self.name}>"
 
 
 class Builtin:
@@ -63,7 +63,7 @@ class Builtin:
         self.arity = arity  # None = nombre variable d'arguments
 
     def __repr__(self):
-        return f"<khidma {self.name}>"
+        return f"<khidime {self.name}>"
 
 
 # ---------- affichage ----------
@@ -72,7 +72,7 @@ def to_text(value, nested=False):
     if value is True:
         return "sahi"
     if value is False:
-        return "khalat"
+        return "ghalat"
     if value is None:
         return "mafi"
     if isinstance(value, float):
@@ -88,18 +88,18 @@ def to_text(value, nested=False):
 
 def type_name(value):
     if isinstance(value, bool):
-        return "sahi/khalat"
+        return "sahi/ghalat"
     if value is None:
         return "mafi"
     if isinstance(value, (int, float)):
-        return "adad"
+        return "nimra"
     if isinstance(value, str):
-        return "nass"
+        return "kitaba"
     if isinstance(value, list):
         return "liste"
     if isinstance(value, dict):
         return "dikt"
-    return "khidma"
+    return "khidime"
 
 
 def truthy(value):
@@ -129,14 +129,14 @@ class Interpreter:
             try:
                 return self.input_fn(to_text(prompt))
             except EOFError:
-                raise KalamError("asal : ma fi kalam jâ (fin de l'entrée)")
+                raise KalamError("asal : ma fi kalâm jâ (fin de l'entrée)")
 
         def gadur(x):
             if not isinstance(x, (str, list, dict)):
-                raise KalamError(f"gadur ma bisawwi ma'a {type_name(x)}")
+                raise KalamError(f"gadur ma bagdar bisawwi ma'a {type_name(x)}")
             return len(x)
 
-        def adad(x):
+        def nimra(x):
             if isinstance(x, bool):
                 return int(x)
             if isinstance(x, (int, float)):
@@ -145,28 +145,28 @@ class Interpreter:
                 text = str(x).strip()
                 return int(text) if text.lstrip("-").isdigit() else float(text)
             except ValueError:
-                raise KalamError(f"{to_text(x, True)} ma adad (ce n'est pas un nombre)")
+                raise KalamError(f"{to_text(x, True)} da ma nimra (ce n'est pas un nombre)")
 
         def zid(lst, item):
             if not isinstance(lst, list):
-                raise KalamError("zid bidôr liste (append attend une liste)")
+                raise KalamError("zid bidôr liste (liste attendue)")
             lst.append(item)
             return lst
 
         def shil(lst, index=None):
             if not isinstance(lst, list) or not lst:
-                raise KalamError("shil bidôr liste malyâne (liste non vide attendue)")
+                raise KalamError("shil bidôr liste al-indaha haja (liste non vide attendue)")
             return lst.pop() if index is None else lst.pop(int(index))
 
         def mafatih(d):
             if not isinstance(d, dict):
-                raise KalamError("mafatih bidôr dikt")
+                raise KalamError("mafatih bidôr dikt (dictionnaire attendu)")
             return list(d.keys())
 
         def sudfa(a, b):
             return random.randint(int(a), int(b))
 
-        def jazr(x):
+        def jidir(x):
             return x ** 0.5
 
         def gassim(text, sep=" "):
@@ -179,20 +179,20 @@ class Interpreter:
             try:
                 return sorted(lst)
             except TypeError:
-                raise KalamError("rattib : ma nagdar nirattib ashyâ min anwâ mukhtalifa")
+                raise KalamError("rattib : ma nagdar nirattib ashyâ shakalhum mâ wâhid (types différents)")
 
         builtins = {
             "ori": (ori, None),          # afficher
             "asal": (asal, None),        # demander (input)
             "gadur": (gadur, 1),         # taille / longueur
-            "adad": (adad, 1),           # convertir en nombre
-            "nass": (lambda x: to_text(x), 1),  # convertir en texte
-            "naw": (type_name, 1),       # type
+            "nimra": (nimra, 1),         # convertir en nombre
+            "kitaba": (lambda x: to_text(x), 1),  # convertir en texte
+            "shakal": (type_name, 1),    # type
             "zid": (zid, 2),             # ajouter à une liste
             "shil": (shil, None),        # retirer d'une liste
             "mafatih": (mafatih, 1),     # clés d'un dictionnaire
             "sudfa": (sudfa, 2),         # nombre aléatoire
-            "jazr": (jazr, 1),           # racine carrée
+            "jidir": (jidir, 1),         # racine carrée
             "gassim": (gassim, None),    # découper un texte
             "lumm": (lumm, None),        # joindre une liste
             "rattib": (rattib, 1),       # trier
@@ -207,11 +207,11 @@ class Interpreter:
         try:
             self.exec_block(program.body, self.globals)
         except BreakSignal:
-            raise KalamError("'agif' barra min al-loop ('agif' hors d'une boucle)")
+            raise KalamError("'agif' lâzim yabga juwa dôra ('agif' hors d'une boucle)")
         except ContinueSignal:
-            raise KalamError("'fut' barra min al-loop ('fut' hors d'une boucle)")
+            raise KalamError("'fut' lâzim yabga juwa dôra ('fut' hors d'une boucle)")
         except ReturnSignal:
-            raise KalamError("'rajja' barra min khidma ('rajja' hors d'une fonction)")
+            raise KalamError("'rajja' lâzim yabga juwa khidime ('rajja' hors d'une fonction)")
 
     def exec_block(self, stmts, env):
         result = None
@@ -262,7 +262,7 @@ class Interpreter:
         elif isinstance(iterable, list):
             iterable = list(iterable)  # copie : modifier la liste pendant la boucle est sûr
         elif not isinstance(iterable, (str, range)):
-            raise KalamError(f"ma tagdar tilfa fi {type_name(iterable)} (non itérable)", node.line)
+            raise KalamError(f"ma tagdar tilfa fôg {type_name(iterable)} (non itérable)", node.line)
         for item in iterable:
             env.assign(node.name, item)
             try:
@@ -305,12 +305,12 @@ class Interpreter:
         start = self.evaluate(node.start, env)
         end = self.evaluate(node.end, env)
         if not all(isinstance(v, int) and not isinstance(v, bool) for v in (start, end)):
-            raise KalamError("min ... lahaddi bidôr adad sahîh (entiers attendus)", node.line)
+            raise KalamError("min ... lahaddi bidôr nimra kâmle (entiers attendus)", node.line)
         step = 1 if end >= start else -1
         return range(start, end + step, step)
 
     def eval_Lambda(self, node, env):
-        return Function("bala ism", node.params, node.body, env)
+        return Function("bala usum", node.params, node.body, env)
 
     def eval_Logic(self, node, env):
         left = self.evaluate(node.left, env)
@@ -323,7 +323,7 @@ class Interpreter:
         if node.op == "ma":
             return not truthy(value)
         if not is_number(value):
-            raise KalamError(f"ma tagdar tusawwi '-' le {type_name(value)}", node.line)
+            raise KalamError(f"ma tagdar tisawwi '-' le {type_name(value)}", node.line)
         return -value
 
     def eval_Binary(self, node, env):
@@ -349,7 +349,7 @@ class Interpreter:
             pass
         elif not (is_number(a) and is_number(b)):
             raise KalamError(
-                f"ma tagdar tusawwi '{op}' bên {type_name(a)} wa {type_name(b)}", line
+                f"ma tagdar tisawwi '{op}' bên {type_name(a)} wa {type_name(b)}", line
             )
 
         if op == "+":
@@ -360,7 +360,7 @@ class Interpreter:
             return a * b
         if op in ("/", "%"):
             if b == 0:
-                raise KalamError("ma tagdar tagassim ala sifir (division par zéro)", line)
+                raise KalamError("ma tagdar tigassim be sifir (division par zéro)", line)
             if op == "%":
                 return a % b
             return a // b if is_int(a) and is_int(b) and a % b == 0 else a / b
@@ -372,7 +372,7 @@ class Interpreter:
             return a <= b
         if op == ">=":
             return a >= b
-        raise KalamError(f"operateur ma ma'arûf {op}", line)
+        raise KalamError(f"operateur {op} da ma na'arfah", line)
 
     def eval_Index(self, node, env):
         obj = self.evaluate(node.obj, env)
@@ -381,25 +381,25 @@ class Interpreter:
             return obj.get(key)
         if isinstance(obj, (list, str)):
             if not is_int(key):
-                raise KalamError("al-index lâzim adad sahîh (index entier attendu)", node.line)
+                raise KalamError("al-index lâzim yabga nimra kâmle (index entier attendu)", node.line)
             try:
                 return obj[key]
             except IndexError:
                 raise KalamError(
-                    f"index {key} barra (hors limites, gadur = {len(obj)})", node.line
+                    f"index {key} marag barra (hors limites, gadur = {len(obj)})", node.line
                 )
-        raise KalamError(f"ma tagdar tusawwi [] le {type_name(obj)}", node.line)
+        raise KalamError(f"ma tagdar tisawwi [] le {type_name(obj)}", node.line)
 
     def set_index(self, obj, key, value, line):
         if isinstance(obj, dict):
             obj[key] = value
         elif isinstance(obj, list):
             if not is_int(key):
-                raise KalamError("al-index lâzim adad sahîh (index entier attendu)", line)
+                raise KalamError("al-index lâzim yabga nimra kâmle (index entier attendu)", line)
             try:
                 obj[key] = value
             except IndexError:
-                raise KalamError(f"index {key} barra (hors limites, gadur = {len(obj)})", line)
+                raise KalamError(f"index {key} marag barra (hors limites, gadur = {len(obj)})", line)
         else:
             raise KalamError(f"ma tagdar tibaddil {type_name(obj)}", line)
 
@@ -412,7 +412,7 @@ class Interpreter:
         if isinstance(fn, Builtin):
             if fn.arity is not None and len(args) != fn.arity:
                 raise KalamError(
-                    f"{fn.name} bidôr {fn.arity} argument, ligît {len(args)}", line
+                    f"{fn.name} bidôr {fn.arity} argument, inta antêtah {len(args)}", line
                 )
             try:
                 return fn.fn(*args)
@@ -421,11 +421,11 @@ class Interpreter:
                     e.line = line
                 raise
             except TypeError:
-                raise KalamError(f"arguments ma sameh le {fn.name}", line)
+                raise KalamError(f"al-arguments hana {fn.name} ma sameh", line)
         if isinstance(fn, Function):
             if len(args) != len(fn.params):
                 raise KalamError(
-                    f"{fn.name} bidôr {len(fn.params)} argument, ligît {len(args)}", line
+                    f"{fn.name} bidôr {len(fn.params)} argument, inta antêtah {len(args)}", line
                 )
             local = Environment(fn.closure)
             for name, value in zip(fn.params, args):
@@ -435,7 +435,7 @@ class Interpreter:
             except ReturnSignal as r:
                 return r.value
             return None
-        raise KalamError(f"{type_name(fn)} ma khidma (ce n'est pas une fonction)", line)
+        raise KalamError(f"{type_name(fn)} da ma khidime (ce n'est pas une fonction)", line)
 
 
 def is_int(v):

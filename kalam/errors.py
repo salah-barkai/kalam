@@ -16,5 +16,5 @@ class KalamError(Exception):
 
     def __str__(self):
         if self.line is not None:
-            return f"Ghalat fi satir {self.line}: {self.message}"
-        return f"Ghalat: {self.message}"
+            return f"Mushkila fi satir {self.line}: {self.message}"
+        return f"Mushkila: {self.message}"

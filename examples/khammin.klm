@@ -1,18 +1,18 @@
-# Li'ib : khammin al-adad (devine le nombre)
+# Li'ib : khammin an-nimra (devine le nombre)
 khalli sirr = sudfa(1, 100)
-khalli muhawalat = 0
+khalli marrât = 0
 
-ori("Ana fakkart fi adad min 1 lahaddi 100. Khammin!")
+ori("Ana fakkart fi nimra min 1 lahaddi 100. Khammin!")
 
 tulma sahi
-    khalli jawab = adad(asal("Adadak: "))
-    muhawalat = muhawalat + 1
-    kan jawab < sirr
+    khalli radd = nimra(asal("Nimritak: "))
+    marrât = marrât + 1
+    kan radd < sirr
         ori("Zîd! (plus grand)")
-    walla kan jawab > sirr
-        ori("Nagis! (plus petit)")
+    walla kan radd > sirr
+        ori("Nagguss! (plus petit)")
     walla
-        ori("Mabrûk! Ligît al-adad fi", muhawalat, "muhawalat.")
+        ori("Mabrûk! Ligît an-nimra be", marrât, "marrât.")
         agif
     khalas
 khalas
