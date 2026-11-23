@@ -27,6 +27,13 @@ def main():
                             check=True, capture_output=True, text=True).stdout.strip()
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT,
                             check=True, capture_output=True, text=True).stdout.strip()
+    # Le dépôt temporaire reprend l'identité git du projet (pas la config globale).
+    identity = []
+    for key in ("user.name", "user.email"):
+        value = subprocess.run(["git", "config", key], cwd=ROOT,
+                               capture_output=True, text=True).stdout.strip()
+        if value:
+            identity += ["-c", f"{key}={value}"]
     with tempfile.TemporaryDirectory() as tmp:
         out = os.path.join(tmp, "site")
         shutil.copytree(SITE, out)
@@ -35,7 +42,7 @@ def main():
         open(os.path.join(out, ".nojekyll"), "w").close()
         git("init", "-q", "-b", "gh-pages", cwd=out)
         git("add", "-A", cwd=out)
-        git("commit", "-q", "-m", f"Site Kalam (depuis {commit})", cwd=out)
+        git(*identity, "commit", "-q", "-m", f"Site Kalam (depuis {commit})", cwd=out)
         git("push", "-q", "--force", remote, "gh-pages", cwd=out)
     print("Site publié sur la branche gh-pages.")
 
