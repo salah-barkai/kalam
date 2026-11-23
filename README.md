@@ -23,6 +23,25 @@ python -m kalam                      # mode interactif (REPL), taper "marug" pou
 python -m unittest discover tests    # lancer les tests
 ```
 
+Pour pouvoir lancer `kalam fichier.klm` depuis n'importe quel dossier :
+
+```sh
+python -m pip install -e .
+```
+
+## Extension VS Code
+
+Le dossier [vscode-kalam/](vscode-kalam/) contient une extension qui apporte :
+
+- la coloration syntaxique des fichiers `.klm` (mots-clés, fonctions, textes, commentaires) ;
+- l'indentation automatique après `kan`, `tulma`, `kulla`, `khidma`, `walla` ;
+- le pliage des blocs et `Ctrl+/` pour commenter ;
+- des snippets : `kan`, `kanw`, `tulma`, `kulla`, `kullamin`, `khidma`, `khalli`, `ori` ;
+- **F5** (ou le bouton ▶ en haut à droite) pour exécuter le fichier.
+
+Installation : copier le dossier `vscode-kalam` dans `~/.vscode/extensions/salah-barkai.kalam-0.1.0`
+puis recharger VS Code (`Ctrl+Shift+P` → « Developer: Reload Window »).
+
 ## Mots-clés
 
 | Kalam | Sens | Équivalent |

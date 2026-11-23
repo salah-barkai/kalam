@@ -1,0 +1,70 @@
+{
+  "name": "kalam",
+  "displayName": "Kalam",
+  "description": "Support du langage Kalam (arabe tchadien) : coloration, snippets, exécution",
+  "version": "0.1.0",
+  "publisher": "salah-barkai",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Programming Languages", "Snippets"],
+  "main": "./extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "languages": [
+      {
+        "id": "kalam",
+        "aliases": ["Kalam", "kalam"],
+        "extensions": [".klm"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "kalam",
+        "scopeName": "source.kalam",
+        "path": "./syntaxes/kalam.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "kalam",
+        "path": "./snippets/kalam.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "kalam.run",
+        "title": "Kalam : Shaghghil al-file (Exécuter)",
+        "icon": "$(play)"
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "kalam.run",
+          "when": "resourceLangId == kalam",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "kalam.run",
+        "key": "f5",
+        "when": "editorLangId == kalam"
+      }
+    ],
+    "configuration": {
+      "title": "Kalam",
+      "properties": {
+        "kalam.python": {
+          "type": "string",
+          "default": "python",
+          "description": "Chemin de l'exécutable Python qui a le module kalam installé."
+        }
+      }
+    }
+  }
+}
