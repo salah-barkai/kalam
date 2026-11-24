@@ -60,7 +60,7 @@ textarea { flex: 1; width: 100%; border: 0; resize: none; padding: 14px 16px; ba
   <a class="home" href="index.html">{{LOGO}} Kalam</a>
   <select id="examples" aria-label="Exemples"><option value="">Amthila (exemples)…</option></select>
   <span class="spacer"></span>
-  <span class="status" id="status">Tahmîl… (chargement)</span>
+  <span class="status" id="status">Tahmîl…</span>
   <button class="ghost" id="share" title="Copier un lien vers ce programme">Partager</button>
   <button class="run" id="run" disabled title="Ctrl+Entrée">▶ Shaghghil</button>
   <a class="link" href="cours.html">Cours</a>
@@ -76,7 +76,7 @@ textarea { flex: 1; width: 100%; border: 0; resize: none; padding: 14px 16px; ba
   </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="kalam.js"></script>
 <script>
 const DEFAULT = `# Ahlan! Aktib barnâmijak hini, wa addi "Shaghghil".
 khidime salam(usum)
@@ -166,20 +166,14 @@ async function fetchText(path) {
 
 async function init() {
   try {
-    const pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
-    status.textContent = "Tahmîl Kalam…";
-    pyodide.FS.mkdirTree("/home/pyodide/kalam");
-    pyodide.FS.mkdirTree("/home/pyodide/work");
+    // Fichiers en mémoire : les exemples (pour « jib ») et ce que les programmes écrivent (aktib).
+    const host = Kalam.memoryHost();
     const lines = (text) => text.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
-    const files = lines(await fetchText("py/manifest.txt"));
-    await Promise.all(files.map(async (f) => pyodide.FS.writeFile("/home/pyodide/kalam/" + f, await fetchText("py/kalam/" + f))));
-
-    // Exemples : menu + copies dans le dossier de travail (pour « jib »)
     const examples = lines(await fetchText("exemples/liste.txt"));
     const select = $("examples");
     for (const name of examples) {
       const text = await fetchText("exemples/" + name);
-      pyodide.FS.writeFile("/home/pyodide/work/" + name, text);
+      host.writeFile(name, text, false);
       const opt = document.createElement("option");
       opt.value = name; opt.textContent = name; opt.dataset.code = text;
       select.appendChild(opt);
@@ -190,29 +184,16 @@ async function init() {
       select.value = "";
     });
 
-    pyodide.runPython(`
-import sys, os
-sys.path.insert(0, "/home/pyodide")
-sys.setrecursionlimit(3000)
-os.chdir("/home/pyodide/work")
-from kalam import Interpreter, KalamError, run_source
-
-def run_kalam(source, out, ask):
-    def asal(prompt=""):
-        answer = ask(prompt)
-        if answer is None:
-            raise EOFError()
-        return answer
-    interp = Interpreter(output=lambda s: out(s), input_fn=asal, base_dir="/home/pyodide/work")
-    try:
-        run_source(source, interp)
-    except KalamError as e:
-        return str(e)
-    except RecursionError:
-        return "Mushkila: al-khidime nâdat nafisha katîr marra (récursion trop profonde)"
-    return None
-`);
-    runKalam = pyodide.globals.get("run_kalam");
+    runKalam = (source, output, input) => {
+      try {
+        Kalam.run(source, { output, input, host, baseDir: ".", maxSteps: 5000000 });
+        return null;
+      } catch (e) {
+        if (e instanceof Kalam.KalamError) return e.toString();
+        if (e instanceof RangeError) return "Mushkila: al-khidime nâdat nafisha katîr marra (récursion trop profonde)";
+        return "Mushkila dâkhiliya : " + e.message;
+      }
+    };
     runBtn.disabled = false;
     status.textContent = "Jâhiz (prêt)";
     write("Kalam jâhiz. Addi « Shaghghil » walla Ctrl+Entrée.", "sys");

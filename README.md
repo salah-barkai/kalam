@@ -22,22 +22,29 @@ kulla usum fi ["Mahamat", "Fatime", "Abakar"]
 khalas
 ```
 
-## Lancer Kalam
+## Installer Kalam
 
-Il faut seulement Python 3.8 ou plus récent.
+Kalam ne demande **rien d'autre** : pas de Python, pas de Node.js.
 
-```sh
-python -m kalam examples/salam.klm   # exécuter un fichier .klm
-python -m kalam                      # mode interactif (REPL), taper "amrug" pour sortir
-python -m kalam --check fichier.klm  # vérifier sans exécuter (sortie JSON)
-python -m unittest discover tests    # lancer les tests
-```
-
-Pour pouvoir lancer `kalam fichier.klm` depuis n'importe quel dossier :
+**Dans un terminal (Windows)** : téléchargez `kalam.exe` sur la
+[page des versions](https://github.com/salah-barkai/kalam/releases/latest), puis une seule fois :
 
 ```sh
-python -m pip install -e .
+kalam.exe rakkib        # « installe » : kalam devient utilisable partout
 ```
+
+Ensuite, dans n'importe quel nouveau terminal :
+
+```sh
+kalam salam.klm         # exécuter un fichier .klm
+kalam                   # mode interactif, taper "amrug" pour sortir
+kalam --check f.klm     # vérifier sans exécuter (sortie JSON)
+```
+
+**Dans VS Code** : installez l'extension `kalam-0.2.0.vsix` (même page), ouvrez un fichier `.klm`
+et appuyez sur F5. Kalam est entièrement inclus dans l'extension.
+
+**Dans le navigateur** : le [terrain de jeu](https://salah-barkai.github.io/kalam/essayer.html).
 
 ## Extension VS Code
 
@@ -53,10 +60,10 @@ Le dossier [vscode-kalam/](vscode-kalam/) contient une extension qui apporte :
 - l'indentation automatique après `kan`, `tulma`, `kulla`, `khidime`, `walla`, `jarrib`, `mushkila` ;
 - le pliage des blocs et `Ctrl+/` pour commenter ;
 - des snippets : `kan`, `kanw`, `tulma`, `kulla`, `kullamin`, `khidime`, `jarrib`, `jib`, `khalli`, `ori` ;
-- **F5** (ou le bouton ▶ en haut à droite) pour exécuter le fichier.
+- **F5** (ou le bouton ▶ en haut à droite) pour exécuter le fichier dans un terminal Kalam intégré :
+  les questions (`asal`) se répondent dedans, `Ctrl+C` arrête le programme.
 
-Installation : copier le dossier `vscode-kalam` dans `~/.vscode/extensions/salah-barkai.kalam-0.1.0`
-puis recharger VS Code (`Ctrl+Shift+P` → « Developer: Reload Window »).
+Installation : VS Code → Extensions → menu « … » → *Install from VSIX…* → `kalam-0.2.0.vsix`.
 
 ## Mots-clés
 
@@ -224,27 +231,35 @@ Mushkila fi satir 3: 'z' da ma ligênah — sawwi 'khalli z = ...' awwal (variab
 ## Structure du projet
 
 ```
-kalam/lexer.py        découpe le texte en jetons (mots-clés, nombres, textes…)
-kalam/parser.py       construit l'arbre syntaxique
-kalam/interpreter.py  exécute le programme
-kalam/checker.py      trouve les erreurs sans exécuter (utilisé par VS Code)
+src/kalam.js          tout le langage : lexer, parser, interpréteur, vérificateur
+                      (le même fichier tourne dans kalam.exe, VS Code et le navigateur)
+src/cli.js            ligne de commande et mode interactif
 vscode-kalam/         extension VS Code
 docs/cours.md         le cours complet (source du PDF)
-tools/build_site.py   construit le site, le terrain de jeu et le cours PDF
-tools/deploy_pages.py publie le site sur GitHub Pages (branche gh-pages)
-tools/ci/site.yml     workflow GitHub Actions (tests + déploiement automatique), à activer
-kalam/__main__.py     ligne de commande et REPL
 examples/             programmes d'exemple (.klm)
-tests/                tests unitaires
+test/                 tests (npm test)
+tools/build-exe.js    fabrique dist/kalam.exe (Node.js « Single Executable Application »)
+tools/build-site.js   construit le site, le terrain de jeu et le cours PDF
+tools/deploy-pages.js publie le site sur GitHub Pages (branche gh-pages)
+tools/ci/site.yml     workflow GitHub Actions (tests + déploiement automatique), à activer
 ```
 
-## Construire et publier le site
+## Développer Kalam
+
+Pour **modifier** Kalam (pas pour l'utiliser), il faut Node.js 18 ou plus récent :
 
 ```sh
-python -m pip install markdown
-python tools/build_site.py     # site/ + site/kalam-cours.pdf (Chrome ou Edge requis pour le PDF)
-python tools/deploy_pages.py   # publie site/ sur https://salah-barkai.github.io/kalam/
+npm install                 # outils de construction
+npm test                    # tests : langage, vérificateur, 103 programmes du cours, ligne de commande
+node src/cli.js salam.klm   # lancer Kalam sans fabriquer l'exécutable
+npm run build:exe           # dist/kalam.exe
+npm run build:vsix          # vscode-kalam/kalam-<version>.vsix
+npm run build:site          # site/ + site/kalam-cours.pdf (Chrome ou Edge requis pour le PDF)
+npm run deploy:site         # publie site/ sur https://salah-barkai.github.io/kalam/
 ```
+
+Limite connue : les nombres entiers sont exacts jusqu'à 9 007 199 254 740 991 (2^53) ;
+au-delà, ils sont arrondis.
 
 Pour activer le déploiement automatique à chaque `git push`, donnez à `gh` le droit
 de modifier les workflows, puis déplacez le fichier :

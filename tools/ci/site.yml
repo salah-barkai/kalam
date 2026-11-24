@@ -21,21 +21,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-node@v4
         with:
-          python-version: "3.12"
+          node-version: 24
 
       - name: Installer les outils
-        run: python -m pip install markdown
+        run: npm ci
 
-      - name: Tests (interpréteur, vérificateur, programmes du cours)
-        run: python -m unittest discover tests -v
+      - name: Tests (langage, vérificateur, programmes du cours, ligne de commande)
+        run: npm test
 
       - name: Polices pour le PDF
         run: sudo apt-get install -y --no-install-recommends fonts-noto-core fonts-dejavu-core
 
       - name: Construire le site et le cours PDF
-        run: python tools/build_site.py --browser google-chrome
+        run: node tools/build-site.js --browser /usr/bin/google-chrome
 
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'

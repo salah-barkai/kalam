@@ -62,26 +62,33 @@ Ouvrez le **terrain de jeu** sur le site de Kalam : **salah-barkai.github.io/kal
 
 VS Code est un éditeur de code gratuit utilisé par les professionnels.
 
-1. Installez **Python** depuis *python.org* (version 3.8 ou plus). Sous Windows, cochez bien **« Add Python to PATH »** pendant l'installation.
-2. Installez **VS Code** depuis *code.visualstudio.com*.
-3. Dans VS Code, ouvrez l'onglet **Extensions** (`Ctrl+Shift+X`), cherchez **Kalam** et installez l'extension.
-4. Créez un fichier qui finit par **`.klm`**, par exemple `salam.klm`.
-5. Écrivez votre programme et appuyez sur **F5** pour l'exécuter.
+1. Installez **VS Code** depuis *code.visualstudio.com*.
+2. Dans VS Code, ouvrez l'onglet **Extensions** (`Ctrl+Shift+X`), cherchez **Kalam** et installez l'extension.
+3. Créez un fichier qui finit par **`.klm`**, par exemple `salam.klm`.
+4. Écrivez votre programme et appuyez sur **F5** pour l'exécuter.
 
-L'extension colore votre code, **souligne les erreurs en rouge** pendant que vous tapez, et affiche l'aide d'un mot quand vous passez la souris dessus.
+C'est tout : Kalam est entièrement inclus dans l'extension. Le programme s'exécute dans un terminal en bas de la fenêtre ; quand il pose une question (`asal`), vous tapez la réponse dedans. `Ctrl+C` arrête un programme qui tourne trop longtemps.
 
-## Façon 3 : en ligne de commande
+L'extension colore aussi votre code, **souligne les erreurs en rouge** pendant que vous tapez, et affiche l'aide d'un mot quand vous passez la souris dessus.
 
-Si Kalam est installé avec Python, on peut exécuter un fichier depuis un terminal :
+## Façon 3 : en ligne de commande avec kalam.exe
 
-```
-python -m kalam salam.klm
-```
-
-Ou lancer le **mode interactif** : on tape une ligne, Kalam répond tout de suite. Pratique pour faire des petits calculs. On en sort en tapant `amrug`.
+Pour utiliser Kalam dans un terminal, téléchargez **`kalam.exe`** sur la page des versions de Kalam (*github.com/salah-barkai/kalam/releases*). C'est un seul fichier, qui contient tout. Une fois, dans le dossier où il se trouve, tapez :
 
 ```
-python -m kalam
+kalam.exe rakkib
+```
+
+(`rakkib` = « installe ».) Ensuite, dans n'importe quel nouveau terminal, il suffit d'écrire `kalam` suivi du nom du fichier :
+
+```
+kalam salam.klm
+```
+
+Sans nom de fichier, `kalam` ouvre le **mode interactif** : on tape une ligne, Kalam répond tout de suite. Pratique pour faire des petits calculs. On en sort en tapant `amrug`.
+
+```
+kalam
 kalam> 2 + 3 * 4
 14
 kalam> amrug

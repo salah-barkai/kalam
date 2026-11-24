@@ -1,90 +1,44 @@
 const vscode = require("vscode");
-const { spawn } = require("child_process");
-const fs = require("fs");
 const path = require("path");
+const os = require("os");
+const { Worker } = require("worker_threads");
 
-let terminal;
+// Le langage Kalam lui-même (copié depuis src/kalam.js à l'empaquetage).
+// Il tourne dans VS Code : rien d'autre à installer.
+const Kalam = require("./kalam.js");
+
 let diagnostics;
-const timers = new Map();     // uri -> timer (anti-rebond pendant la frappe)
-let warnedMissingPython = false;
-
-// L'interpréteur Kalam est copié dans l'extension (dossier python/) à l'empaquetage.
-const BUNDLED = path.join(__dirname, "python");
-
-function pythonPath() {
-  const configured = vscode.workspace.getConfiguration("kalam").get("python");
-  if (configured) return configured;
-  return process.platform === "win32" ? "python" : "python3";
-}
-
-function kalamEnv() {
-  const env = { ...process.env, PYTHONIOENCODING: "utf-8" };
-  if (fs.existsSync(BUNDLED)) {
-    env.PYTHONPATH = env.PYTHONPATH ? BUNDLED + path.delimiter + env.PYTHONPATH : BUNDLED;
-  }
-  return env;
-}
-
-async function warnPython(detail) {
-  if (warnedMissingPython) return;
-  warnedMissingPython = true;
-  const choice = await vscode.window.showWarningMessage(
-    `Kalam a besoin de Python 3.8+ (« ${pythonPath()} » : ${detail}). ` +
-      "Installez Python ou réglez kalam.python.",
-    "Télécharger Python",
-    "Réglages"
-  );
-  if (choice === "Télécharger Python") {
-    vscode.env.openExternal(vscode.Uri.parse("https://www.python.org/downloads/"));
-  } else if (choice === "Réglages") {
-    vscode.commands.executeCommand("workbench.action.openSettings", "kalam.python");
-  }
-}
+const timers = new Map(); // uri -> timer (anti-rebond pendant la frappe)
 
 // ---------- Soulignement des erreurs ----------
 
 function runCheck(document) {
-  if (document.languageId !== "kalam") return;
+  if (document.languageId !== "kalam" || document.isClosed) return;
   if (!vscode.workspace.getConfiguration("kalam").get("verifier", true)) {
     diagnostics.delete(document.uri);
     return;
   }
-  const version = document.version;
-  const args = ["-m", "kalam", "--check", "-"];
-  if (document.uri.scheme === "file") args.push(document.fileName); // pour les 'jib'
-  const proc = spawn(pythonPath(), args, {
-    env: kalamEnv(),
-    windowsHide: true,
-  });
+  let problems;
+  try {
+    const file = document.uri.scheme === "file" ? document.fileName : null; // pour les 'jib'
+    problems = Kalam.check(document.getText(), file);
+  } catch (e) {
+    console.error("Kalam check", e);
+    return;
+  }
+  diagnostics.set(document.uri, problems.map((p) => toDiagnostic(document, p)));
+}
 
-  let stdout = "";
-  let stderr = "";
-  proc.stdout.on("data", (d) => (stdout += d));
-  proc.stderr.on("data", (d) => (stderr += d));
-
-  proc.on("error", (err) => warnPython(err.code || err.message));
-
-  proc.on("close", () => {
-    // Le document a changé pendant la vérification : un nouveau résultat arrive.
-    if (document.isClosed || document.version !== version) return;
-    let problems;
-    try {
-      problems = JSON.parse(stdout);
-    } catch {
-      if (stderr.trim()) warnPython(stderr.trim().split("\n").pop());
-      return;
-    }
-    diagnostics.set(document.uri, problems.map((p) => toDiagnostic(document, p)));
-  });
-
-  proc.stdin.end(document.getText(), "utf8");
+// Kalam compte les colonnes en caractères (points de code), VS Code en unités UTF-16.
+function utf16Column(lineText, col) {
+  return Array.from(lineText).slice(0, col).join("").length;
 }
 
 function toDiagnostic(document, p) {
   const lineIndex = Math.min(Math.max(p.line - 1, 0), document.lineCount - 1);
   const lineText = document.lineAt(lineIndex).text;
-  let start = Math.min(p.col, lineText.length);
-  let end = Math.min(start + p.length, lineText.length);
+  let start = Math.min(utf16Column(lineText, p.col), lineText.length);
+  let end = Math.min(utf16Column(lineText, p.col + p.length), lineText.length);
   if (end <= start) {
     // Erreur en fin de ligne : souligner le dernier caractère visible.
     start = Math.max(0, lineText.trimEnd().length - 1);
@@ -230,28 +184,118 @@ const signatureProvider = {
 
 // ---------- Exécution (F5) ----------
 
+let lastTerminal = null;
+
 async function runFile() {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.document.languageId !== "kalam") {
     vscode.window.showWarningMessage("Iftah file .klm awwal (ouvrez d'abord un fichier .klm).");
     return;
   }
-  if (editor.document.isDirty) {
-    await editor.document.save();
-  }
-  const file = editor.document.fileName;
+  const doc = editor.document;
+  if (doc.isDirty && doc.uri.scheme === "file") await doc.save();
+  const name = doc.uri.scheme === "file" ? path.basename(doc.fileName) : "barnâmij";
+  const folder = vscode.workspace.getWorkspaceFolder(doc.uri);
+  const baseDir = doc.uri.scheme === "file"
+    ? path.dirname(doc.fileName)
+    : folder ? folder.uri.fsPath : os.homedir();
 
-  if (!terminal || terminal.exitStatus !== undefined) {
-    const env = kalamEnv();
-    terminal = vscode.window.createTerminal({
-      name: "Kalam",
-      env: { PYTHONPATH: env.PYTHONPATH || "", PYTHONIOENCODING: "utf-8" },
+  if (lastTerminal) lastTerminal.dispose();
+  lastTerminal = vscode.window.createTerminal({
+    name: `Kalam — ${name}`,
+    pty: kalamPseudoterminal(doc.getText(), baseDir, name),
+    iconPath: new vscode.ThemeIcon("play"),
+  });
+  lastTerminal.show();
+}
+
+// Un terminal « maison » : la sortie du programme s'y affiche, et les réponses
+// aux questions (asal) y sont tapées. Ctrl+C arrête le programme.
+function kalamPseudoterminal(source, baseDir, name) {
+  const writeEmitter = new vscode.EventEmitter();
+  const closeEmitter = new vscode.EventEmitter();
+  const shared = new SharedArrayBuffer(8 + 65536);
+  const control = new Int32Array(shared, 0, 2);
+  const data = new Uint8Array(shared, 8);
+  let worker = null;
+  let waiting = false;
+  let finished = false;
+  let line = "";
+
+  const write = (text) => writeEmitter.fire(text.replace(/\r?\n/g, "\r\n"));
+  const dim = (text) => `\x1b[2m${text}\x1b[0m`;
+
+  function answer(text, eof = false) {
+    const bytes = Buffer.from(text, "utf8").subarray(0, data.length);
+    data.set(bytes);
+    control[1] = bytes.length;
+    Atomics.store(control, 0, eof ? 2 : 1);
+    Atomics.notify(control, 0);
+    waiting = false;
+  }
+
+  function finish(message) {
+    finished = true;
+    worker = null;
+    write("\n" + dim(message + " — addi ayyi zirr le tagfil (appuyez sur une touche pour fermer)") + "\n");
+  }
+
+  function start() {
+    const t0 = Date.now();
+    write(dim(`▶ kalam ${name}`) + "\n");
+    worker = new Worker(path.join(__dirname, "runner.js"), {
+      workerData: { source, baseDir, shared },
+      resourceLimits: { stackSizeMb: 64 },
+    });
+    worker.on("message", (m) => {
+      if (m.type === "out") write(m.text + "\n");
+      else if (m.type === "ask") { write(m.prompt); waiting = true; }
+      else if (m.type === "error") write(`\x1b[31m${m.text}\x1b[0m\n`);
+      else if (m.type === "done") finish(`${m.ok ? "khalas" : "wagaf be mushkila"} (${Date.now() - t0} ms)`);
+    });
+    worker.on("error", (e) => {
+      write(`\x1b[31mMushkila dâkhiliya : ${e.message}\x1b[0m\n`);
+      finish("wagaf");
     });
   }
-  terminal.show(true);
-  const isPowerShell = /powershell|pwsh/i.test(vscode.env.shell || "");
-  const prefix = isPowerShell ? "& " : "";
-  terminal.sendText(`${prefix}"${pythonPath()}" -m kalam "${file}"`);
+
+  return {
+    onDidWrite: writeEmitter.event,
+    onDidClose: closeEmitter.event,
+    open: start,
+    close() {
+      if (worker) worker.terminate();
+    },
+    handleInput(input) {
+      if (finished) { closeEmitter.fire(); return; }
+      if (input === "\x03") { // Ctrl+C
+        write("^C\n");
+        if (worker) worker.terminate();
+        finish("Al-barnâmij wagaf (programme arrêté)");
+        return;
+      }
+      if (!waiting) return;
+      for (const ch of input) {
+        if (ch === "\r" || ch === "\n") {
+          write("\n");
+          const text = line;
+          line = "";
+          answer(text);
+          if (!waiting) return;
+        } else if (ch === "\x7f" || ch === "\b") {
+          if (line) {
+            line = Array.from(line).slice(0, -1).join("");
+            write("\b \b");
+          }
+        } else if (ch === "\x04") { // Ctrl+D : fin de l'entrée
+          answer("", true);
+        } else if (ch >= " ") {
+          line += ch;
+          write(ch);
+        }
+      }
+    },
+  };
 }
 
 // ---------- Activation ----------
@@ -274,12 +318,11 @@ function activate(context) {
     }),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("kalam")) {
-        warnedMissingPython = false;
         vscode.workspace.textDocuments.forEach((doc) => scheduleCheck(doc, 0));
       }
     }),
     vscode.window.onDidCloseTerminal((t) => {
-      if (t === terminal) terminal = undefined;
+      if (t === lastTerminal) lastTerminal = null;
     })
   );
 

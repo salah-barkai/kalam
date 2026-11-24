@@ -3,7 +3,7 @@
   "displayName": "Kalam — programmer en arabe tchadien",
   "description": "Langage de programmation en arabe tchadien (lettres latines) : couleurs, erreurs en rouge, autocomplétion, aide en français et exécution avec F5.",
   "keywords": ["kalam", "tchad", "chad", "arabe", "arabic", "tchadien", "éducation", "langage", "klm"],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "salah-barkai",
   "license": "MIT",
   "repository": {
@@ -22,6 +22,9 @@
   },
   "engines": {
     "vscode": "^1.75.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": true }
   },
   "categories": ["Programming Languages", "Snippets", "Education"],
   "main": "./extension.js",
@@ -81,11 +84,6 @@
     "configuration": {
       "title": "Kalam",
       "properties": {
-        "kalam.python": {
-          "type": "string",
-          "default": "",
-          "description": "Commande ou chemin de Python 3.8+. Vide = « python » sous Windows, « python3 » ailleurs."
-        },
         "kalam.verifier": {
           "type": "boolean",
           "default": true,

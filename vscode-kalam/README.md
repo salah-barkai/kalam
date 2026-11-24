@@ -26,14 +26,18 @@ khalas
 
 ## Pour commencer
 
-1. Installez [Python](https://www.python.org/downloads/) 3.8 ou plus récent (cochez « Add Python to PATH »).
-2. Créez un fichier `salam.klm` et écrivez :
+1. Créez un fichier `salam.klm` et écrivez :
    ```
    ori("Salam aleykum!")
    ```
-3. Appuyez sur **F5**.
+2. Appuyez sur **F5** : le programme s'exécute dans un terminal Kalam.
 
-L'interpréteur Kalam est déjà inclus dans l'extension, il n'y a rien d'autre à installer.
+C'est tout : Kalam est **entièrement inclus** dans l'extension, il n'y a rien d'autre à installer.
+Quand un programme pose une question (`asal`), tapez la réponse dans le terminal.
+`Ctrl+C` arrête un programme qui tourne trop longtemps.
+
+Pour utiliser Kalam **hors de VS Code** (dans un terminal : `kalam salam.klm`), téléchargez
+`kalam.exe` sur la [page des versions](https://github.com/salah-barkai/kalam/releases/latest).
 
 ## Apprendre Kalam
 
@@ -65,7 +69,6 @@ Fonctions utiles : `ori` (afficher), `asal` (demander), `gadur` (longueur), `zid
 
 | Réglage | Rôle |
 |---|---|
-| `kalam.python` | commande Python à utiliser (par défaut `python`) |
 | `kalam.verifier` | souligner les erreurs pendant la frappe (par défaut activé) |
 
 ## Exemple : une petite boutique

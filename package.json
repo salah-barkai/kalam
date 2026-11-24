@@ -1,0 +1,34 @@
+{
+  "name": "kalam-lang",
+  "version": "0.2.0",
+  "description": "Kalam : langage de programmation en arabe tchadien (lettres latines)",
+  "license": "MIT",
+  "author": "salah-barkai",
+  "homepage": "https://salah-barkai.github.io/kalam/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/salah-barkai/kalam.git"
+  },
+  "main": "src/kalam.js",
+  "bin": {
+    "kalam": "src/cli.js"
+  },
+  "files": [
+    "src/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "build:site": "node tools/build-site.js",
+    "build:exe": "node tools/build-exe.js",
+    "build:vsix": "cd vscode-kalam && npx --yes @vscode/vsce@3 package",
+    "deploy:site": "node tools/deploy-pages.js"
+  },
+  "devDependencies": {
+    "marked": "^12.0.2",
+    "postject": "^1.0.0-alpha.6",
+    "rcedit": "^4.0.1"
+  }
+}

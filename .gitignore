@@ -1,8 +1,8 @@
 __pycache__/
 *.pyc
-*.egg-info/
-build/
-examples/*.txt
-vscode-kalam/python/
 *.vsix
 site/
+node_modules/
+dist/
+vscode-kalam/kalam.js
+examples/*.txt
