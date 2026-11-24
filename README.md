@@ -9,7 +9,8 @@ Le but est que les Tchadiens puissent apprendre à programmer avec des mots qu'i
   <a href="https://salah-barkai.github.io/kalam/essayer.html"><b>▶ Essayer en ligne</b></a> ·
   <a href="https://salah-barkai.github.io/kalam/cours.html"><b>📘 Le cours complet</b></a> ·
   <a href="https://salah-barkai.github.io/kalam/kalam-cours.pdf"><b>Cours PDF</b></a> ·
-  <a href="https://github.com/salah-barkai/kalam/releases/latest"><b>Extension VS Code</b></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=salah-barkai.kalam"><b>Extension VS Code</b></a> ·
+  <a href="https://github.com/salah-barkai/kalam/releases/latest"><b>kalam.exe</b></a>
 </p>
 
 ```
@@ -41,7 +42,7 @@ kalam                   # mode interactif, taper "amrug" pour sortir
 kalam --check f.klm     # vérifier sans exécuter (sortie JSON)
 ```
 
-**Dans VS Code** : installez l'extension `kalam-0.2.0.vsix` (même page), ouvrez un fichier `.klm`
+**Dans VS Code** : cherchez **Kalam** dans l'onglet Extensions ([Marketplace](https://marketplace.visualstudio.com/items?itemName=salah-barkai.kalam)), ouvrez un fichier `.klm`
 et appuyez sur F5. Kalam est entièrement inclus dans l'extension.
 
 **Dans le navigateur** : le [terrain de jeu](https://salah-barkai.github.io/kalam/essayer.html).
@@ -63,7 +64,8 @@ Le dossier [vscode-kalam/](vscode-kalam/) contient une extension qui apporte :
 - **F5** (ou le bouton ▶ en haut à droite) pour exécuter le fichier dans un terminal Kalam intégré :
   les questions (`asal`) se répondent dedans, `Ctrl+C` arrête le programme.
 
-Installation : VS Code → Extensions → menu « … » → *Install from VSIX…* → `kalam-0.2.0.vsix`.
+Installation : dans VS Code, onglet **Extensions** (`Ctrl+Shift+X`), cherchez **Kalam** et cliquez sur *Install*
+([page du Marketplace](https://marketplace.visualstudio.com/items?itemName=salah-barkai.kalam)).
 
 ## Mots-clés
 
