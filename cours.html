@@ -1,0 +1,2299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cours Kalam</title>
+<meta name="description" content="Apprendre à programmer avec Kalam, le langage en arabe tchadien : le cours complet de A à Z.">
+<link rel="icon" href="assets/logo.svg">
+<style>
+:root {
+  --navy: #0A1F44;
+  --navy-2: #12306B;
+  --blue: #1D4ED8;
+  --yellow: #FECB00;
+  --red: #C60C30;
+  --ink: #1F2430;
+  --muted: #5B6475;
+  --line: #DDE2EC;
+  --code-bg: #F5F7FB;
+  --sans: "Segoe UI", "Noto Sans", "DejaVu Sans", Helvetica, Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+}
+* { box-sizing: border-box; }
+html { background: #fff; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 11pt/1.55 var(--sans);
+  background: #fff;
+}
+main { max-width: 820px; margin: 0 auto; padding: 0 20px 60px; }
+
+/* ---------- couverture ---------- */
+.cover {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  color: #fff;
+  padding: 40px 20px;
+  position: relative;
+}
+.cover svg { width: 170px; height: 170px; margin-bottom: 36px; }
+.cover h1 { font-size: 34pt; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.5px; }
+.cover .sub { font-size: 15pt; color: #C9D3EA; margin: 0 0 6px; }
+.cover .ar { font-size: 13pt; color: var(--yellow); margin: 18px 0 0; font-style: italic; }
+.cover .meta { position: absolute; bottom: 70px; left: 0; right: 0; color: #9FB0D4; font-size: 10pt; }
+.cover .flag { position: absolute; bottom: 0; left: 0; right: 0; height: 26px; display: flex; }
+.cover .flag span { flex: 1; }
+
+/* ---------- sommaire ---------- */
+.toc { break-after: page; padding-top: 30px; }
+.toc h1 { font-size: 24pt; color: var(--navy); margin: 0 0 18px; }
+.toc ol { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 36px; }
+.toc li { break-inside: avoid; }
+.toc a { color: var(--ink); text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.toc-part { font-weight: 700; color: var(--navy); margin: 14px 0 4px; font-size: 11pt; }
+.toc-part a { color: var(--navy); }
+.toc-ch { padding-left: 12px; font-size: 10pt; line-height: 1.7; }
+.toc-annex { padding-left: 12px; font-size: 10pt; line-height: 1.7; color: var(--muted); }
+
+/* ---------- titres ---------- */
+.part {
+  break-before: page; break-after: page;
+  min-height: 70vh;
+  display: flex; flex-direction: column; justify-content: center;
+  border-left: 10px solid var(--yellow);
+  padding-left: 30px;
+}
+.part-num { font-size: 14pt; color: var(--red); font-weight: 700; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 2px; }
+.part h1 { font-size: 34pt; color: var(--navy); margin: 0; line-height: 1.1; }
+h1.chapter {
+  break-before: page;
+  font-size: 22pt; color: var(--navy); margin: 30px 0 18px;
+  padding-bottom: 10px; border-bottom: 3px solid var(--yellow);
+}
+h2 { font-size: 14pt; color: var(--navy-2); margin: 26px 0 8px; break-after: avoid; }
+h3 { font-size: 12pt; margin: 20px 0 6px; break-after: avoid; }
+p { margin: 8px 0; }
+a { color: var(--blue); }
+
+/* ---------- code ---------- */
+code { font-family: var(--mono); font-size: 0.92em; background: var(--code-bg); padding: 1px 4px; border-radius: 3px; }
+pre { margin: 0; }
+pre code { background: none; padding: 0; font-size: 9.6pt; }
+main > pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; margin: 12px 0; overflow-x: auto; }
+figure.prog { margin: 14px 0 18px; break-inside: avoid; }
+figure.prog figcaption { font-size: 9.5pt; color: var(--muted); margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg);
+  border: 1px solid var(--line); border-left: 4px solid var(--navy-2);
+  border-radius: 6px 6px 0 0;
+  padding: 10px 14px; line-height: 1.5; overflow-x: auto;
+}
+figure.prog > pre.code:last-child { border-radius: 6px; }
+.t-kw { color: var(--blue); font-weight: 700; }
+.t-fn { color: #7C3AED; }
+.t-string { color: #0F7B3F; }
+.t-number { color: #B45309; }
+.t-const { color: #C2410C; font-weight: 600; }
+.t-comment { color: #6B7280; font-style: italic; }
+.t-op { color: #475569; }
+.out {
+  background: var(--navy); color: #E7ECF6;
+  border-radius: 0 0 6px 6px; padding: 8px 14px 10px;
+  border-left: 4px solid var(--yellow);
+}
+.out pre { font-family: var(--mono); font-size: 9.6pt; line-height: 1.45; white-space: pre-wrap; }
+.out-label { display: block; font: 700 7.5pt var(--sans); letter-spacing: 1.2px; text-transform: uppercase; color: var(--yellow); margin-bottom: 3px; }
+.out.err { border-left-color: var(--red); }
+.out.err .out-label { color: #FF8A9B; }
+.out.err pre { color: #FFD6DC; }
+
+/* ---------- tableaux & encadrés ---------- */
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10pt; break-inside: avoid; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 6px 9px; font-weight: 600; }
+td { border-bottom: 1px solid var(--line); padding: 5px 9px; vertical-align: top; }
+tr:nth-child(even) td { background: #FAFBFD; }
+blockquote {
+  margin: 14px 0; padding: 10px 16px;
+  background: #FFF8DB; border-left: 4px solid var(--yellow); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { padding-left: 22px; }
+li { margin: 3px 0; }
+.colophon { margin-top: 50px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9.5pt; }
+
+/* ---------- impression ---------- */
+@page {
+  size: A4;
+  margin: 18mm 17mm 20mm;
+  @bottom-center { content: counter(page); font: 9pt "Segoe UI", sans-serif; color: #5B6475; }
+  @bottom-right { content: "Kalam — le cours"; font: 8pt "Segoe UI", sans-serif; color: #9AA3B5; }
+}
+@page :first { margin: 0; @bottom-center { content: none; } @bottom-right { content: none; } }
+@media print {
+  .cover { min-height: 297mm; break-after: page; }
+  main { max-width: none; padding: 0; }
+  .part { min-height: 230mm; }
+  .screen-only { display: none; }
+  a { color: inherit; text-decoration: none; }
+}
+@media screen {
+  .topbar { position: sticky; top: 0; z-index: 5; background: var(--navy); color: #fff; padding: 10px 16px; display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+  .topbar a { color: #fff; text-decoration: none; font-weight: 600; }
+  .topbar a.pdf { background: var(--yellow); color: var(--navy); padding: 5px 12px; border-radius: 6px; }
+  .cover { min-height: 70vh; }
+  .part { min-height: auto; padding-top: 40px; padding-bottom: 40px; margin-top: 50px; }
+}
+@media (max-width: 640px) {
+  body { font-size: 10.5pt; }
+  .toc ol { columns: 1; }
+  .cover h1 { font-size: 24pt; }
+  .part h1 { font-size: 24pt; }
+}
+</style>
+</head>
+<body>
+<nav class="topbar screen-only">
+  <a href="index.html">← Kalam</a>
+  <span><a href="essayer.html">Essayer</a> &nbsp; <a class="pdf" href="kalam-cours.pdf">Télécharger le PDF</a></span>
+</nav>
+
+<header class="cover">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <clipPath id="badge">
+      <rect width="256" height="256" rx="56"/>
+    </clipPath>
+    <clipPath id="k-box">
+      <rect x="0" y="44" width="256" height="148"/>
+    </clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12306B"/>
+      <stop offset="1" stop-color="#0A1F44"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#badge)">
+    <rect width="256" height="256" fill="url(#bg)"/>
+    <!-- Bande aux couleurs du drapeau du Tchad -->
+    <rect x="0" y="224" width="86" height="32" fill="#1D4ED8"/>
+    <rect x="85" y="224" width="86" height="32" fill="#FECB00"/>
+    <rect x="170" y="224" width="86" height="32" fill="#C60C30"/>
+  </g>
+  <g transform="translate(-8 0)">
+    <!-- La lettre K -->
+    <g clip-path="url(#k-box)" fill="none" stroke="#FFFFFF" stroke-width="34">
+      <line x1="72" y1="30" x2="72" y2="210"/>
+      <line x1="74" y1="138" x2="168" y2="36"/>
+      <line x1="104" y1="108" x2="172" y2="204"/>
+    </g>
+    <!-- Curseur jaune -->
+    <rect x="198" y="174" width="34" height="18" rx="3" fill="#FECB00"/>
+  </g>
+</svg>
+
+  <h1>Apprendre à programmer<br>avec Kalam</h1>
+  <p class="sub">Le cours complet, de A à Z</p>
+  <p class="sub">Le langage de programmation en arabe tchadien</p>
+  <p class="ar">« Al-barmaja be kalâmna »</p>
+  <p class="meta">Version du 24/11/2026 — tous les programmes de ce livre ont été exécutés automatiquement</p>
+  <div class="flag"><span style="background:#1D4ED8"></span><span style="background:#FECB00"></span><span style="background:#C60C30"></span></div>
+</header>
+
+<main>
+<nav class="toc">
+  <h1>Sommaire</h1>
+  <ol>
+<li class="toc-annex"><a href="#preface">Préface</a></li>
+<li class="toc-part"><a href="#partie-1-premiers-pas">Partie 1 — Premiers pas</a></li>
+<li class="toc-ch"><a href="#1-c-39-est-quoi-kalam">1. C&#39;est quoi Kalam ?</a></li>
+<li class="toc-ch"><a href="#2-installer-kalam">2. Installer Kalam</a></li>
+<li class="toc-ch"><a href="#3-le-premier-programme">3. Le premier programme</a></li>
+<li class="toc-part"><a href="#partie-2-les-bases">Partie 2 — Les bases</a></li>
+<li class="toc-ch"><a href="#4-les-variables">4. Les variables</a></li>
+<li class="toc-ch"><a href="#5-les-types-de-valeurs">5. Les types de valeurs</a></li>
+<li class="toc-ch"><a href="#6-les-operations">6. Les opérations</a></li>
+<li class="toc-ch"><a href="#7-dialoguer-avec-l-39-utilisateur">7. Dialoguer avec l&#39;utilisateur</a></li>
+<li class="toc-part"><a href="#partie-3-decider-et-repeter">Partie 3 — Décider et répéter</a></li>
+<li class="toc-ch"><a href="#8-les-conditions">8. Les conditions</a></li>
+<li class="toc-ch"><a href="#9-les-boucles">9. Les boucles</a></li>
+<li class="toc-part"><a href="#partie-4-organiser-les-donnees">Partie 4 — Organiser les données</a></li>
+<li class="toc-ch"><a href="#10-les-listes">10. Les listes</a></li>
+<li class="toc-ch"><a href="#11-travailler-avec-les-textes">11. Travailler avec les textes</a></li>
+<li class="toc-ch"><a href="#12-les-dictionnaires-dikt">12. Les dictionnaires (dikt)</a></li>
+<li class="toc-part"><a href="#partie-5-organiser-le-code">Partie 5 — Organiser le code</a></li>
+<li class="toc-ch"><a href="#13-les-fonctions-khidime">13. Les fonctions (khidime)</a></li>
+<li class="toc-ch"><a href="#14-gerer-les-erreurs">14. Gérer les erreurs</a></li>
+<li class="toc-ch"><a href="#15-fichiers-et-modules">15. Fichiers et modules</a></li>
+<li class="toc-ch"><a href="#16-le-temps-et-le-hasard">16. Le temps et le hasard</a></li>
+<li class="toc-part"><a href="#partie-6-projets">Partie 6 — Projets</a></li>
+<li class="toc-ch"><a href="#17-projet-la-calculatrice">17. Projet : la calculatrice</a></li>
+<li class="toc-ch"><a href="#18-projet-devine-le-nombre">18. Projet : devine le nombre</a></li>
+<li class="toc-ch"><a href="#19-projet-la-boutique-du-marche">19. Projet : la boutique du marché</a></li>
+<li class="toc-ch"><a href="#20-projet-le-carnet-de-notes-de-la-classe">20. Projet : le carnet de notes de la classe</a></li>
+<li class="toc-annex"><a href="#annexe-a-aide-memoire-des-mots-cles">Annexe A — Aide-mémoire des mots-clés</a></li>
+<li class="toc-annex"><a href="#annexe-b-toutes-les-fonctions-integrees">Annexe B — Toutes les fonctions intégrées</a></li>
+<li class="toc-annex"><a href="#annexe-c-les-messages-d-39-erreur-courants">Annexe C — Les messages d&#39;erreur courants</a></li>
+<li class="toc-annex"><a href="#annexe-d-solutions-des-exercices">Annexe D — Solutions des exercices</a></li>
+<li class="toc-annex"><a href="#annexe-e-petit-lexique">Annexe E — Petit lexique</a></li>
+  </ol>
+</nav>
+
+<h1 class="chapter" id="preface">Préface</h1>
+<h2 id="a-qui-s-39-adresse-ce-cours">À qui s&#39;adresse ce cours ?</h2>
+<p>Ce cours est pour <strong>toute personne qui veut apprendre à programmer</strong>, même sans jamais avoir écrit une ligne de code. Il suffit de savoir lire le français et de connaître un peu l&#39;arabe tchadien.</p>
+<p>Programmer, c&#39;est donner des instructions précises à un ordinateur. D&#39;habitude, on le fait avec des mots anglais : <code>if</code>, <code>while</code>, <code>function</code>… Avec <strong>Kalam</strong>, on utilise les mots de chez nous : <code>kan</code>, <code>tulma</code>, <code>khidime</code>. Les idées sont exactement les mêmes que dans les grands langages (Python, JavaScript…) : ce que vous apprenez ici vous servira partout.</p>
+<h2 id="comment-utiliser-ce-cours">Comment utiliser ce cours</h2>
+<ul>
+<li>Lisez les chapitres <strong>dans l&#39;ordre</strong> : chacun utilise ce que les précédents ont expliqué.</li>
+<li><strong>Tapez les exemples vous-même</strong> au lieu de les copier. C&#39;est en écrivant qu&#39;on apprend.</li>
+<li>Chaque exemple est suivi de son <strong>résultat</strong> : vérifiez que vous obtenez la même chose.</li>
+<li>À la fin de chaque chapitre, faites les <strong>exercices</strong>. Les solutions sont à la fin du livre (Annexe D), mais cherchez d&#39;abord seul !</li>
+</ul>
+<p>Dans ce cours, le code Kalam ressemble à ceci :</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Salam aleykum!&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam aleykum!</pre></div></figure>
+<p>Et le cadre qui suit montre ce que l&#39;ordinateur affiche quand on exécute le programme.</p>
+<section class="part" id="partie-1-premiers-pas"><p class="part-num">Partie 1</p><h1>Premiers pas</h1></section>
+<h1 class="chapter" id="1-c-39-est-quoi-kalam">1. C&#39;est quoi Kalam ?</h1>
+<h2 id="un-langage-de-programmation">Un langage de programmation</h2>
+<p>Un <strong>programme</strong> est une liste d&#39;instructions que l&#39;ordinateur exécute <strong>une par une, de haut en bas</strong>. Un <strong>langage de programmation</strong> est la façon d&#39;écrire ces instructions pour que l&#39;ordinateur les comprenne.</p>
+<p>L&#39;ordinateur est très rapide mais il ne devine rien : il fait <strong>exactement</strong> ce qu&#39;on lui dit. Si on se trompe d&#39;un seul caractère, il le signale par un message d&#39;erreur. Ce n&#39;est pas grave : les erreurs font partie du travail de tous les programmeurs, même les plus forts.</p>
+<h2 id="pourquoi-en-arabe-tchadien">Pourquoi en arabe tchadien ?</h2>
+<p>Kalam (« la parole ») a été créé pour que les Tchadiens puissent apprendre la programmation avec des mots familiers. Les mots-clés sont écrits <strong>en lettres latines</strong>, comme on écrit le tchadien dans les messages de téléphone :</p>
+<table>
+<thead>
+<tr>
+<th>Kalam</th>
+<th>Sens en français</th>
+<th>Rôle en programmation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>khalli</code></td>
+<td>laisse</td>
+<td>créer une variable</td>
+</tr>
+<tr>
+<td><code>kan</code></td>
+<td>si</td>
+<td>faire un choix</td>
+</tr>
+<tr>
+<td><code>kulla</code></td>
+<td>chaque</td>
+<td>répéter pour chaque élément</td>
+</tr>
+<tr>
+<td><code>khidime</code></td>
+<td>travail</td>
+<td>une fonction (un « travail » qu&#39;on peut réutiliser)</td>
+</tr>
+<tr>
+<td><code>khalas</code></td>
+<td>c&#39;est fini</td>
+<td>fin d&#39;un bloc</td>
+</tr>
+</tbody></table>
+<p>Les <strong>accents sont facultatifs</strong> : <code>khalâs</code> et <code>khalas</code>, <code>ôri</code> et <code>ori</code> sont pareils pour Kalam.</p>
+<h2 id="a-retenir">À retenir</h2>
+<ul>
+<li>Un programme est une suite d&#39;instructions exécutées de haut en bas.</li>
+<li>Kalam utilise des mots tchadiens, mais les idées sont celles de tous les langages.</li>
+</ul>
+<h1 class="chapter" id="2-installer-kalam">2. Installer Kalam</h1>
+<p>Il y a trois façons d&#39;utiliser Kalam. Choisissez celle qui vous convient.</p>
+<h2 id="facon-1-dans-le-navigateur-le-plus-simple">Façon 1 : dans le navigateur (le plus simple)</h2>
+<p>Ouvrez le <strong>terrain de jeu</strong> sur le site de Kalam : <strong>salah-barkai.github.io/kalam</strong> (page « Essayer »). Vous écrivez votre programme à gauche, vous cliquez sur <strong>Shaghghil</strong> (Exécuter), et le résultat s&#39;affiche à droite. Rien à installer ! C&#39;est idéal pour les premiers chapitres.</p>
+<h2 id="facon-2-avec-vs-code-recommande-ensuite">Façon 2 : avec VS Code (recommandé ensuite)</h2>
+<p>VS Code est un éditeur de code gratuit utilisé par les professionnels.</p>
+<ol>
+<li>Installez <strong>VS Code</strong> depuis <em>code.visualstudio.com</em>.</li>
+<li>Dans VS Code, ouvrez l&#39;onglet <strong>Extensions</strong> (<code>Ctrl+Shift+X</code>), cherchez <strong>Kalam</strong> et installez l&#39;extension.</li>
+<li>Créez un fichier qui finit par <strong><code>.klm</code></strong>, par exemple <code>salam.klm</code>.</li>
+<li>Écrivez votre programme et appuyez sur <strong>F5</strong> pour l&#39;exécuter.</li>
+</ol>
+<p>C&#39;est tout : Kalam est entièrement inclus dans l&#39;extension. Le programme s&#39;exécute dans un terminal en bas de la fenêtre ; quand il pose une question (<code>asal</code>), vous tapez la réponse dedans. <code>Ctrl+C</code> arrête un programme qui tourne trop longtemps.</p>
+<p>L&#39;extension colore aussi votre code, <strong>souligne les erreurs en rouge</strong> pendant que vous tapez, et affiche l&#39;aide d&#39;un mot quand vous passez la souris dessus.</p>
+<h2 id="facon-3-en-ligne-de-commande-avec-kalam-exe">Façon 3 : en ligne de commande avec kalam.exe</h2>
+<p>Pour utiliser Kalam dans un terminal, téléchargez <strong><code>kalam.exe</code></strong> sur la page des versions de Kalam (<em>github.com/salah-barkai/kalam/releases</em>). C&#39;est un seul fichier, qui contient tout. Une fois, dans le dossier où il se trouve, tapez :</p>
+<pre><code>kalam.exe rakkib
+</code></pre>
+<p>(<code>rakkib</code> = « installe ».) Ensuite, dans n&#39;importe quel nouveau terminal, il suffit d&#39;écrire <code>kalam</code> suivi du nom du fichier :</p>
+<pre><code>kalam salam.klm
+</code></pre>
+<p>Sans nom de fichier, <code>kalam</code> ouvre le <strong>mode interactif</strong> : on tape une ligne, Kalam répond tout de suite. Pratique pour faire des petits calculs. On en sort en tapant <code>amrug</code>.</p>
+<pre><code>kalam
+kalam&gt; 2 + 3 * 4
+14
+kalam&gt; amrug
+Ma&#39;a salâma!
+</code></pre>
+<h1 class="chapter" id="3-le-premier-programme">3. Le premier programme</h1>
+<h2 id="afficher-avec-ori">Afficher avec ori</h2>
+<p>L&#39;instruction la plus importante pour commencer est <strong><code>ori</code></strong> (« montre », « informe »). Elle affiche ce qu&#39;on lui donne entre parenthèses.</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Salam aleykum!&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ana gâ'id na'allim al-barmaja.&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam aleykum!
+Ana gâ'id na'allim al-barmaja.</pre></div></figure>
+<p>Le texte est écrit <strong>entre guillemets</strong> <code>&quot; &quot;</code>. Sans guillemets, Kalam croirait que c&#39;est un nom de variable (on verra ça au chapitre 4).</p>
+<p>On peut donner <strong>plusieurs choses</strong> à <code>ori</code>, séparées par des virgules. Elles sont affichées avec un espace entre elles :</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Tchad indaha&quot;</span>, <span class="t-number">23</span>, <span class="t-string">&quot;wilâya&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-number">10</span> <span class="t-op">+</span> <span class="t-number">5</span>)
+<span class="t-fn">ori</span>()
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-akhir&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Tchad indaha 23 wilâya
+15
+
+Al-akhir</pre></div></figure>
+<p>Remarquez : <code>ori()</code> sans rien affiche une ligne vide. Et <code>10 + 5</code> sans guillemets est <strong>calculé</strong> : Kalam affiche <code>15</code>.</p>
+<h2 id="les-commentaires">Les commentaires</h2>
+<p>Tout ce qui suit un <code>#</code> sur une ligne est un <strong>commentaire</strong> : Kalam l&#39;ignore. Les commentaires servent à expliquer le code aux humains (et à vous-même dans trois mois !).</p>
+<figure class="prog"><pre class="code"><code><span class="t-comment"># Programme : saluer la classe</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Salam ya awlâd!&quot;</span>)   <span class="t-comment"># ce texte s'affiche</span>
+<span class="t-comment"># ori(&quot;ce texte ne s'affiche pas&quot;)</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam ya awlâd!</pre></div></figure>
+<h2 id="votre-premiere-erreur">Votre première erreur</h2>
+<p>Que se passe-t-il si on oublie le guillemet de fin ?</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Salam)</span></code></pre><div class="out err"><span class="out-label">Résultat</span><pre>Mushkila fi satir 1: al-kitaba di ma indaha guillemet fôg al-akhir (guillemet fermant manquant)</pre></div></figure>
+<p>Kalam indique <strong>le numéro de la ligne</strong> (<code>satir</code>) et explique le problème en tchadien, avec la traduction en français entre parenthèses. Dans VS Code, l&#39;erreur est soulignée en rouge avant même d&#39;exécuter le programme.</p>
+<blockquote>
+<p><strong>Conseil :</strong> quand une erreur apparaît, ne paniquez pas. Lisez le message, allez à la ligne indiquée, et regardez attentivement ce qui ne va pas.</p>
+</blockquote>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 3.1</strong> — Écrivez un programme qui affiche votre nom, puis votre ville, sur deux lignes.</p>
+<p><strong>Exercice 3.2</strong> — Faites afficher le résultat de <code>365 * 24</code> avec un texte qui explique ce que c&#39;est (le nombre d&#39;heures dans une année).</p>
+<section class="part" id="partie-2-les-bases"><p class="part-num">Partie 2</p><h1>Les bases</h1></section>
+<h1 class="chapter" id="4-les-variables">4. Les variables</h1>
+<h2 id="ranger-une-valeur-dans-une-boite">Ranger une valeur dans une boîte</h2>
+<p>Une <strong>variable</strong> est comme une boîte avec une étiquette : on y range une valeur pour la réutiliser plus tard. On crée une variable avec <strong><code>khalli</code></strong> (« laisse ») :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> usum <span class="t-op">=</span> <span class="t-string">&quot;Halime&quot;</span>
+<span class="t-kw">khalli</span> umur <span class="t-op">=</span> <span class="t-number">16</span>
+<span class="t-fn">ori</span>(usum, <span class="t-string">&quot;umurha&quot;</span>, umur, <span class="t-string">&quot;sana&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Halime umurha 16 sana</pre></div></figure>
+<p>Lisez <code>khalli umur = 16</code> comme : « laisse <em>umur</em> valoir 16 ». Le signe <code>=</code> ne veut pas dire « égal » comme en maths, mais <strong>« ranger dans »</strong>.</p>
+<h2 id="changer-la-valeur">Changer la valeur</h2>
+<p>Une fois créée, une variable peut changer. On écrit alors simplement le nom, <code>=</code>, et la nouvelle valeur (sans <code>khalli</code>) :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> gurûsh <span class="t-op">=</span> <span class="t-number">1000</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Indi&quot;</span>, gurûsh, <span class="t-string">&quot;FCFA&quot;</span>)
+gurûsh <span class="t-op">=</span> gurûsh <span class="t-op">-</span> <span class="t-number">250</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ba'ad shiri ash-shay:&quot;</span>, gurûsh, <span class="t-string">&quot;FCFA&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Indi 1000 FCFA
+Ba'ad shiri ash-shay: 750 FCFA</pre></div></figure>
+<p>La ligne <code>gurûsh = gurûsh - 250</code> se lit de droite à gauche : Kalam calcule d&#39;abord <code>gurûsh - 250</code> (donc 750), puis range le résultat dans <code>gurûsh</code>.</p>
+<h2 id="les-raccourcis">Les raccourcis</h2>
+<p>Changer une variable à partir de sa propre valeur est si fréquent qu&#39;il existe des raccourcis :</p>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Équivalent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>x += 5</code></td>
+<td><code>x = x + 5</code></td>
+</tr>
+<tr>
+<td><code>x -= 5</code></td>
+<td><code>x = x - 5</code></td>
+</tr>
+<tr>
+<td><code>x *= 2</code></td>
+<td><code>x = x * 2</code></td>
+</tr>
+<tr>
+<td><code>x /= 2</code></td>
+<td><code>x = x / 2</code></td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nugât <span class="t-op">=</span> <span class="t-number">10</span>
+nugât <span class="t-op">+=</span> <span class="t-number">5</span>
+nugât <span class="t-op">*=</span> <span class="t-number">2</span>
+<span class="t-fn">ori</span>(nugât)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>30</pre></div></figure>
+<h2 id="bien-choisir-les-noms">Bien choisir les noms</h2>
+<ul>
+<li>Un nom commence par une <strong>lettre</strong> ou <code>_</code>, puis lettres, chiffres ou <code>_</code> : <code>umur</code>, <code>taman_al_sukkar</code>, <code>talib2</code>.</li>
+<li>Pas d&#39;espace dans un nom : écrivez <code>taman_al_sukkar</code>, pas <code>taman al sukkar</code>.</li>
+<li>Choisissez des noms <strong>qui expliquent</strong> : <code>taman</code> est mieux que <code>t</code>.</li>
+<li>Les accents et apostrophes sont ignorés dans les noms : <code>jadîd</code> et <code>jadid</code> sont <strong>la même</strong> variable.</li>
+<li>On ne peut pas utiliser un mot-clé comme nom (<code>kan</code>, <code>khalas</code>, <code>fi</code>, <code>min</code>…).</li>
+</ul>
+<h2 id="une-erreur-frequente">Une erreur fréquente</h2>
+<p>Utiliser une variable qui n&#39;existe pas :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> taman <span class="t-op">=</span> <span class="t-number">500</span>
+<span class="t-fn">ori</span>(tamam)</code></pre><div class="out err"><span class="out-label">Résultat</span><pre>Mushkila fi satir 2: 'tamam' da ma ligênah — sawwi 'khalli tamam = ...' awwal (variable non définie)</pre></div></figure>
+<p>On a tapé <code>tamam</code> au lieu de <code>taman</code>. Kalam ne trouve pas cette variable (« <em>da ma ligênah</em> ») et propose de la créer avec <code>khalli</code>.</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 4.1</strong> — Créez une variable <code>sana_al_wilâda</code> (année de naissance) et calculez votre âge en 2026.</p>
+<p><strong>Exercice 4.2</strong> — Une variable <code>rasîd</code> vaut 5000. Retirez 1200 (achat de riz), puis ajoutez 3000 (salaire du jour), en utilisant <code>-=</code> et <code>+=</code>. Affichez le résultat final.</p>
+<h1 class="chapter" id="5-les-types-de-valeurs">5. Les types de valeurs</h1>
+<p>Chaque valeur a un <strong>type</strong> (en Kalam : son <code>shakal</code>, sa « forme »). Le type dit ce qu&#39;on peut faire avec la valeur.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Exemples</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nimra</code></td>
+<td><code>12</code>, <code>-3</code>, <code>2.5</code></td>
+<td>un nombre</td>
+</tr>
+<tr>
+<td><code>kitaba</code></td>
+<td><code>&quot;Abéché&quot;</code>, <code>&#39;bamya&#39;</code></td>
+<td>un texte (une écriture)</td>
+</tr>
+<tr>
+<td><code>sahi/ghalat</code></td>
+<td><code>sahi</code>, <code>ghalat</code></td>
+<td>vrai ou faux</td>
+</tr>
+<tr>
+<td><code>mafi</code></td>
+<td><code>mafi</code></td>
+<td>« il n&#39;y a rien »</td>
+</tr>
+<tr>
+<td><code>liste</code></td>
+<td><code>[1, 2, 3]</code></td>
+<td>une liste de valeurs (chapitre 10)</td>
+</tr>
+<tr>
+<td><code>dikt</code></td>
+<td><code>{usum: &quot;Ali&quot;}</code></td>
+<td>un dictionnaire (chapitre 12)</td>
+</tr>
+<tr>
+<td><code>khidime</code></td>
+<td><code>ori</code></td>
+<td>une fonction (chapitre 13)</td>
+</tr>
+</tbody></table>
+<p>La fonction <strong><code>shakal</code></strong> donne le type d&#39;une valeur :</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-number">42</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-number">3.14</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-string">&quot;salam&quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-const">sahi</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-const">mafi</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>nimra
+nimra
+kitaba
+sahi/ghalat
+mafi</pre></div></figure>
+<h2 id="les-nombres">Les nombres</h2>
+<p>Les nombres s&#39;écrivent sans guillemets. Les nombres à virgule s&#39;écrivent avec un <strong>point</strong> : <code>2.5</code> (pas <code>2,5</code>, car la virgule sépare les valeurs).</p>
+<h2 id="les-textes">Les textes</h2>
+<p>Un texte (<code>kitaba</code>) s&#39;écrit entre guillemets doubles <code>&quot;…&quot;</code> ou simples <code>&#39;…&#39;</code>. Quelques caractères spéciaux :</p>
+<table>
+<thead>
+<tr>
+<th>Écriture</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>\n</code></td>
+<td>retour à la ligne</td>
+</tr>
+<tr>
+<td><code>\t</code></td>
+<td>tabulation</td>
+</tr>
+<tr>
+<td><code>\&quot;</code></td>
+<td>un guillemet dans le texte</td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Satir wâhid\nSatir tinên&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Hu gâl: \&quot;Âfe!\&quot;&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Satir wâhid
+Satir tinên
+Hu gâl: &quot;Âfe!&quot;</pre></div></figure>
+<h2 id="vrai-faux-et-rien">Vrai, faux et rien</h2>
+<p><code>sahi</code> (vrai) et <code>ghalat</code> (faux) servent aux décisions (chapitre 8). <code>mafi</code> représente l&#39;absence de valeur.</p>
+<h2 id="convertir-d-39-un-type-a-l-39-autre">Convertir d&#39;un type à l&#39;autre</h2>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nimra(x)</code></td>
+<td>texte → nombre</td>
+<td><code>nimra(&quot;25&quot;)</code> donne <code>25</code></td>
+</tr>
+<tr>
+<td><code>kitaba(x)</code></td>
+<td>n&#39;importe quoi → texte</td>
+<td><code>kitaba(25)</code> donne <code>&quot;25&quot;</code></td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> a <span class="t-op">=</span> <span class="t-string">&quot;12&quot;</span>
+<span class="t-kw">khalli</span> b <span class="t-op">=</span> <span class="t-string">&quot;30&quot;</span>
+<span class="t-fn">ori</span>(a <span class="t-op">+</span> b)
+<span class="t-fn">ori</span>(<span class="t-fn">nimra</span>(a) <span class="t-op">+</span> <span class="t-fn">nimra</span>(b))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>1230
+42</pre></div></figure>
+<p>Avec des textes, <code>+</code> <strong>colle</strong> : <code>&quot;12&quot; + &quot;30&quot;</code> donne <code>&quot;1230&quot;</code>. Avec des nombres, <code>+</code> <strong>additionne</strong>. C&#39;est pour ça qu&#39;il faut convertir.</p>
+<p>Si le texte ne ressemble pas à un nombre, <code>nimra</code> signale une erreur :</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-fn">nimra</span>(<span class="t-string">&quot;khamsa&quot;</span>))</code></pre><div class="out err"><span class="out-label">Résultat</span><pre>Mushkila fi satir 1: 'khamsa' da ma nimra (ce n'est pas un nombre)</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 5.1</strong> — Quel est le <code>shakal</code> de <code>&quot;42&quot;</code> ? Et de <code>42</code> ? Vérifiez avec un programme.</p>
+<p><strong>Exercice 5.2</strong> — Les variables <code>x = &quot;7&quot;</code> et <code>y = &quot;8&quot;</code> sont des textes. Affichez leur somme comme un nombre (15).</p>
+<h1 class="chapter" id="6-les-operations">6. Les opérations</h1>
+<h2 id="calculs">Calculs</h2>
+<table>
+<thead>
+<tr>
+<th>Opération</th>
+<th>Signe</th>
+<th>Exemple</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addition</td>
+<td><code>+</code></td>
+<td><code>7 + 2</code></td>
+<td><code>9</code></td>
+</tr>
+<tr>
+<td>soustraction</td>
+<td><code>-</code></td>
+<td><code>7 - 2</code></td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td>multiplication</td>
+<td><code>*</code></td>
+<td><code>7 * 2</code></td>
+<td><code>14</code></td>
+</tr>
+<tr>
+<td>division</td>
+<td><code>/</code></td>
+<td><code>7 / 2</code></td>
+<td><code>3.5</code></td>
+</tr>
+<tr>
+<td>reste de la division</td>
+<td><code>%</code></td>
+<td><code>7 % 2</code></td>
+<td><code>1</code></td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-number">7</span> <span class="t-op">+</span> <span class="t-number">2</span>, <span class="t-number">7</span> <span class="t-op">-</span> <span class="t-number">2</span>, <span class="t-number">7</span> <span class="t-op">*</span> <span class="t-number">2</span>, <span class="t-number">7</span> <span class="t-op">/</span> <span class="t-number">2</span>, <span class="t-number">7</span> <span class="t-op">%</span> <span class="t-number">2</span>)
+<span class="t-fn">ori</span>(<span class="t-number">10</span> <span class="t-op">/</span> <span class="t-number">2</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>9 5 14 3.5 1
+5</pre></div></figure>
+<p>Le <strong>reste</strong> (<code>%</code>) est très utile : un nombre est <strong>pair</strong> si <code>n % 2</code> vaut <code>0</code>.</p>
+<h2 id="l-39-ordre-des-operations">L&#39;ordre des opérations</h2>
+<p>Comme en maths, <code>*</code>, <code>/</code> et <code>%</code> passent avant <code>+</code> et <code>-</code>. Utilisez des <strong>parenthèses</strong> pour changer l&#39;ordre :</p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-number">2</span> <span class="t-op">+</span> <span class="t-number">3</span> <span class="t-op">*</span> <span class="t-number">4</span>)
+<span class="t-fn">ori</span>((<span class="t-number">2</span> <span class="t-op">+</span> <span class="t-number">3</span>) <span class="t-op">*</span> <span class="t-number">4</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>14
+20</pre></div></figure>
+<h2 id="operations-sur-les-textes">Opérations sur les textes</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> usum <span class="t-op">=</span> <span class="t-string">&quot;Abakar&quot;</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Salam &quot;</span> <span class="t-op">+</span> usum <span class="t-op">+</span> <span class="t-string">&quot;!&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Umri &quot;</span> <span class="t-op">+</span> <span class="t-number">30</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;ha&quot;</span> <span class="t-op">*</span> <span class="t-number">3</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span> <span class="t-op">*</span> <span class="t-number">20</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam Abakar!
+Umri 30
+hahaha
+====================</pre></div></figure>
+<ul>
+<li><code>+</code> entre un texte et autre chose <strong>colle</strong> les deux (le nombre est converti en texte).</li>
+<li><code>texte * n</code> <strong>répète</strong> le texte <code>n</code> fois. Pratique pour dessiner des lignes !</li>
+</ul>
+<h2 id="diviser-par-zero">Diviser par zéro</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nâs <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-fn">ori</span>(<span class="t-number">1000</span> <span class="t-op">/</span> nâs)</code></pre><div class="out err"><span class="out-label">Résultat</span><pre>Mushkila fi satir 2: ma tagdar tigassim be sifir (division par zéro)</pre></div></figure>
+<p>Diviser par zéro est impossible, en maths comme en programmation.</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 6.1</strong> — Un taxi-moto coûte 500 FCFA par trajet. Combien dépense-t-on pour 2 trajets par jour pendant 22 jours ?</p>
+<p><strong>Exercice 6.2</strong> — Quel est le reste de 100 divisé par 7 ? Écrivez le programme.</p>
+<p><strong>Exercice 6.3</strong> — Affichez un cadre comme ceci, en utilisant <code>&quot;*&quot; * …</code> :</p>
+<pre><code>**********
+* Kalam  *
+**********
+</code></pre>
+<h1 class="chapter" id="7-dialoguer-avec-l-39-utilisateur">7. Dialoguer avec l&#39;utilisateur</h1>
+<h2 id="poser-une-question-avec-asal">Poser une question avec asal</h2>
+<p><strong><code>asal</code></strong> (« demande ») affiche une question et attend que l&#39;utilisateur tape une réponse. La réponse est <strong>toujours un texte</strong>.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> usum <span class="t-op">=</span> <span class="t-fn">asal</span>(<span class="t-string">&quot;Usumak shunu? &quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ahlan&quot;</span>, usum <span class="t-op">+</span> <span class="t-string">&quot;!&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Usumak shunu? Fatime
+Ahlan Fatime!</pre></div></figure>
+<p>Dans ce livre, les réponses tapées par l&#39;utilisateur sont montrées dans le résultat, après la question.</p>
+<h2 id="demander-un-nombre">Demander un nombre</h2>
+<p>Puisque <code>asal</code> renvoie un texte, il faut le convertir avec <code>nimra</code> pour faire des calculs :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> sana <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Inta wildôk be sana kam? &quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Fi 2026 umrak&quot;</span>, <span class="t-number">2026</span> <span class="t-op">-</span> sana, <span class="t-string">&quot;sana.&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Inta wildôk be sana kam? 2008
+Fi 2026 umrak 18 sana.</pre></div></figure>
+<p>On peut lire <code>nimra(asal(...))</code> de l&#39;intérieur vers l&#39;extérieur : d&#39;abord on pose la question, puis on convertit la réponse en nombre.</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 7.1</strong> — Demandez le prix d&#39;un article et la quantité, puis affichez le total.</p>
+<p><strong>Exercice 7.2</strong> — Demandez une température en degrés Celsius et affichez-la en Fahrenheit (<code>F = C * 9 / 5 + 32</code>).</p>
+<section class="part" id="partie-3-decider-et-repeter"><p class="part-num">Partie 3</p><h1>Décider et répéter</h1></section>
+<h1 class="chapter" id="8-les-conditions">8. Les conditions</h1>
+<h2 id="comparer">Comparer</h2>
+<p>Une <strong>comparaison</strong> donne <code>sahi</code> (vrai) ou <code>ghalat</code> (faux) :</p>
+<table>
+<thead>
+<tr>
+<th>Signe</th>
+<th>Sens</th>
+<th>Exemple</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>==</code></td>
+<td>est égal à</td>
+<td><code>5 == 5</code></td>
+<td><code>sahi</code></td>
+</tr>
+<tr>
+<td><code>!=</code></td>
+<td>est différent de</td>
+<td><code>5 != 3</code></td>
+<td><code>sahi</code></td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>plus petit que</td>
+<td><code>2 &lt; 1</code></td>
+<td><code>ghalat</code></td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>plus grand que</td>
+<td><code>2 &gt; 1</code></td>
+<td><code>sahi</code></td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>plus petit ou égal</td>
+<td><code>3 &lt;= 3</code></td>
+<td><code>sahi</code></td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td>plus grand ou égal</td>
+<td><code>2 &gt;= 5</code></td>
+<td><code>ghalat</code></td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-number">5</span> <span class="t-op">==</span> <span class="t-number">5</span>, <span class="t-number">5</span> <span class="t-op">!=</span> <span class="t-number">3</span>, <span class="t-number">2</span> <span class="t-op">&lt;</span> <span class="t-number">1</span>, <span class="t-string">&quot;bamya&quot;</span> <span class="t-op">==</span> <span class="t-string">&quot;bamya&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>sahi sahi ghalat sahi</pre></div></figure>
+<blockquote>
+<p><strong>Attention :</strong> <code>=</code> range une valeur dans une variable, <code>==</code> compare deux valeurs. C&#39;est une erreur très courante de les confondre.</p>
+</blockquote>
+<h2 id="kan-khalas-si">kan … khalas : si</h2>
+<p>Avec <strong><code>kan</code></strong> (« si »), le bloc de code n&#39;est exécuté <strong>que si</strong> la condition est vraie. Le bloc se termine par <strong><code>khalas</code></strong>.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> umur <span class="t-op">=</span> <span class="t-number">20</span>
+<span class="t-kw">kan</span> umur <span class="t-op">&gt;=</span> <span class="t-number">18</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Inta kabîr, tagdar tisawwi carte d'identité.&quot;</span>)
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-barnâmij kammal.&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Inta kabîr, tagdar tisawwi carte d'identité.
+Al-barnâmij kammal.</pre></div></figure>
+<p>Les lignes à l&#39;intérieur du bloc sont <strong>décalées</strong> (indentées) de 4 espaces. Kalam n&#39;en a pas besoin pour comprendre, mais cela rend le code beaucoup plus facile à lire. VS Code le fait automatiquement.</p>
+<h2 id="walla-sinon">walla : sinon</h2>
+<p><strong><code>walla</code></strong> permet de dire quoi faire quand la condition est fausse :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nimra_al_imtihân <span class="t-op">=</span> <span class="t-number">8</span>
+<span class="t-kw">kan</span> nimra_al_imtihân <span class="t-op">&gt;=</span> <span class="t-number">10</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Najaht! Mabrûk!&quot;</span>)
+<span class="t-kw">walla</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Ma najaht. Agri shuwayya wa jarrib marra tânye.&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Ma najaht. Agri shuwayya wa jarrib marra tânye.</pre></div></figure>
+<h2 id="walla-kan-plusieurs-cas">walla kan : plusieurs cas</h2>
+<p>Pour tester plusieurs cas l&#39;un après l&#39;autre, on utilise <strong><code>walla kan</code></strong> (« ou bien si »). Kalam prend <strong>le premier</strong> cas vrai et ignore les autres :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> harâra <span class="t-op">=</span> <span class="t-number">43</span>
+<span class="t-kw">kan</span> harâra <span class="t-op">&gt;=</span> <span class="t-number">40</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-hamu shadîd! Ashrab almi katîr.&quot;</span>)
+<span class="t-kw">walla</span> <span class="t-kw">kan</span> harâra <span class="t-op">&gt;=</span> <span class="t-number">30</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-hamu.&quot;</span>)
+<span class="t-kw">walla</span> <span class="t-kw">kan</span> harâra <span class="t-op">&gt;=</span> <span class="t-number">20</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-jaww sameh.&quot;</span>)
+<span class="t-kw">walla</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-barid! Albas kabbût.&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Al-hamu shadîd! Ashrab almi katîr.</pre></div></figure>
+<h2 id="combiner-wa-aw-ma">Combiner : wa, aw, ma</h2>
+<table>
+<thead>
+<tr>
+<th>Mot</th>
+<th>Sens</th>
+<th>Vrai quand…</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>wa</code></td>
+<td>et</td>
+<td>les <strong>deux</strong> conditions sont vraies</td>
+</tr>
+<tr>
+<td><code>aw</code></td>
+<td>ou</td>
+<td><strong>au moins une</strong> condition est vraie</td>
+</tr>
+<tr>
+<td><code>ma</code></td>
+<td>non / pas</td>
+<td>la condition est <strong>fausse</strong></td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> umur <span class="t-op">=</span> <span class="t-number">25</span>
+<span class="t-kw">khalli</span> indah_permis <span class="t-op">=</span> <span class="t-const">sahi</span>
+<span class="t-kw">kan</span> umur <span class="t-op">&gt;=</span> <span class="t-number">18</span> <span class="t-kw">wa</span> indah_permis
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Yagdar yasûg watîr.&quot;</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khalli</span> yôm <span class="t-op">=</span> <span class="t-string">&quot;juma&quot;</span>
+<span class="t-kw">kan</span> yôm <span class="t-op">==</span> <span class="t-string">&quot;juma&quot;</span> <span class="t-kw">aw</span> yôm <span class="t-op">==</span> <span class="t-string">&quot;sabit&quot;</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-yôm da ijâza.&quot;</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">kan</span> <span class="t-kw">ma</span> indah_permis
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Ma yagdar yasûg.&quot;</span>)
+<span class="t-kw">walla</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Indah permis.&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Yagdar yasûg watîr.
+Al-yôm da ijâza.
+Indah permis.</pre></div></figure>
+<h2 id="ce-qui-compte-comme-vrai-ou-faux">Ce qui compte comme vrai ou faux</h2>
+<p>Dans une condition, Kalam considère comme <strong>faux</strong> : <code>ghalat</code>, <code>mafi</code>, <code>0</code>, le texte vide <code>&quot;&quot;</code>, la liste vide <code>[]</code> et le dikt vide <code>{}</code>. Tout le reste est <strong>vrai</strong>.</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 8.1</strong> — Demandez un nombre et dites s&#39;il est pair ou impair (pensez à <code>%</code>).</p>
+<p><strong>Exercice 8.2</strong> — Demandez une note sur 20 et affichez la mention : moins de 10 « Ma najah », de 10 à 11 « Sameh », de 12 à 15 « Sameh shadîd », 16 et plus « Mumtâz ».</p>
+<p><strong>Exercice 8.3</strong> — Une année est bissextile si elle est divisible par 4, sauf si elle est divisible par 100 et pas par 400. Écrivez le test pour 2024 et 1900.</p>
+<h1 class="chapter" id="9-les-boucles">9. Les boucles</h1>
+<p>Une <strong>boucle</strong> répète un bloc de code. C&#39;est la grande force de l&#39;ordinateur : il peut répéter mille fois sans se fatiguer.</p>
+<h2 id="kulla-fi-min-lahaddi-compter">kulla … fi min … lahaddi : compter</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">5</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Dôra nimra&quot;</span>, i)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Dôra nimra 1
+Dôra nimra 2
+Dôra nimra 3
+Dôra nimra 4
+Dôra nimra 5</pre></div></figure>
+<p>Lisez : « pour <strong>chaque</strong> <em>i</em> <strong>dans</strong> l&#39;intervalle <strong>de</strong> 1 <strong>jusqu&#39;à</strong> 5 ». La variable <code>i</code> prend successivement les valeurs 1, 2, 3, 4, 5 (la fin est <strong>incluse</strong>). On peut aussi compter à l&#39;envers :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">3</span> <span class="t-kw">lahaddi</span> <span class="t-number">1</span>
+    <span class="t-fn">ori</span>(i, <span class="t-string">&quot;...&quot;</span>)
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Yalla!&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>3 ...
+2 ...
+1 ...
+Yalla!</pre></div></figure>
+<p>Exemple classique : la table de multiplication.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> n <span class="t-op">=</span> <span class="t-number">7</span>
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">10</span>
+    <span class="t-fn">ori</span>(n, <span class="t-string">&quot;x&quot;</span>, i, <span class="t-string">&quot;=&quot;</span>, n <span class="t-op">*</span> i)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+7 x 4 = 28
+7 x 5 = 35
+7 x 6 = 42
+7 x 7 = 49
+7 x 8 = 56
+7 x 9 = 63
+7 x 10 = 70</pre></div></figure>
+<h2 id="additionner-dans-une-boucle">Additionner dans une boucle</h2>
+<p>Une technique très utilisée : une variable qui <strong>accumule</strong> un total.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> majmû <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">100</span>
+    majmû <span class="t-op">+=</span> i
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;1 + 2 + ... + 100 =&quot;</span>, majmû)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>1 + 2 + ... + 100 = 5050</pre></div></figure>
+<h2 id="kulla-fi-parcourir">kulla … fi : parcourir</h2>
+<p><code>kulla</code> peut aussi parcourir chaque élément d&#39;une liste, ou chaque lettre d&#39;un texte :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> madina <span class="t-kw">fi</span> [<span class="t-string">&quot;Ndjamena&quot;</span>, <span class="t-string">&quot;Moundou&quot;</span>, <span class="t-string">&quot;Abéché&quot;</span>, <span class="t-string">&quot;Sarh&quot;</span>]
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Salam ya&quot;</span>, madina)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">kulla</span> harf <span class="t-kw">fi</span> <span class="t-string">&quot;Tchad&quot;</span>
+    <span class="t-fn">ori</span>(harf)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam ya Ndjamena
+Salam ya Moundou
+Salam ya Abéché
+Salam ya Sarh
+T
+c
+h
+a
+d</pre></div></figure>
+<h2 id="tulma-tant-que">tulma : tant que</h2>
+<p><strong><code>tulma</code></strong> répète <strong>tant que</strong> la condition est vraie. On l&#39;utilise quand on ne sait pas à l&#39;avance combien de fois répéter.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> gurûsh <span class="t-op">=</span> <span class="t-number">10000</span>
+<span class="t-kw">khalli</span> shahar <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">tulma</span> gurûsh <span class="t-op">&lt;</span> <span class="t-number">20000</span>
+    gurûsh <span class="t-op">=</span> gurûsh <span class="t-op">*</span> <span class="t-number">1.1</span>
+    shahar <span class="t-op">+=</span> <span class="t-number">1</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ba'ad&quot;</span>, shahar, <span class="t-string">&quot;shahar, al-gurûsh bigi&quot;</span>, <span class="t-fn">garrib</span>(gurûsh), <span class="t-string">&quot;FCFA&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Ba'ad 8 shahar, al-gurûsh bigi 21436 FCFA</pre></div></figure>
+<blockquote>
+<p><strong>Attention à la boucle infinie !</strong> Si la condition ne devient jamais fausse, la boucle ne s&#39;arrête jamais. Vérifiez toujours que quelque chose change dans la boucle. Pour arrêter un programme bloqué : <code>Ctrl+C</code> dans le terminal.</p>
+</blockquote>
+<h2 id="agif-et-fut-arreter-et-passer">agif et fut : arrêter et passer</h2>
+<ul>
+<li><strong><code>agif</code></strong> (« arrête-toi ») sort immédiatement de la boucle.</li>
+<li><strong><code>fut</code></strong> (« passe ») saute la fin du tour et passe au tour suivant.</li>
+</ul>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">10</span>
+    <span class="t-kw">kan</span> i <span class="t-op">%</span> <span class="t-number">2</span> <span class="t-op">==</span> <span class="t-number">0</span>
+        <span class="t-kw">fut</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">kan</span> i <span class="t-op">&gt;</span> <span class="t-number">7</span>
+        <span class="t-kw">agif</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;fard:&quot;</span>, i)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>fard: 1
+fard: 3
+fard: 5
+fard: 7</pre></div></figure>
+<p>Une boucle <code>tulma sahi</code> (« tant que vrai ») ne s&#39;arrête que grâce à <code>agif</code>. C&#39;est pratique pour redemander jusqu&#39;à obtenir une bonne réponse :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">tulma</span> <span class="t-const">sahi</span>
+    <span class="t-kw">jarrib</span>
+        <span class="t-kw">khalli</span> umur <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Umrak kam? &quot;</span>))
+        <span class="t-kw">kan</span> umur <span class="t-op">&gt;</span> <span class="t-number">0</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;Shukran!&quot;</span>, umur, <span class="t-string">&quot;sana.&quot;</span>)
+            <span class="t-kw">agif</span>
+        <span class="t-kw">khalas</span>
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-umur lâzim yabga fôg sifir.&quot;</span>)
+    <span class="t-kw">mushkila</span>
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Aktib nimra, mâ kalâm.&quot;</span>)
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Umrak kam? abc
+Aktib nimra, mâ kalâm.
+Umrak kam? -5
+Al-umur lâzim yabga fôg sifir.
+Umrak kam? 17
+Shukran! 17 sana.</pre></div></figure>
+<p>(Les mots <code>jarrib</code> et <code>mushkila</code> sont expliqués au chapitre 14.)</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 9.1</strong> — Affichez les nombres pairs de 2 à 20.</p>
+<p><strong>Exercice 9.2</strong> — Calculez 1 × 2 × 3 × … × 10 (c&#39;est « factorielle 10 »).</p>
+<p><strong>Exercice 9.3</strong> — Demandez des nombres à l&#39;utilisateur jusqu&#39;à ce qu&#39;il tape 0, puis affichez la somme.</p>
+<p><strong>Exercice 9.4</strong> — Affichez un triangle d&#39;étoiles de 5 lignes : <code>*</code>, <code>**</code>, <code>***</code>…</p>
+<section class="part" id="partie-4-organiser-les-donnees"><p class="part-num">Partie 4</p><h1>Organiser les données</h1></section>
+<h1 class="chapter" id="10-les-listes">10. Les listes</h1>
+<h2 id="creer-une-liste">Créer une liste</h2>
+<p>Une <strong>liste</strong> range plusieurs valeurs dans l&#39;ordre, entre crochets <code>[ ]</code>, séparées par des virgules :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> khudâr <span class="t-op">=</span> [<span class="t-string">&quot;bamya&quot;</span>, <span class="t-string">&quot;tamatim&quot;</span>, <span class="t-string">&quot;basal&quot;</span>]
+<span class="t-kw">khalli</span> nugât <span class="t-op">=</span> [<span class="t-number">12</span>, <span class="t-number">15</span>, <span class="t-number">9</span>, <span class="t-number">18</span>]
+<span class="t-kw">khalli</span> khalît <span class="t-op">=</span> [<span class="t-string">&quot;Ali&quot;</span>, <span class="t-number">20</span>, <span class="t-const">sahi</span>]
+<span class="t-fn">ori</span>(khudâr)
+<span class="t-fn">ori</span>(<span class="t-fn">gadur</span>(khudâr), <span class="t-string">&quot;khudâr&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>['bamya', 'tamatim', 'basal']
+3 khudâr</pre></div></figure>
+<p><strong><code>gadur</code></strong> (« la taille ») donne le nombre d&#39;éléments.</p>
+<h2 id="acceder-a-un-element">Accéder à un élément</h2>
+<p>Chaque élément a une <strong>position</strong> (un <em>index</em>). Attention : on <strong>commence à compter à 0</strong> !</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> khudâr <span class="t-op">=</span> [<span class="t-string">&quot;bamya&quot;</span>, <span class="t-string">&quot;tamatim&quot;</span>, <span class="t-string">&quot;basal&quot;</span>]
+<span class="t-fn">ori</span>(khudâr[<span class="t-number">0</span>])
+<span class="t-fn">ori</span>(khudâr[<span class="t-number">2</span>])
+<span class="t-fn">ori</span>(khudâr[<span class="t-op">-</span><span class="t-number">1</span>])
+khudâr[<span class="t-number">1</span>] <span class="t-op">=</span> <span class="t-string">&quot;fûl&quot;</span>
+<span class="t-fn">ori</span>(khudâr)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>bamya
+basal
+basal
+['bamya', 'fûl', 'basal']</pre></div></figure>
+<p>L&#39;index <code>-1</code> désigne le <strong>dernier</strong> élément, <code>-2</code> l&#39;avant-dernier, etc.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> l <span class="t-op">=</span> [<span class="t-number">10</span>, <span class="t-number">20</span>, <span class="t-number">30</span>]
+<span class="t-fn">ori</span>(l[<span class="t-number">3</span>])</code></pre><div class="out err"><span class="out-label">Résultat</span><pre>Mushkila fi satir 2: index 3 marag barra (hors limites, gadur = 3)</pre></div></figure>
+<h2 id="ajouter-retirer-chercher">Ajouter, retirer, chercher</h2>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>zid(liste, x)</code></td>
+<td>ajoute <code>x</code> à la fin (« ajoute »)</td>
+</tr>
+<tr>
+<td><code>shil(liste)</code></td>
+<td>retire et renvoie le dernier élément (« enlève »)</td>
+</tr>
+<tr>
+<td><code>shil(liste, i)</code></td>
+<td>retire l&#39;élément à la position <code>i</code></td>
+</tr>
+<tr>
+<td><code>x fi liste</code></td>
+<td><code>sahi</code> si <code>x</code> est dans la liste</td>
+</tr>
+<tr>
+<td><code>fattish(liste, x)</code></td>
+<td>position de <code>x</code>, ou <code>-1</code> s&#39;il n&#39;y est pas (« cherche »)</td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> safar <span class="t-op">=</span> [<span class="t-string">&quot;Ali&quot;</span>, <span class="t-string">&quot;Halime&quot;</span>]
+<span class="t-fn">zid</span>(safar, <span class="t-string">&quot;Mahamat&quot;</span>)
+<span class="t-fn">zid</span>(safar, <span class="t-string">&quot;Zara&quot;</span>)
+<span class="t-fn">ori</span>(safar)
+<span class="t-kw">khalli</span> al_akhîr <span class="t-op">=</span> <span class="t-fn">shil</span>(safar)
+<span class="t-fn">ori</span>(al_akhîr, <span class="t-string">&quot;ma maragat&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Halime&quot;</span> <span class="t-kw">fi</span> safar, <span class="t-fn">fattish</span>(safar, <span class="t-string">&quot;Mahamat&quot;</span>), <span class="t-fn">fattish</span>(safar, <span class="t-string">&quot;Zara&quot;</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>['Ali', 'Halime', 'Mahamat', 'Zara']
+Zara ma maragat
+sahi 2 -1</pre></div></figure>
+<h2 id="parcourir-une-liste">Parcourir une liste</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nugât <span class="t-op">=</span> [<span class="t-number">12</span>, <span class="t-number">15</span>, <span class="t-number">9</span>, <span class="t-number">18</span>, <span class="t-number">14</span>]
+<span class="t-kw">khalli</span> majmû <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">kulla</span> n <span class="t-kw">fi</span> nugât
+    majmû <span class="t-op">+=</span> n
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-mu'addal:&quot;</span>, majmû <span class="t-op">/</span> <span class="t-fn">gadur</span>(nugât))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Al-mu'addal: 13.6</pre></div></figure>
+<p>Kalam a aussi des fonctions toutes faites pour les listes de nombres :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nugât <span class="t-op">=</span> [<span class="t-number">12</span>, <span class="t-number">15</span>, <span class="t-number">9</span>, <span class="t-number">18</span>, <span class="t-number">14</span>]
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-majmû':&quot;</span>, <span class="t-fn">jumla</span>(nugât))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-aktar:&quot;</span>, <span class="t-fn">aktar</span>(nugât), <span class="t-string">&quot;— al-agall:&quot;</span>, <span class="t-fn">agall</span>(nugât))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Murattabîn:&quot;</span>, <span class="t-fn">rattib</span>(nugât))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Magalûbîn:&quot;</span>, <span class="t-fn">gallib</span>(nugât))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Al-majmû': 68
+Al-aktar: 18 — al-agall: 9
+Murattabîn: [9, 12, 14, 15, 18]
+Magalûbîn: [14, 18, 9, 15, 12]</pre></div></figure>
+<h2 id="couper-et-joindre">Couper et joindre</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> ayyâm <span class="t-op">=</span> [<span class="t-string">&quot;itnên&quot;</span>, <span class="t-string">&quot;talâta&quot;</span>, <span class="t-string">&quot;arba'a&quot;</span>, <span class="t-string">&quot;khamîs&quot;</span>, <span class="t-string">&quot;juma&quot;</span>]
+<span class="t-fn">ori</span>(<span class="t-fn">gata</span>(ayyâm, <span class="t-number">0</span>, <span class="t-number">3</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">gata</span>(ayyâm, <span class="t-number">3</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">lumm</span>(ayyâm, <span class="t-string">&quot;, &quot;</span>))
+<span class="t-fn">ori</span>(ayyâm <span class="t-op">+</span> [<span class="t-string">&quot;sabit&quot;</span>, <span class="t-string">&quot;ahad&quot;</span>])</code></pre><div class="out"><span class="out-label">Résultat</span><pre>['itnên', 'talâta', &quot;arba'a&quot;]
+['khamîs', 'juma']
+itnên, talâta, arba'a, khamîs, juma
+['itnên', 'talâta', &quot;arba'a&quot;, 'khamîs', 'juma', 'sabit', 'ahad']</pre></div></figure>
+<p><code>gata(liste, début, fin)</code> (« coupe ») prend les éléments de <code>début</code> jusqu&#39;à <code>fin</code> <strong>non incluse</strong>.</p>
+<h2 id="copier-une-liste">Copier une liste</h2>
+<p>Attention : <code>khalli b = a</code> ne copie pas la liste, les deux noms désignent <strong>la même</strong> liste. Pour une vraie copie, utilisez <code>nuskha</code> :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> a <span class="t-op">=</span> [<span class="t-number">1</span>, <span class="t-number">2</span>, <span class="t-number">3</span>]
+<span class="t-kw">khalli</span> b <span class="t-op">=</span> a
+<span class="t-kw">khalli</span> c <span class="t-op">=</span> <span class="t-fn">nuskha</span>(a)
+<span class="t-fn">zid</span>(a, <span class="t-number">4</span>)
+<span class="t-fn">ori</span>(b)
+<span class="t-fn">ori</span>(c)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>[1, 2, 3, 4]
+[1, 2, 3]</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 10.1</strong> — Créez la liste des notes <code>[11, 7, 15, 13, 9]</code>. Affichez le nombre de notes supérieures ou égales à 10.</p>
+<p><strong>Exercice 10.2</strong> — Sans utiliser <code>aktar</code>, trouvez le plus grand nombre d&#39;une liste avec une boucle.</p>
+<p><strong>Exercice 10.3</strong> — Demandez 3 noms à l&#39;utilisateur, rangez-les dans une liste, puis affichez-les dans l&#39;ordre alphabétique.</p>
+<h1 class="chapter" id="11-travailler-avec-les-textes">11. Travailler avec les textes</h1>
+<p>Un texte se comporte un peu comme une liste de lettres : on peut connaître sa longueur, prendre une lettre, le parcourir avec <code>kulla</code>.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> b <span class="t-op">=</span> <span class="t-string">&quot;Ndjamena&quot;</span>
+<span class="t-fn">ori</span>(<span class="t-fn">gadur</span>(b), b[<span class="t-number">0</span>], b[<span class="t-op">-</span><span class="t-number">1</span>], <span class="t-fn">gata</span>(b, <span class="t-number">0</span>, <span class="t-number">3</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>8 N a Ndj</pre></div></figure>
+<h2 id="les-fonctions-utiles">Les fonctions utiles</h2>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>kabir(t)</code> / <code>saghayyar(t)</code></td>
+<td>MAJUSCULES / minuscules</td>
+</tr>
+<tr>
+<td><code>naddif(t)</code></td>
+<td>enlève les espaces au début et à la fin (« nettoie »)</td>
+</tr>
+<tr>
+<td><code>ghayyir(t, ancien, nouveau)</code></td>
+<td>remplace (« change »)</td>
+</tr>
+<tr>
+<td><code>fattish(t, x)</code></td>
+<td>position de <code>x</code> dans <code>t</code>, ou <code>-1</code></td>
+</tr>
+<tr>
+<td><code>x fi t</code></td>
+<td><code>sahi</code> si <code>x</code> apparaît dans <code>t</code></td>
+</tr>
+<tr>
+<td><code>bada_be(t, x)</code> / <code>kammal_be(t, x)</code></td>
+<td>commence par / finit par</td>
+</tr>
+<tr>
+<td><code>gassim(t, séparateur)</code></td>
+<td>découpe en liste (« partage »)</td>
+</tr>
+<tr>
+<td><code>lumm(liste, séparateur)</code></td>
+<td>joint une liste en texte (« rassemble »)</td>
+</tr>
+<tr>
+<td><code>gallib(t)</code></td>
+<td>inverse le texte</td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> jumla_hana <span class="t-op">=</span> <span class="t-string">&quot;  Al-yôm al-jaww sameh  &quot;</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;[&quot;</span> <span class="t-op">+</span> <span class="t-fn">naddif</span>(jumla_hana) <span class="t-op">+</span> <span class="t-string">&quot;]&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-fn">kabir</span>(<span class="t-string">&quot;salam&quot;</span>), <span class="t-fn">saghayyar</span>(<span class="t-string">&quot;TCHAD&quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">ghayyir</span>(<span class="t-string">&quot;Ana ba'arif&quot;</span>, <span class="t-string">&quot;ba'arif&quot;</span>, <span class="t-string">&quot;ma ba'arif&quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;jaww&quot;</span> <span class="t-kw">fi</span> jumla_hana, <span class="t-fn">fattish</span>(<span class="t-string">&quot;bamya&quot;</span>, <span class="t-string">&quot;m&quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-fn">bada_be</span>(<span class="t-string">&quot;0612345&quot;</span>, <span class="t-string">&quot;06&quot;</span>), <span class="t-fn">kammal_be</span>(<span class="t-string">&quot;barnâmij.klm&quot;</span>, <span class="t-string">&quot;.klm&quot;</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>[Al-yôm al-jaww sameh]
+SALAM tchad
+Ana ma ba'arif
+sahi 2
+sahi sahi</pre></div></figure>
+<h2 id="decouper-et-recoller">Découper et recoller</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> kalimât <span class="t-op">=</span> <span class="t-fn">gassim</span>(<span class="t-string">&quot;ana wa inta wa hu&quot;</span>)
+<span class="t-fn">ori</span>(kalimât)
+<span class="t-fn">ori</span>(<span class="t-fn">gadur</span>(kalimât), <span class="t-string">&quot;kalimât&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-fn">lumm</span>(kalimât, <span class="t-string">&quot;-&quot;</span>))
+
+<span class="t-kw">khalli</span> tarîkh <span class="t-op">=</span> <span class="t-fn">gassim</span>(<span class="t-string">&quot;23/11/2026&quot;</span>, <span class="t-string">&quot;/&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-yôm:&quot;</span>, tarîkh[<span class="t-number">0</span>], <span class="t-string">&quot;— as-sana:&quot;</span>, tarîkh[<span class="t-number">2</span>])</code></pre><div class="out"><span class="out-label">Résultat</span><pre>['ana', 'wa', 'inta', 'wa', 'hu']
+5 kalimât
+ana-wa-inta-wa-hu
+Al-yôm: 23 — as-sana: 2026</pre></div></figure>
+<h2 id="exercice-resolu-un-palindrome">Exercice résolu : un palindrome</h2>
+<p>Un palindrome se lit pareil dans les deux sens (comme « kayak »).</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> palindrome(kilma)
+    <span class="t-kw">khalli</span> k <span class="t-op">=</span> <span class="t-fn">saghayyar</span>(kilma)
+    <span class="t-kw">rajja</span> k <span class="t-op">==</span> <span class="t-fn">gallib</span>(k)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">kulla</span> k <span class="t-kw">fi</span> [<span class="t-string">&quot;kayak&quot;</span>, <span class="t-string">&quot;Tchad&quot;</span>, <span class="t-string">&quot;Radar&quot;</span>, <span class="t-string">&quot;salam&quot;</span>]
+    <span class="t-fn">ori</span>(k, <span class="t-string">&quot;-&gt;&quot;</span>, palindrome(k))
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>kayak -&gt; sahi
+Tchad -&gt; ghalat
+Radar -&gt; sahi
+salam -&gt; ghalat</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 11.1</strong> — Demandez une phrase et affichez combien de mots elle contient.</p>
+<p><strong>Exercice 11.2</strong> — Comptez le nombre de <code>a</code> dans <code>&quot;Al-arabi at-tchadi&quot;</code> (en minuscules).</p>
+<p><strong>Exercice 11.3</strong> — Transformez <code>&quot;mahamat ali&quot;</code> en <code>&quot;Mahamat Ali&quot;</code> (première lettre de chaque mot en majuscule).</p>
+<h1 class="chapter" id="12-les-dictionnaires-dikt">12. Les dictionnaires (dikt)</h1>
+<h2 id="des-etiquettes-au-lieu-des-positions">Des étiquettes au lieu des positions</h2>
+<p>Une liste range les valeurs <strong>par position</strong> (0, 1, 2…). Un <strong>dikt</strong> (dictionnaire) range les valeurs <strong>par nom</strong> (une <em>clé</em>). C&#39;est parfait pour décrire une personne, un produit, une ville…</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> talib <span class="t-op">=</span> {usum: <span class="t-string">&quot;Halime&quot;</span>, umur: <span class="t-number">15</span>, fasil: <span class="t-string">&quot;3ème&quot;</span>}
+<span class="t-fn">ori</span>(talib)
+<span class="t-fn">ori</span>(talib.usum)
+<span class="t-fn">ori</span>(talib[<span class="t-string">&quot;umur&quot;</span>])</code></pre><div class="out"><span class="out-label">Résultat</span><pre>{'usum': 'Halime', 'umur': 15, 'fasil': '3ème'}
+Halime
+15</pre></div></figure>
+<p>On lit une valeur avec <code>.clé</code> ou <code>[&quot;clé&quot;]</code>. Les deux sont équivalents. La forme <code>[&quot;clé&quot;]</code> est nécessaire quand la clé est dans une variable.</p>
+<h2 id="ajouter-et-modifier">Ajouter et modifier</h2>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> taman <span class="t-op">=</span> {sukkar: <span class="t-number">750</span>, shay: <span class="t-number">250</span>}
+taman.zêt <span class="t-op">=</span> <span class="t-number">1200</span>
+taman[<span class="t-string">&quot;sukkar&quot;</span>] <span class="t-op">=</span> <span class="t-number">800</span>
+<span class="t-fn">ori</span>(taman)
+<span class="t-fn">ori</span>(taman.laban)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;shay&quot;</span> <span class="t-kw">fi</span> taman, <span class="t-string">&quot;laban&quot;</span> <span class="t-kw">fi</span> taman)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>{'sukkar': 800, 'shay': 250, 'zêt': 1200}
+mafi
+sahi ghalat</pre></div></figure>
+<p>Une clé qui n&#39;existe pas donne <code>mafi</code>. Le test <code>&quot;clé&quot; fi dikt</code> dit si la clé existe.</p>
+<h2 id="parcourir-un-dikt">Parcourir un dikt</h2>
+<p><code>kulla</code> sur un dikt parcourt ses <strong>clés</strong> :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> taman <span class="t-op">=</span> {sukkar: <span class="t-number">750</span>, shay: <span class="t-number">250</span>, zêt: <span class="t-number">1200</span>}
+<span class="t-kw">kulla</span> haja <span class="t-kw">fi</span> taman
+    <span class="t-fn">ori</span>(haja, <span class="t-string">&quot;:&quot;</span>, taman[haja], <span class="t-string">&quot;FCFA&quot;</span>)
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-mafâtîh:&quot;</span>, <span class="t-fn">mafatih</span>(taman))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-giyam:&quot;</span>, <span class="t-fn">giyam</span>(taman), <span class="t-string">&quot;— al-jumla:&quot;</span>, <span class="t-fn">jumla</span>(<span class="t-fn">giyam</span>(taman)))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>sukkar : 750 FCFA
+shay : 250 FCFA
+zêt : 1200 FCFA
+Al-mafâtîh: ['sukkar', 'shay', 'zêt']
+Al-giyam: [750, 250, 1200] — al-jumla: 2200</pre></div></figure>
+<h2 id="listes-de-dikt">Listes de dikt</h2>
+<p>On combine souvent les deux : une liste de dikt, comme un tableau.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> fasil <span class="t-op">=</span> [
+    {usum: <span class="t-string">&quot;Ali&quot;</span>, nugta: <span class="t-number">14</span>},
+    {usum: <span class="t-string">&quot;Zara&quot;</span>, nugta: <span class="t-number">17</span>},
+    {usum: <span class="t-string">&quot;Moussa&quot;</span>, nugta: <span class="t-number">9</span>},
+]
+<span class="t-kw">kulla</span> t <span class="t-kw">fi</span> fasil
+    <span class="t-kw">khalli</span> natîja <span class="t-op">=</span> <span class="t-string">&quot;najah&quot;</span>
+    <span class="t-kw">kan</span> t.nugta <span class="t-op">&lt;</span> <span class="t-number">10</span>
+        natîja <span class="t-op">=</span> <span class="t-string">&quot;ma najah&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-fn">ori</span>(t.usum, <span class="t-string">&quot;—&quot;</span>, t.nugta, <span class="t-string">&quot;—&quot;</span>, natîja)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Ali — 14 — najah
+Zara — 17 — najah
+Moussa — 9 — ma najah</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 12.1</strong> — Créez un dikt qui décrit votre téléphone (marque, prix, couleur), puis affichez chaque information sur une ligne.</p>
+<p><strong>Exercice 12.2</strong> — Comptez combien de fois chaque mot apparaît dans <code>&quot;shay sukkar shay laban shay sukkar&quot;</code>. Résultat attendu : <code>{&#39;shay&#39;: 3, &#39;sukkar&#39;: 2, &#39;laban&#39;: 1}</code>.</p>
+<section class="part" id="partie-5-organiser-le-code"><p class="part-num">Partie 5</p><h1>Organiser le code</h1></section>
+<h1 class="chapter" id="13-les-fonctions-khidime">13. Les fonctions (khidime)</h1>
+<h2 id="pourquoi-des-fonctions">Pourquoi des fonctions ?</h2>
+<p>Une <strong>fonction</strong> (<code>khidime</code>, « un travail ») est un morceau de code auquel on donne un nom, pour pouvoir le réutiliser. Vous en utilisez déjà : <code>ori</code>, <code>gadur</code>, <code>zid</code>… sont des fonctions. Maintenant, vous allez créer les vôtres.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> salam()
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Salam aleykum!&quot;</span>)
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Kikkêf al-âfe?&quot;</span>)
+<span class="t-kw">khalas</span>
+
+salam()
+salam()</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam aleykum!
+Kikkêf al-âfe?
+Salam aleykum!
+Kikkêf al-âfe?</pre></div></figure>
+<p>La définition (<code>khidime salam() … khalas</code>) n&#39;exécute rien : elle <strong>apprend</strong> un nouveau travail à Kalam. Le travail est fait chaque fois qu&#39;on <strong>appelle</strong> la fonction : <code>salam()</code>.</p>
+<h2 id="les-parametres">Les paramètres</h2>
+<p>Une fonction peut recevoir des valeurs, appelées <strong>paramètres</strong>. Ils s&#39;écrivent entre les parenthèses, séparés par des virgules :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> salam(usum)
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Salam&quot;</span>, usum <span class="t-op">+</span> <span class="t-string">&quot;!&quot;</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> ta'arif(usum, umur)
+    <span class="t-fn">ori</span>(usum, <span class="t-string">&quot;umurah&quot;</span>, umur, <span class="t-string">&quot;sana.&quot;</span>)
+<span class="t-kw">khalas</span>
+
+salam(<span class="t-string">&quot;Ali&quot;</span>)
+salam(<span class="t-string">&quot;Zara&quot;</span>)
+ta'arif(<span class="t-string">&quot;Moussa&quot;</span>, <span class="t-number">12</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Salam Ali!
+Salam Zara!
+Moussa umurah 12 sana.</pre></div></figure>
+<p>À l&#39;intérieur de la fonction, <code>usum</code> prend la valeur donnée à l&#39;appel : <code>&quot;Ali&quot;</code> la première fois, <code>&quot;Zara&quot;</code> la deuxième.</p>
+<h2 id="rajja-renvoyer-un-resultat">rajja : renvoyer un résultat</h2>
+<p>Avec <strong><code>rajja</code></strong> (« rends »), une fonction <strong>renvoie</strong> une valeur qu&#39;on peut utiliser ailleurs :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> murabba'(x)
+    <span class="t-kw">rajja</span> x <span class="t-op">*</span> x
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> masâha_al_bêt(tûl, ard)
+    <span class="t-kw">rajja</span> tûl <span class="t-op">*</span> ard
+<span class="t-kw">khalas</span>
+
+<span class="t-fn">ori</span>(murabba'(<span class="t-number">7</span>))
+<span class="t-kw">khalli</span> m <span class="t-op">=</span> masâha_al_bêt(<span class="t-number">12</span>, <span class="t-number">8</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-masâha:&quot;</span>, m, <span class="t-string">&quot;mitir murabba'&quot;</span>)
+<span class="t-fn">ori</span>(murabba'(<span class="t-number">3</span>) <span class="t-op">+</span> murabba'(<span class="t-number">4</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>49
+Al-masâha: 96 mitir murabba'
+25</pre></div></figure>
+<p><code>rajja</code> termine immédiatement la fonction. Une fonction sans <code>rajja</code> renvoie <code>mafi</code>.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> tagdîr(nugta)
+    <span class="t-kw">kan</span> nugta <span class="t-op">&gt;=</span> <span class="t-number">16</span>
+        <span class="t-kw">rajja</span> <span class="t-string">&quot;Mumtâz&quot;</span>
+    <span class="t-kw">walla</span> <span class="t-kw">kan</span> nugta <span class="t-op">&gt;=</span> <span class="t-number">10</span>
+        <span class="t-kw">rajja</span> <span class="t-string">&quot;Sameh&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> <span class="t-string">&quot;Ma najah&quot;</span>
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">kulla</span> n <span class="t-kw">fi</span> [<span class="t-number">18</span>, <span class="t-number">12</span>, <span class="t-number">6</span>]
+    <span class="t-fn">ori</span>(n, <span class="t-string">&quot;-&gt;&quot;</span>, tagdîr(n))
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>18 -&gt; Mumtâz
+12 -&gt; Sameh
+6 -&gt; Ma najah</pre></div></figure>
+<h2 id="variables-locales">Variables locales</h2>
+<p>Une variable créée avec <code>khalli</code> <strong>dans</strong> une fonction n&#39;existe que dans cette fonction. Elle est <strong>locale</strong> :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> hisâb()
+    <span class="t-kw">khalli</span> natîja <span class="t-op">=</span> <span class="t-number">42</span>
+    <span class="t-kw">rajja</span> natîja
+<span class="t-kw">khalas</span>
+
+<span class="t-fn">ori</span>(hisâb())
+<span class="t-fn">ori</span>(natîja)</code></pre><div class="out err"><span class="out-label">Résultat</span><pre>42
+Mushkila fi satir 7: 'natîja' da ma ligênah — sawwi 'khalli natîja = ...' awwal (variable non définie)</pre></div></figure>
+<p>C&#39;est une bonne chose : chaque fonction a ses propres « boîtes » et ne dérange pas les autres.</p>
+<h2 id="une-fonction-qui-s-39-appelle-elle-meme">Une fonction qui s&#39;appelle elle-même</h2>
+<p>Une fonction peut s&#39;appeler elle-même : c&#39;est la <strong>récursion</strong>. Il faut toujours un cas où elle s&#39;arrête.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> factorielle(n)
+    <span class="t-kw">kan</span> n <span class="t-op">&lt;=</span> <span class="t-number">1</span>
+        <span class="t-kw">rajja</span> <span class="t-number">1</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> n <span class="t-op">*</span> factorielle(n <span class="t-op">-</span> <span class="t-number">1</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-fn">ori</span>(factorielle(<span class="t-number">5</span>))
+<span class="t-fn">ori</span>(factorielle(<span class="t-number">10</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>120
+3628800</pre></div></figure>
+<h2 id="les-fonctions-sont-des-valeurs">Les fonctions sont des valeurs</h2>
+<p>Une fonction peut être rangée dans une variable ou donnée à une autre fonction. On peut aussi créer une fonction <strong>sans nom</strong>, sur une seule ligne :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> marratên <span class="t-op">=</span> <span class="t-kw">khidime</span>(x) <span class="t-kw">rajja</span> x <span class="t-op">*</span> <span class="t-number">2</span> <span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(marratên(<span class="t-number">21</span>))
+
+<span class="t-kw">khidime</span> sawwi_le_kull(liste, f)
+    <span class="t-kw">khalli</span> jadîd <span class="t-op">=</span> []
+    <span class="t-kw">kulla</span> x <span class="t-kw">fi</span> liste
+        <span class="t-fn">zid</span>(jadîd, f(x))
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> jadîd
+<span class="t-kw">khalas</span>
+
+<span class="t-fn">ori</span>(sawwi_le_kull([<span class="t-number">1</span>, <span class="t-number">2</span>, <span class="t-number">3</span>, <span class="t-number">4</span>], marratên))
+<span class="t-fn">ori</span>(sawwi_le_kull([<span class="t-string">&quot;ali&quot;</span>, <span class="t-string">&quot;zara&quot;</span>], kabir))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>42
+[2, 4, 6, 8]
+['ALI', 'ZARA']</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 13.1</strong> — Écrivez une fonction <code>zôj(n)</code> qui renvoie <code>sahi</code> si <code>n</code> est pair.</p>
+<p><strong>Exercice 13.2</strong> — Écrivez une fonction <code>mu&#39;addal(liste)</code> qui renvoie la moyenne d&#39;une liste de nombres.</p>
+<p><strong>Exercice 13.3</strong> — Écrivez une fonction <code>aktar_min_tinên(a, b)</code> qui renvoie le plus grand des deux nombres, sans utiliser <code>aktar</code>.</p>
+<p><strong>Exercice 13.4</strong> — Écrivez une fonction récursive <code>fibonacci(n)</code> : <code>fibonacci(0) = 0</code>, <code>fibonacci(1) = 1</code>, et ensuite chaque nombre est la somme des deux précédents. Affichez les 10 premiers.</p>
+<h1 class="chapter" id="14-gerer-les-erreurs">14. Gérer les erreurs</h1>
+<h2 id="lire-un-message-d-39-erreur">Lire un message d&#39;erreur</h2>
+<p>Un message d&#39;erreur Kalam a toujours la même forme :</p>
+<pre><code>Mushkila fi satir 12: &lt;explication en tchadien&gt; (&lt;explication en français&gt;)
+</code></pre>
+<ol>
+<li><strong>Où ?</strong> : le numéro de la ligne (<code>satir</code>).</li>
+<li><strong>Quoi ?</strong> : l&#39;explication. L&#39;annexe C liste les messages les plus fréquents et comment les corriger.</li>
+</ol>
+<p>Dans VS Code, la plupart des erreurs sont soulignées en rouge <strong>avant</strong> l&#39;exécution.</p>
+<h2 id="jarrib-mushkila-prevoir-le-probleme">jarrib … mushkila : prévoir le problème</h2>
+<p>Certaines erreurs ne dépendent pas de vous : l&#39;utilisateur tape un mot au lieu d&#39;un nombre, un fichier n&#39;existe pas… Au lieu de laisser le programme s&#39;arrêter, on peut <strong>attraper</strong> l&#39;erreur :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">jarrib</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Gabul al-mushkila&quot;</span>)
+    <span class="t-fn">ori</span>(<span class="t-number">10</span> <span class="t-op">/</span> <span class="t-number">0</span>)
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Da ma yasal hini&quot;</span>)
+<span class="t-kw">mushkila</span> m
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Ligêna mushkila:&quot;</span>, m)
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-barnâmij mâshi ba'ad al-mushkila.&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Gabul al-mushkila
+Ligêna mushkila: ma tagdar tigassim be sifir (division par zéro)
+Al-barnâmij mâshi ba'ad al-mushkila.</pre></div></figure>
+<ul>
+<li>Kalam <strong>essaie</strong> (<code>jarrib</code>) le bloc.</li>
+<li>Si une erreur arrive, il saute directement au bloc <strong><code>mushkila</code></strong>. La variable après <code>mushkila</code> (ici <code>m</code>) contient le message.</li>
+<li>S&#39;il n&#39;y a pas d&#39;erreur, le bloc <code>mushkila</code> est ignoré.</li>
+<li>Dans les deux cas, le programme <strong>continue</strong> après <code>khalas</code>.</li>
+</ul>
+<h2 id="zagil-lancer-sa-propre-erreur">zagil : lancer sa propre erreur</h2>
+<p><strong><code>zagil</code></strong> (« jette ») permet à vos fonctions de signaler un problème :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> sahab(rasîd, mablagh)
+    <span class="t-kw">kan</span> mablagh <span class="t-op">&gt;</span> rasîd
+        <span class="t-kw">zagil</span> <span class="t-string">&quot;rasîdak ma bikaffi&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> rasîd <span class="t-op">-</span> mablagh
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khalli</span> rasîd <span class="t-op">=</span> <span class="t-number">5000</span>
+<span class="t-kw">kulla</span> mablagh <span class="t-kw">fi</span> [<span class="t-number">2000</span>, <span class="t-number">4000</span>, <span class="t-number">1000</span>]
+    <span class="t-kw">jarrib</span>
+        rasîd <span class="t-op">=</span> sahab(rasîd, mablagh)
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Sahabt&quot;</span>, mablagh, <span class="t-string">&quot;— fadal&quot;</span>, rasîd)
+    <span class="t-kw">mushkila</span> m
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Ma gidirt nashab&quot;</span>, mablagh, <span class="t-string">&quot;:&quot;</span>, m)
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Sahabt 2000 — fadal 3000
+Ma gidirt nashab 4000 : rasîdak ma bikaffi
+Sahabt 1000 — fadal 2000</pre></div></figure>
+<p>On peut jeter n&#39;importe quelle valeur, par exemple un dikt avec plus d&#39;informations :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">jarrib</span>
+    <span class="t-kw">zagil</span> {kod: <span class="t-number">404</span>, sabab: <span class="t-string">&quot;ma ligêna al-safha&quot;</span>}
+<span class="t-kw">mushkila</span> e
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Mushkila&quot;</span>, e.kod, <span class="t-string">&quot;:&quot;</span>, e.sabab)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Mushkila 404 : ma ligêna al-safha</pre></div></figure>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 14.1</strong> — Écrivez une fonction <code>gassim_be(a, b)</code> qui jette une erreur claire si <code>b</code> vaut 0, puis appelez-la dans un <code>jarrib</code>.</p>
+<p><strong>Exercice 14.2</strong> — Demandez un nombre à l&#39;utilisateur ; s&#39;il tape autre chose, affichez « Da ma nimra » au lieu de laisser le programme planter.</p>
+<h1 class="chapter" id="15-fichiers-et-modules">15. Fichiers et modules</h1>
+<h2 id="ecrire-et-lire-un-fichier">Écrire et lire un fichier</h2>
+<p>Les variables disparaissent quand le programme s&#39;arrête. Pour <strong>garder</strong> des informations, on les écrit dans un fichier :</p>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>aktib(file, t)</code></td>
+<td>écrit le texte <code>t</code> dans le fichier (le remplace)</td>
+</tr>
+<tr>
+<td><code>aktib(file, t, sahi)</code></td>
+<td><strong>ajoute</strong> <code>t</code> à la fin du fichier</td>
+</tr>
+<tr>
+<td><code>agri(file)</code></td>
+<td>lit tout le contenu du fichier</td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-fn">aktib</span>(<span class="t-string">&quot;ma'lûmât.txt&quot;</span>, <span class="t-string">&quot;Usum: Halime\n&quot;</span>)
+<span class="t-fn">aktib</span>(<span class="t-string">&quot;ma'lûmât.txt&quot;</span>, <span class="t-string">&quot;Hille: Abéché\n&quot;</span>, <span class="t-const">sahi</span>)
+<span class="t-kw">khalli</span> muhtawa <span class="t-op">=</span> <span class="t-fn">agri</span>(<span class="t-string">&quot;ma'lûmât.txt&quot;</span>)
+<span class="t-fn">ori</span>(muhtawa)
+<span class="t-kw">kulla</span> satir <span class="t-kw">fi</span> <span class="t-fn">gassim</span>(<span class="t-fn">naddif</span>(muhtawa), <span class="t-string">&quot;\n&quot;</span>)
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;-&gt;&quot;</span>, satir)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Usum: Halime
+Hille: Abéché
+
+-&gt; Usum: Halime
+-&gt; Hille: Abéché</pre></div></figure>
+<p>Le fichier est créé dans le même dossier que le programme <code>.klm</code>.</p>
+<h2 id="importer-un-autre-fichier-avec-jib">Importer un autre fichier avec jib</h2>
+<p>Quand un programme devient grand, on le <strong>découpe</strong> en plusieurs fichiers. <strong><code>jib</code></strong> (« apporte ») exécute un autre fichier <code>.klm</code> et rend ses fonctions et variables disponibles.</p>
+<p>Fichier <code>adawat.klm</code> (« les outils ») :</p>
+<figure class="prog"><figcaption>Fichier <code>adawat.klm</code></figcaption><pre class="code"><code><span class="t-kw">khidime</span> khatt(n)
+    <span class="t-kw">rajja</span> <span class="t-string">&quot;-&quot;</span> <span class="t-op">*</span> n
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> riyal(mablagh)
+    <span class="t-kw">rajja</span> <span class="t-fn">kitaba</span>(mablagh) <span class="t-op">+</span> <span class="t-string">&quot; FCFA&quot;</span>
+<span class="t-kw">khalas</span></code></pre></figure>
+<p>Fichier principal, dans le même dossier :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">jib</span> <span class="t-string">&quot;adawat&quot;</span>
+<span class="t-fn">ori</span>(khatt(<span class="t-number">20</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-jumla:&quot;</span>, riyal(<span class="t-number">4500</span>))
+<span class="t-fn">ori</span>(khatt(<span class="t-number">20</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>--------------------
+Al-jumla: 4500 FCFA
+--------------------</pre></div></figure>
+<p>L&#39;extension <code>.klm</code> est facultative dans <code>jib</code>. Un fichier n&#39;est importé qu&#39;<strong>une seule fois</strong>, même si on écrit <code>jib</code> plusieurs fois.</p>
+<h2 id="exercices">Exercices</h2>
+<p><strong>Exercice 15.1</strong> — Écrivez un programme qui ajoute la date du jour (<code>al_yom()</code>) à la fin d&#39;un fichier <code>journal.txt</code> à chaque exécution, puis affiche tout le fichier.</p>
+<p><strong>Exercice 15.2</strong> — Créez un fichier <code>riyadiyât.klm</code> contenant les fonctions <code>murabba&#39;</code> et <code>mu&#39;addal</code>, et utilisez-les depuis un autre fichier.</p>
+<h1 class="chapter" id="16-le-temps-et-le-hasard">16. Le temps et le hasard</h1>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sudfa(a, b)</code></td>
+<td>un nombre entier au hasard entre <code>a</code> et <code>b</code> (inclus)</td>
+</tr>
+<tr>
+<td><code>azil(liste)</code></td>
+<td>un élément au hasard (« choisis »)</td>
+</tr>
+<tr>
+<td><code>khalbit(liste)</code></td>
+<td>mélange la liste</td>
+</tr>
+<tr>
+<td><code>al_yom()</code></td>
+<td>la date du jour, <code>JJ/MM/AAAA</code></td>
+</tr>
+<tr>
+<td><code>as_sa()</code></td>
+<td>l&#39;heure, <code>HH:MM</code></td>
+</tr>
+<tr>
+<td><code>wakit()</code></td>
+<td>l&#39;heure actuelle en secondes (pour mesurer une durée)</td>
+</tr>
+<tr>
+<td><code>agod(s)</code></td>
+<td>attend <code>s</code> secondes (« assieds-toi »)</td>
+</tr>
+</tbody></table>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Al-zahr:&quot;</span>, <span class="t-fn">sudfa</span>(<span class="t-number">1</span>, <span class="t-number">6</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-yôm nâkulu:&quot;</span>, <span class="t-fn">azil</span>([<span class="t-string">&quot;êsh&quot;</span>, <span class="t-string">&quot;riz&quot;</span>, <span class="t-string">&quot;kisar&quot;</span>, <span class="t-string">&quot;fûl&quot;</span>]))
+<span class="t-kw">khalli</span> awrâg <span class="t-op">=</span> [<span class="t-number">1</span>, <span class="t-number">2</span>, <span class="t-number">3</span>, <span class="t-number">4</span>, <span class="t-number">5</span>]
+<span class="t-fn">khalbit</span>(awrâg)
+<span class="t-fn">ori</span>(awrâg)</code></pre><div class="out"><span class="out-label">Exemple de résultat</span><pre>Al-zahr: 3
+Al-yôm nâkulu: riz
+[2, 5, 1, 3, 4]</pre></div></figure>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Al-yôm&quot;</span>, <span class="t-fn">al_yom</span>(), <span class="t-string">&quot;as-sâ'a&quot;</span>, <span class="t-fn">as_sa</span>())
+<span class="t-kw">khalli</span> bidâya <span class="t-op">=</span> <span class="t-fn">wakit</span>()
+<span class="t-fn">agod</span>(<span class="t-number">0.5</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Antazart&quot;</span>, <span class="t-fn">garrib</span>(<span class="t-fn">wakit</span>() <span class="t-op">-</span> bidâya, <span class="t-number">1</span>), <span class="t-string">&quot;sânye&quot;</span>)</code></pre><div class="out"><span class="out-label">Exemple de résultat</span><pre>Al-yôm 24/11/2026 as-sâ'a 11:23
+Antazart 0.5 sânye</pre></div></figure>
+<p>Les résultats changent à chaque exécution : c&#39;est le principe du hasard !</p>
+<h2 id="exercice">Exercice</h2>
+<p><strong>Exercice 16.1</strong> — Simulez 1000 lancers de dé et comptez combien de fois on obtient 6. Le résultat devrait être proche de 167.</p>
+<section class="part" id="partie-6-projets"><p class="part-num">Partie 6</p><h1>Projets</h1></section>
+<p>Il est temps de tout combiner ! Chaque projet est un vrai programme complet. Tapez-le, exécutez-le, puis <strong>modifiez-le</strong> : c&#39;est la meilleure façon de progresser.</p>
+<h1 class="chapter" id="17-projet-la-calculatrice">17. Projet : la calculatrice</h1>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;=== Al-hâsiba ===&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Aktib 'amrug' le tamrug.&quot;</span>)
+
+<span class="t-kw">tulma</span> <span class="t-const">sahi</span>
+    <span class="t-kw">khalli</span> a <span class="t-op">=</span> <span class="t-fn">asal</span>(<span class="t-string">&quot;Al-nimra al-ûla: &quot;</span>)
+    <span class="t-kw">kan</span> a <span class="t-op">==</span> <span class="t-string">&quot;amrug&quot;</span>
+        <span class="t-kw">agif</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">khalli</span> amaliya <span class="t-op">=</span> <span class="t-fn">asal</span>(<span class="t-string">&quot;Al-amaliya (+ - * /): &quot;</span>)
+    <span class="t-kw">khalli</span> b <span class="t-op">=</span> <span class="t-fn">asal</span>(<span class="t-string">&quot;Al-nimra at-tâniye: &quot;</span>)
+    <span class="t-kw">jarrib</span>
+        a <span class="t-op">=</span> <span class="t-fn">nimra</span>(a)
+        b <span class="t-op">=</span> <span class="t-fn">nimra</span>(b)
+        <span class="t-kw">kan</span> amaliya <span class="t-op">==</span> <span class="t-string">&quot;+&quot;</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span>, a <span class="t-op">+</span> b)
+        <span class="t-kw">walla</span> <span class="t-kw">kan</span> amaliya <span class="t-op">==</span> <span class="t-string">&quot;-&quot;</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span>, a <span class="t-op">-</span> b)
+        <span class="t-kw">walla</span> <span class="t-kw">kan</span> amaliya <span class="t-op">==</span> <span class="t-string">&quot;*&quot;</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span>, a <span class="t-op">*</span> b)
+        <span class="t-kw">walla</span> <span class="t-kw">kan</span> amaliya <span class="t-op">==</span> <span class="t-string">&quot;/&quot;</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span>, a <span class="t-op">/</span> b)
+        <span class="t-kw">walla</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot;Al-amaliya di ma na'arfaha.&quot;</span>)
+        <span class="t-kw">khalas</span>
+    <span class="t-kw">mushkila</span> m
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Mushkila:&quot;</span>, m)
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ma'a salâma!&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>=== Al-hâsiba ===
+Aktib 'amrug' le tamrug.
+Al-nimra al-ûla: 12
+Al-amaliya (+ - * /): *
+Al-nimra at-tâniye: 4
+= 48
+Al-nimra al-ûla: 100
+Al-amaliya (+ - * /): /
+Al-nimra at-tâniye: 0
+Mushkila: ma tagdar tigassim be sifir (division par zéro)
+Al-nimra al-ûla: 5
+Al-amaliya (+ - * /): +
+Al-nimra at-tâniye: abc
+Mushkila: 'abc' da ma nimra (ce n'est pas un nombre)
+Al-nimra al-ûla: amrug
+Ma'a salâma!</pre></div></figure>
+<p><strong>Pour aller plus loin :</strong> ajoutez l&#39;opération <code>%</code>, et une opération <code>^</code> pour la puissance (avec une boucle).</p>
+<h1 class="chapter" id="18-projet-devine-le-nombre">18. Projet : devine le nombre</h1>
+<p>L&#39;ordinateur choisit un nombre secret ; le joueur doit le deviner. Pour que le résultat soit le même dans ce livre, le nombre secret est fixé à 42. Dans votre version, remplacez <code>42</code> par <code>sudfa(1, 100)</code>.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> sirr <span class="t-op">=</span> <span class="t-number">42</span>
+<span class="t-kw">khalli</span> marrât <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ana fakkart fi nimra min 1 lahaddi 100. Khammin!&quot;</span>)
+
+<span class="t-kw">tulma</span> <span class="t-const">sahi</span>
+    <span class="t-kw">khalli</span> radd <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Nimritak: &quot;</span>))
+    marrât <span class="t-op">+=</span> <span class="t-number">1</span>
+    <span class="t-kw">kan</span> radd <span class="t-op">&lt;</span> sirr
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Zîd! (plus grand)&quot;</span>)
+    <span class="t-kw">walla</span> <span class="t-kw">kan</span> radd <span class="t-op">&gt;</span> sirr
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Nagguss! (plus petit)&quot;</span>)
+    <span class="t-kw">walla</span>
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;Mabrûk! Ligît an-nimra be&quot;</span>, marrât, <span class="t-string">&quot;marrât.&quot;</span>)
+        <span class="t-kw">agif</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Ana fakkart fi nimra min 1 lahaddi 100. Khammin!
+Nimritak: 50
+Nagguss! (plus petit)
+Nimritak: 25
+Zîd! (plus grand)
+Nimritak: 37
+Zîd! (plus grand)
+Nimritak: 43
+Nagguss! (plus petit)
+Nimritak: 40
+Zîd! (plus grand)
+Nimritak: 42
+Mabrûk! Ligît an-nimra be 6 marrât.</pre></div></figure>
+<p><strong>Pour aller plus loin :</strong> limitez le joueur à 7 essais ; gérez le cas où il tape autre chose qu&#39;un nombre.</p>
+<h1 class="chapter" id="19-projet-la-boutique-du-marche">19. Projet : la boutique du marché</h1>
+<p>Un petit logiciel de gestion de stock pour une boutique : afficher les produits, vendre, refuser les ventes impossibles, et calculer la facture.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> dukkan <span class="t-op">=</span> {
+    sukkar: {taman: <span class="t-number">750</span>, kammiye: <span class="t-number">20</span>},
+    shay: {taman: <span class="t-number">250</span>, kammiye: <span class="t-number">50</span>},
+    dagig: {taman: <span class="t-number">600</span>, kammiye: <span class="t-number">0</span>},
+    zêt: {taman: <span class="t-number">1200</span>, kammiye: <span class="t-number">8</span>},
+}
+
+<span class="t-kw">khidime</span> warri_al_bada'a()
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span> <span class="t-op">*</span> <span class="t-number">34</span>)
+    <span class="t-kw">kulla</span> haja <span class="t-kw">fi</span> <span class="t-fn">rattib</span>(<span class="t-fn">mafatih</span>(dukkan))
+        <span class="t-kw">khalli</span> b <span class="t-op">=</span> dukkan[haja]
+        <span class="t-kw">kan</span> b.kammiye <span class="t-op">==</span> <span class="t-number">0</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot; &quot;</span>, haja, <span class="t-string">&quot;:&quot;</span>, b.taman, <span class="t-string">&quot;FCFA — kammal!&quot;</span>)
+        <span class="t-kw">walla</span>
+            <span class="t-fn">ori</span>(<span class="t-string">&quot; &quot;</span>, haja, <span class="t-string">&quot;:&quot;</span>, b.taman, <span class="t-string">&quot;FCFA —&quot;</span>, b.kammiye, <span class="t-string">&quot;fi l-makhzan&quot;</span>)
+        <span class="t-kw">khalas</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;=&quot;</span> <span class="t-op">*</span> <span class="t-number">34</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> bi'(haja, kammiye)
+    <span class="t-kw">kan</span> <span class="t-kw">ma</span> haja <span class="t-kw">fi</span> dukkan
+        <span class="t-kw">zagil</span> <span class="t-string">&quot;'&quot;</span> <span class="t-op">+</span> haja <span class="t-op">+</span> <span class="t-string">&quot;' ma indina&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">khalli</span> b <span class="t-op">=</span> dukkan[haja]
+    <span class="t-kw">kan</span> kammiye <span class="t-op">&gt;</span> b.kammiye
+        <span class="t-kw">zagil</span> <span class="t-string">&quot;fi &quot;</span> <span class="t-op">+</span> b.kammiye <span class="t-op">+</span> <span class="t-string">&quot; &quot;</span> <span class="t-op">+</span> haja <span class="t-op">+</span> <span class="t-string">&quot; bas&quot;</span>
+    <span class="t-kw">khalas</span>
+    b.kammiye <span class="t-op">-=</span> kammiye
+    <span class="t-kw">rajja</span> b.taman <span class="t-op">*</span> kammiye
+<span class="t-kw">khalas</span>
+
+warri_al_bada'a()
+
+<span class="t-kw">khalli</span> talabât <span class="t-op">=</span> [[<span class="t-string">&quot;sukkar&quot;</span>, <span class="t-number">2</span>], [<span class="t-string">&quot;shay&quot;</span>, <span class="t-number">4</span>], [<span class="t-string">&quot;dagig&quot;</span>, <span class="t-number">1</span>], [<span class="t-string">&quot;laban&quot;</span>, <span class="t-number">1</span>], [<span class="t-string">&quot;zêt&quot;</span>, <span class="t-number">3</span>]]
+<span class="t-kw">khalli</span> fâtûra <span class="t-op">=</span> []
+<span class="t-kw">kulla</span> talab <span class="t-kw">fi</span> talabât
+    <span class="t-kw">jarrib</span>
+        <span class="t-kw">khalli</span> taman <span class="t-op">=</span> bi'(talab[<span class="t-number">0</span>], talab[<span class="t-number">1</span>])
+        <span class="t-fn">zid</span>(fâtûra, taman)
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;OK  &quot;</span>, talab[<span class="t-number">1</span>], talab[<span class="t-number">0</span>], <span class="t-string">&quot;=&quot;</span>, taman, <span class="t-string">&quot;FCFA&quot;</span>)
+    <span class="t-kw">mushkila</span> m
+        <span class="t-fn">ori</span>(<span class="t-string">&quot;LA  &quot;</span>, talab[<span class="t-number">0</span>], <span class="t-string">&quot;:&quot;</span>, m)
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khalli</span> jumla_al_fatura <span class="t-op">=</span> <span class="t-fn">jumla</span>(fâtûra)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-jumla:&quot;</span>, jumla_al_fatura, <span class="t-string">&quot;FCFA&quot;</span>)
+<span class="t-kw">kan</span> jumla_al_fatura <span class="t-op">&gt;=</span> <span class="t-number">5000</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Takhfîd 10% -&gt;&quot;</span>, <span class="t-fn">garrib</span>(jumla_al_fatura <span class="t-op">*</span> <span class="t-number">0.9</span>), <span class="t-string">&quot;FCFA&quot;</span>)
+<span class="t-kw">khalas</span>
+warri_al_bada'a()</code></pre><div class="out"><span class="out-label">Résultat</span><pre>==================================
+  dagig : 600 FCFA — kammal!
+  shay : 250 FCFA — 50 fi l-makhzan
+  sukkar : 750 FCFA — 20 fi l-makhzan
+  zêt : 1200 FCFA — 8 fi l-makhzan
+==================================
+OK   2 sukkar = 1500 FCFA
+OK   4 shay = 1000 FCFA
+LA   dagig : fi 0 dagig bas
+LA   laban : 'laban' ma indina
+OK   3 zêt = 3600 FCFA
+Al-jumla: 6100 FCFA
+Takhfîd 10% -&gt; 5490 FCFA
+==================================
+  dagig : 600 FCFA — kammal!
+  shay : 250 FCFA — 46 fi l-makhzan
+  sukkar : 750 FCFA — 18 fi l-makhzan
+  zêt : 1200 FCFA — 5 fi l-makhzan
+==================================</pre></div></figure>
+<p><strong>Pour aller plus loin :</strong> demandez les commandes à l&#39;utilisateur avec <code>asal</code> ; enregistrez chaque vente dans un fichier <code>mabî&#39;ât.txt</code> avec la date et l&#39;heure.</p>
+<h1 class="chapter" id="20-projet-le-carnet-de-notes-de-la-classe">20. Projet : le carnet de notes de la classe</h1>
+<p>Calculer la moyenne de chaque élève, le classement, et enregistrer le bulletin dans un fichier.</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> fasil <span class="t-op">=</span> [
+    {usum: <span class="t-string">&quot;Abakar&quot;</span>, nugât: [<span class="t-number">12</span>, <span class="t-number">14</span>, <span class="t-number">9</span>, <span class="t-number">16</span>]},
+    {usum: <span class="t-string">&quot;Halime&quot;</span>, nugât: [<span class="t-number">17</span>, <span class="t-number">15</span>, <span class="t-number">18</span>, <span class="t-number">16</span>]},
+    {usum: <span class="t-string">&quot;Moussa&quot;</span>, nugât: [<span class="t-number">8</span>, <span class="t-number">11</span>, <span class="t-number">7</span>, <span class="t-number">10</span>]},
+    {usum: <span class="t-string">&quot;Zara&quot;</span>, nugât: [<span class="t-number">14</span>, <span class="t-number">13</span>, <span class="t-number">15</span>, <span class="t-number">12</span>]},
+]
+
+<span class="t-kw">khidime</span> mu'addal(liste)
+    <span class="t-kw">rajja</span> <span class="t-fn">garrib</span>(<span class="t-fn">jumla</span>(liste) <span class="t-op">/</span> <span class="t-fn">gadur</span>(liste), <span class="t-number">2</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> tagdîr(m)
+    <span class="t-kw">kan</span> m <span class="t-op">&gt;=</span> <span class="t-number">16</span>
+        <span class="t-kw">rajja</span> <span class="t-string">&quot;Mumtâz&quot;</span>
+    <span class="t-kw">walla</span> <span class="t-kw">kan</span> m <span class="t-op">&gt;=</span> <span class="t-number">12</span>
+        <span class="t-kw">rajja</span> <span class="t-string">&quot;Sameh shadîd&quot;</span>
+    <span class="t-kw">walla</span> <span class="t-kw">kan</span> m <span class="t-op">&gt;=</span> <span class="t-number">10</span>
+        <span class="t-kw">rajja</span> <span class="t-string">&quot;Sameh&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> <span class="t-string">&quot;Ma najah&quot;</span>
+<span class="t-kw">khalas</span>
+
+<span class="t-comment"># Hisâb al-mu'addal le kulla talib</span>
+<span class="t-kw">kulla</span> t <span class="t-kw">fi</span> fasil
+    t.mu'addal <span class="t-op">=</span> mu'addal(t.nugât)
+<span class="t-kw">khalas</span>
+
+<span class="t-comment"># Tartîb : min al-kabîr lê s-saghayyar (tri par sélection)</span>
+<span class="t-kw">khalli</span> murattab <span class="t-op">=</span> <span class="t-fn">nuskha</span>(fasil)
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">0</span> <span class="t-kw">lahaddi</span> <span class="t-fn">gadur</span>(murattab) <span class="t-op">-</span> <span class="t-number">2</span>
+    <span class="t-kw">kulla</span> j <span class="t-kw">fi</span> <span class="t-kw">min</span> i <span class="t-op">+</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-fn">gadur</span>(murattab) <span class="t-op">-</span> <span class="t-number">1</span>
+        <span class="t-kw">kan</span> murattab[j][<span class="t-string">&quot;mu'addal&quot;</span>] <span class="t-op">&gt;</span> murattab[i][<span class="t-string">&quot;mu'addal&quot;</span>]
+            <span class="t-kw">khalli</span> wasît <span class="t-op">=</span> murattab[i]
+            murattab[i] <span class="t-op">=</span> murattab[j]
+            murattab[j] <span class="t-op">=</span> wasît
+        <span class="t-kw">khalas</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khalli</span> satir_hana <span class="t-op">=</span> []
+<span class="t-kw">khalli</span> martaba <span class="t-op">=</span> <span class="t-number">1</span>
+<span class="t-kw">kulla</span> t <span class="t-kw">fi</span> murattab
+    <span class="t-kw">khalli</span> s <span class="t-op">=</span> martaba <span class="t-op">+</span> <span class="t-string">&quot;. &quot;</span> <span class="t-op">+</span> t.usum <span class="t-op">+</span> <span class="t-string">&quot; — &quot;</span> <span class="t-op">+</span> t[<span class="t-string">&quot;mu'addal&quot;</span>] <span class="t-op">+</span> <span class="t-string">&quot; — &quot;</span> <span class="t-op">+</span> tagdîr(t[<span class="t-string">&quot;mu'addal&quot;</span>])
+    <span class="t-fn">ori</span>(s)
+    <span class="t-fn">zid</span>(satir_hana, s)
+    martaba <span class="t-op">+=</span> <span class="t-number">1</span>
+<span class="t-kw">khalas</span>
+
+<span class="t-fn">aktib</span>(<span class="t-string">&quot;bulletin.txt&quot;</span>, <span class="t-fn">lumm</span>(satir_hana, <span class="t-string">&quot;\n&quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-bulletin maktûb fi bulletin.txt (&quot;</span> <span class="t-op">+</span> <span class="t-fn">gadur</span>(satir_hana) <span class="t-op">+</span> <span class="t-string">&quot; talamîz)&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>1. Halime — 16.5 — Mumtâz
+2. Zara — 13.5 — Sameh shadîd
+3. Abakar — 12.75 — Sameh shadîd
+4. Moussa — 9 — Ma najah
+Al-bulletin maktûb fi bulletin.txt (4 talamîz)</pre></div></figure>
+<p>Ce programme utilise presque tout le cours : dikt, listes, boucles imbriquées, fonctions, conditions, textes et fichiers. Bravo si vous le comprenez entièrement !</p>
+<p><strong>Pour aller plus loin :</strong> affichez la moyenne de la classe et le meilleur élève de chaque matière.</p>
+<h1 class="chapter" id="annexe-a-aide-memoire-des-mots-cles">Annexe A — Aide-mémoire des mots-clés</h1>
+<table>
+<thead>
+<tr>
+<th>Mot</th>
+<th>Sens</th>
+<th>Utilisation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>khalli</code></td>
+<td>laisse</td>
+<td><code>khalli x = 5</code></td>
+</tr>
+<tr>
+<td><code>kan</code></td>
+<td>si</td>
+<td><code>kan x &gt; 0 … khalas</code></td>
+</tr>
+<tr>
+<td><code>walla kan</code></td>
+<td>ou bien si</td>
+<td><code>walla kan x == 0</code></td>
+</tr>
+<tr>
+<td><code>walla</code></td>
+<td>sinon</td>
+<td><code>walla … khalas</code></td>
+</tr>
+<tr>
+<td><code>khalas</code></td>
+<td>c&#39;est fini</td>
+<td>fin de tout bloc</td>
+</tr>
+<tr>
+<td><code>tulma</code></td>
+<td>tant que</td>
+<td><code>tulma x &gt; 0 … khalas</code></td>
+</tr>
+<tr>
+<td><code>kulla … fi</code></td>
+<td>pour chaque … dans</td>
+<td><code>kulla x fi liste … khalas</code></td>
+</tr>
+<tr>
+<td><code>min … lahaddi</code></td>
+<td>de … jusqu&#39;à</td>
+<td><code>kulla i fi min 1 lahaddi 10</code></td>
+</tr>
+<tr>
+<td><code>agif</code></td>
+<td>arrête</td>
+<td>sortir d&#39;une boucle</td>
+</tr>
+<tr>
+<td><code>fut</code></td>
+<td>passe</td>
+<td>tour suivant de la boucle</td>
+</tr>
+<tr>
+<td><code>khidime</code></td>
+<td>travail</td>
+<td><code>khidime f(x) … khalas</code></td>
+</tr>
+<tr>
+<td><code>rajja</code></td>
+<td>rends</td>
+<td><code>rajja x * 2</code></td>
+</tr>
+<tr>
+<td><code>jarrib</code></td>
+<td>essaie</td>
+<td><code>jarrib … mushkila m … khalas</code></td>
+</tr>
+<tr>
+<td><code>mushkila</code></td>
+<td>problème</td>
+<td>bloc exécuté en cas d&#39;erreur</td>
+</tr>
+<tr>
+<td><code>zagil</code></td>
+<td>jette</td>
+<td><code>zagil &quot;message&quot;</code></td>
+</tr>
+<tr>
+<td><code>jib</code></td>
+<td>apporte</td>
+<td><code>jib &quot;adawat&quot;</code></td>
+</tr>
+<tr>
+<td><code>sahi</code> / <code>ghalat</code></td>
+<td>vrai / faux</td>
+<td>valeurs booléennes</td>
+</tr>
+<tr>
+<td><code>mafi</code></td>
+<td>il n&#39;y a rien</td>
+<td>absence de valeur</td>
+</tr>
+<tr>
+<td><code>wa</code> / <code>aw</code> / <code>ma</code></td>
+<td>et / ou / non</td>
+<td><code>kan a wa ma b</code></td>
+</tr>
+<tr>
+<td><code>fi</code></td>
+<td>dans</td>
+<td><code>kan x fi liste</code></td>
+</tr>
+</tbody></table>
+<p>Opérateurs : <code>+ - * / %</code>, comparaisons <code>== != &lt; &gt; &lt;= &gt;=</code>, raccourcis <code>+= -= *= /=</code>.</p>
+<h1 class="chapter" id="annexe-b-toutes-les-fonctions-integrees">Annexe B — Toutes les fonctions intégrées</h1>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ori(a, b, …)</code></td>
+<td>afficher</td>
+</tr>
+<tr>
+<td><code>asal(question)</code></td>
+<td>demander une réponse (texte)</td>
+</tr>
+<tr>
+<td><code>nimra(x)</code></td>
+<td>convertir en nombre</td>
+</tr>
+<tr>
+<td><code>kitaba(x)</code></td>
+<td>convertir en texte</td>
+</tr>
+<tr>
+<td><code>shakal(x)</code></td>
+<td>type d&#39;une valeur</td>
+</tr>
+<tr>
+<td><code>gadur(x)</code></td>
+<td>longueur d&#39;un texte, d&#39;une liste ou d&#39;un dikt</td>
+</tr>
+<tr>
+<td><code>zid(liste, x)</code></td>
+<td>ajouter à la fin</td>
+</tr>
+<tr>
+<td><code>shil(liste)</code> / <code>shil(liste, i)</code></td>
+<td>retirer (le dernier / à la position i)</td>
+</tr>
+<tr>
+<td><code>rattib(liste)</code></td>
+<td>copie triée</td>
+</tr>
+<tr>
+<td><code>gallib(x)</code></td>
+<td>inverser une liste ou un texte</td>
+</tr>
+<tr>
+<td><code>nuskha(x)</code></td>
+<td>copier une liste ou un dikt</td>
+</tr>
+<tr>
+<td><code>azil(liste)</code></td>
+<td>élément au hasard</td>
+</tr>
+<tr>
+<td><code>khalbit(liste)</code></td>
+<td>mélanger</td>
+</tr>
+<tr>
+<td><code>mafatih(dikt)</code> / <code>giyam(dikt)</code></td>
+<td>clés / valeurs</td>
+</tr>
+<tr>
+<td><code>fattish(x, y)</code></td>
+<td>position de y dans x, ou -1</td>
+</tr>
+<tr>
+<td><code>gata(x, début, fin)</code></td>
+<td>morceau d&#39;un texte ou d&#39;une liste</td>
+</tr>
+<tr>
+<td><code>gassim(t, sép)</code> / <code>lumm(liste, sép)</code></td>
+<td>découper / joindre</td>
+</tr>
+<tr>
+<td><code>ghayyir(t, ancien, nouveau)</code></td>
+<td>remplacer</td>
+</tr>
+<tr>
+<td><code>naddif(t)</code></td>
+<td>enlever les espaces autour</td>
+</tr>
+<tr>
+<td><code>bada_be(t, x)</code> / <code>kammal_be(t, x)</code></td>
+<td>commence / finit par</td>
+</tr>
+<tr>
+<td><code>kabir(t)</code> / <code>saghayyar(t)</code></td>
+<td>majuscules / minuscules</td>
+</tr>
+<tr>
+<td><code>aktar(…)</code> / <code>agall(…)</code></td>
+<td>maximum / minimum</td>
+</tr>
+<tr>
+<td><code>jumla(liste)</code></td>
+<td>somme</td>
+</tr>
+<tr>
+<td><code>garrib(x, chiffres)</code></td>
+<td>arrondir</td>
+</tr>
+<tr>
+<td><code>mutlag(x)</code></td>
+<td>valeur absolue</td>
+</tr>
+<tr>
+<td><code>jidir(x)</code></td>
+<td>racine carrée</td>
+</tr>
+<tr>
+<td><code>PI</code></td>
+<td>3.14159…</td>
+</tr>
+<tr>
+<td><code>sudfa(a, b)</code></td>
+<td>entier au hasard entre a et b</td>
+</tr>
+<tr>
+<td><code>al_yom()</code> / <code>as_sa()</code></td>
+<td>date / heure</td>
+</tr>
+<tr>
+<td><code>wakit()</code> / <code>agod(s)</code></td>
+<td>secondes actuelles / attendre</td>
+</tr>
+<tr>
+<td><code>agri(file)</code></td>
+<td>lire un fichier</td>
+</tr>
+<tr>
+<td><code>aktib(file, t)</code> / <code>aktib(file, t, sahi)</code></td>
+<td>écrire / ajouter</td>
+</tr>
+</tbody></table>
+<h1 class="chapter" id="annexe-c-les-messages-d-39-erreur-courants">Annexe C — Les messages d&#39;erreur courants</h1>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause probable</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&#39;x&#39; da ma ligênah</code></td>
+<td>variable mal écrite ou pas encore créée</td>
+<td>vérifiez l&#39;orthographe ; créez-la avec <code>khalli</code></td>
+</tr>
+<tr>
+<td><code>&#39;kan&#39; da ma indah &#39;khalas&#39;</code></td>
+<td>un bloc n&#39;est pas fermé</td>
+<td>ajoutez <code>khalas</code> à la fin du bloc</td>
+</tr>
+<tr>
+<td><code>ma fihimt …</code></td>
+<td>Kalam ne comprend pas l&#39;écriture</td>
+<td>vérifiez parenthèses, virgules, guillemets</td>
+</tr>
+<tr>
+<td><code>nidôr …, ligît …</code></td>
+<td>Kalam attendait autre chose à cet endroit</td>
+<td>lisez ce qui est attendu (« attendu … »)</td>
+</tr>
+<tr>
+<td><code>guillemet fermant manquant</code></td>
+<td>texte non fermé</td>
+<td>ajoutez le <code>&quot;</code> de fin</td>
+</tr>
+<tr>
+<td><code>ma tagdar tisawwi &#39;+&#39; bên kitaba wa nimra</code> (ou <code>-</code>, <code>*</code>…)</td>
+<td>opération entre types incompatibles</td>
+<td>convertissez avec <code>nimra()</code> ou <code>kitaba()</code></td>
+</tr>
+<tr>
+<td><code>ma tagdar tigassim be sifir</code></td>
+<td>division par zéro</td>
+<td>vérifiez le diviseur avant de diviser</td>
+</tr>
+<tr>
+<td><code>index … marag barra</code></td>
+<td>position qui n&#39;existe pas dans la liste</td>
+<td>rappelez-vous : on compte à partir de 0</td>
+</tr>
+<tr>
+<td><code>… da ma nimra</code></td>
+<td><code>nimra()</code> sur un texte qui n&#39;est pas un nombre</td>
+<td>utilisez <code>jarrib … mushkila</code></td>
+</tr>
+<tr>
+<td><code>… bidôr 2 argument, inta antêtah 1</code></td>
+<td>mauvais nombre de valeurs données à une fonction</td>
+<td>vérifiez l&#39;appel</td>
+</tr>
+<tr>
+<td><code>&#39;agif&#39; lâzim yabga juwa dôra</code></td>
+<td><code>agif</code> ou <code>fut</code> hors d&#39;une boucle</td>
+<td>placez-le dans <code>kulla</code> ou <code>tulma</code></td>
+</tr>
+<tr>
+<td><code>&#39;rajja&#39; lâzim yabga juwa khidime</code></td>
+<td><code>rajja</code> hors d&#39;une fonction</td>
+<td>placez-le dans une <code>khidime</code></td>
+</tr>
+</tbody></table>
+<h1 class="chapter" id="annexe-d-solutions-des-exercices">Annexe D — Solutions des exercices</h1>
+<p>Il y a souvent plusieurs bonnes solutions. Si la vôtre est différente mais donne le bon résultat, elle est juste !</p>
+<p><strong>3.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Mahamat&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Ndjamena&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Mahamat
+Ndjamena</pre></div></figure>
+<p><strong>3.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;Fi as-sana indaha&quot;</span>, <span class="t-number">365</span> <span class="t-op">*</span> <span class="t-number">24</span>, <span class="t-string">&quot;sâ'a&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Fi as-sana indaha 8760 sâ'a</pre></div></figure>
+<p><strong>4.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> sana_al_wilâda <span class="t-op">=</span> <span class="t-number">2008</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Umri fi 2026:&quot;</span>, <span class="t-number">2026</span> <span class="t-op">-</span> sana_al_wilâda)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Umri fi 2026: 18</pre></div></figure>
+<p><strong>4.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> rasîd <span class="t-op">=</span> <span class="t-number">5000</span>
+rasîd <span class="t-op">-=</span> <span class="t-number">1200</span>
+rasîd <span class="t-op">+=</span> <span class="t-number">3000</span>
+<span class="t-fn">ori</span>(rasîd)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>6800</pre></div></figure>
+<p><strong>5.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-fn">shakal</span>(<span class="t-string">&quot;42&quot;</span>), <span class="t-fn">shakal</span>(<span class="t-number">42</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>kitaba nimra</pre></div></figure>
+<p><strong>5.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> x <span class="t-op">=</span> <span class="t-string">&quot;7&quot;</span>
+<span class="t-kw">khalli</span> y <span class="t-op">=</span> <span class="t-string">&quot;8&quot;</span>
+<span class="t-fn">ori</span>(<span class="t-fn">nimra</span>(x) <span class="t-op">+</span> <span class="t-fn">nimra</span>(y))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>15</pre></div></figure>
+<p><strong>6.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-number">500</span> <span class="t-op">*</span> <span class="t-number">2</span> <span class="t-op">*</span> <span class="t-number">22</span>, <span class="t-string">&quot;FCFA&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>22000 FCFA</pre></div></figure>
+<p><strong>6.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-number">100</span> <span class="t-op">%</span> <span class="t-number">7</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>2</pre></div></figure>
+<p><strong>6.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">ori</span>(<span class="t-string">&quot;*&quot;</span> <span class="t-op">*</span> <span class="t-number">10</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;* Kalam  *&quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-string">&quot;*&quot;</span> <span class="t-op">*</span> <span class="t-number">10</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>**********
+* Kalam  *
+**********</pre></div></figure>
+<p><strong>7.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> taman <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Taman al-haja: &quot;</span>))
+<span class="t-kw">khalli</span> kammiye <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Al-kammiye: &quot;</span>))
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-jumla:&quot;</span>, taman <span class="t-op">*</span> kammiye, <span class="t-string">&quot;FCFA&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Taman al-haja: 750
+Al-kammiye: 3
+Al-jumla: 2250 FCFA</pre></div></figure>
+<p><strong>7.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> c <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Al-harâra (°C): &quot;</span>))
+<span class="t-fn">ori</span>(c <span class="t-op">*</span> <span class="t-number">9</span> <span class="t-op">/</span> <span class="t-number">5</span> <span class="t-op">+</span> <span class="t-number">32</span>, <span class="t-string">&quot;°F&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Al-harâra (°C): 35
+95 °F</pre></div></figure>
+<p><strong>8.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> n <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Nimra: &quot;</span>))
+<span class="t-kw">kan</span> n <span class="t-op">%</span> <span class="t-number">2</span> <span class="t-op">==</span> <span class="t-number">0</span>
+    <span class="t-fn">ori</span>(n, <span class="t-string">&quot;zôj (pair)&quot;</span>)
+<span class="t-kw">walla</span>
+    <span class="t-fn">ori</span>(n, <span class="t-string">&quot;fard (impair)&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Nimra: 17
+17 fard (impair)</pre></div></figure>
+<p><strong>8.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nugta <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Al-nugta: &quot;</span>))
+<span class="t-kw">kan</span> nugta <span class="t-op">&gt;=</span> <span class="t-number">16</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Mumtâz&quot;</span>)
+<span class="t-kw">walla</span> <span class="t-kw">kan</span> nugta <span class="t-op">&gt;=</span> <span class="t-number">12</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Sameh shadîd&quot;</span>)
+<span class="t-kw">walla</span> <span class="t-kw">kan</span> nugta <span class="t-op">&gt;=</span> <span class="t-number">10</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Sameh&quot;</span>)
+<span class="t-kw">walla</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Ma najah&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Al-nugta: 13
+Sameh shadîd</pre></div></figure>
+<p><strong>8.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> sana <span class="t-kw">fi</span> [<span class="t-number">2024</span>, <span class="t-number">1900</span>, <span class="t-number">2000</span>]
+    <span class="t-kw">kan</span> (sana <span class="t-op">%</span> <span class="t-number">4</span> <span class="t-op">==</span> <span class="t-number">0</span> <span class="t-kw">wa</span> sana <span class="t-op">%</span> <span class="t-number">100</span> <span class="t-op">!=</span> <span class="t-number">0</span>) <span class="t-kw">aw</span> sana <span class="t-op">%</span> <span class="t-number">400</span> <span class="t-op">==</span> <span class="t-number">0</span>
+        <span class="t-fn">ori</span>(sana, <span class="t-string">&quot;bissextile&quot;</span>)
+    <span class="t-kw">walla</span>
+        <span class="t-fn">ori</span>(sana, <span class="t-string">&quot;ma bissextile&quot;</span>)
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>2024 bissextile
+1900 ma bissextile
+2000 bissextile</pre></div></figure>
+<p><strong>9.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">10</span>
+    <span class="t-fn">ori</span>(i <span class="t-op">*</span> <span class="t-number">2</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>2
+4
+6
+8
+10
+12
+14
+16
+18
+20</pre></div></figure>
+<p><strong>9.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> natîja <span class="t-op">=</span> <span class="t-number">1</span>
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">10</span>
+    natîja <span class="t-op">*=</span> i
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(natîja)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>3628800</pre></div></figure>
+<p><strong>9.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> majmû <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">tulma</span> <span class="t-const">sahi</span>
+    <span class="t-kw">khalli</span> n <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Nimra (0 le tagîf): &quot;</span>))
+    <span class="t-kw">kan</span> n <span class="t-op">==</span> <span class="t-number">0</span>
+        <span class="t-kw">agif</span>
+    <span class="t-kw">khalas</span>
+    majmû <span class="t-op">+=</span> n
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-string">&quot;Al-majmû':&quot;</span>, majmû)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Nimra (0 le tagîf): 10
+Nimra (0 le tagîf): 25
+Nimra (0 le tagîf): 7
+Nimra (0 le tagîf): 0
+Al-majmû': 42</pre></div></figure>
+<p><strong>9.4</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">5</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;*&quot;</span> <span class="t-op">*</span> i)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>*
+**
+***
+****
+*****</pre></div></figure>
+<p><strong>10.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> nugât <span class="t-op">=</span> [<span class="t-number">11</span>, <span class="t-number">7</span>, <span class="t-number">15</span>, <span class="t-number">13</span>, <span class="t-number">9</span>]
+<span class="t-kw">khalli</span> adad <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">kulla</span> n <span class="t-kw">fi</span> nugât
+    <span class="t-kw">kan</span> n <span class="t-op">&gt;=</span> <span class="t-number">10</span>
+        adad <span class="t-op">+=</span> <span class="t-number">1</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(adad, <span class="t-string">&quot;najaho&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>3 najaho</pre></div></figure>
+<p><strong>10.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> l <span class="t-op">=</span> [<span class="t-number">4</span>, <span class="t-number">19</span>, <span class="t-number">7</span>, <span class="t-number">23</span>, <span class="t-number">11</span>]
+<span class="t-kw">khalli</span> kabîr <span class="t-op">=</span> l[<span class="t-number">0</span>]
+<span class="t-kw">kulla</span> x <span class="t-kw">fi</span> l
+    <span class="t-kw">kan</span> x <span class="t-op">&gt;</span> kabîr
+        kabîr <span class="t-op">=</span> x
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(kabîr)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>23</pre></div></figure>
+<p><strong>10.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> asâmi <span class="t-op">=</span> []
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">3</span>
+    <span class="t-fn">zid</span>(asâmi, <span class="t-fn">asal</span>(<span class="t-string">&quot;Usum &quot;</span> <span class="t-op">+</span> i <span class="t-op">+</span> <span class="t-string">&quot;: &quot;</span>))
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-fn">rattib</span>(asâmi))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Usum 1: Zara
+Usum 2: Ali
+Usum 3: Mahamat
+['Ali', 'Mahamat', 'Zara']</pre></div></figure>
+<p><strong>11.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> jumla_hana <span class="t-op">=</span> <span class="t-fn">asal</span>(<span class="t-string">&quot;Aktib jumla: &quot;</span>)
+<span class="t-fn">ori</span>(<span class="t-fn">gadur</span>(<span class="t-fn">gassim</span>(<span class="t-fn">naddif</span>(jumla_hana))), <span class="t-string">&quot;kalimât&quot;</span>)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Aktib jumla: al-yôm ana gâ'id na'allim Kalam
+5 kalimât</pre></div></figure>
+<p><strong>11.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> adad <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">kulla</span> h <span class="t-kw">fi</span> <span class="t-fn">saghayyar</span>(<span class="t-string">&quot;Al-arabi at-tchadi&quot;</span>)
+    <span class="t-kw">kan</span> h <span class="t-op">==</span> <span class="t-string">&quot;a&quot;</span>
+        adad <span class="t-op">+=</span> <span class="t-number">1</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(adad)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>5</pre></div></figure>
+<p><strong>11.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> natîja <span class="t-op">=</span> []
+<span class="t-kw">kulla</span> kilma <span class="t-kw">fi</span> <span class="t-fn">gassim</span>(<span class="t-string">&quot;mahamat ali&quot;</span>)
+    <span class="t-fn">zid</span>(natîja, <span class="t-fn">kabir</span>(kilma[<span class="t-number">0</span>]) <span class="t-op">+</span> <span class="t-fn">gata</span>(kilma, <span class="t-number">1</span>))
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(<span class="t-fn">lumm</span>(natîja, <span class="t-string">&quot; &quot;</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>Mahamat Ali</pre></div></figure>
+<p><strong>12.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> telefôn <span class="t-op">=</span> {marka: <span class="t-string">&quot;Tecno&quot;</span>, taman: <span class="t-number">85000</span>, lôn: <span class="t-string">&quot;azrag&quot;</span>}
+<span class="t-kw">kulla</span> k <span class="t-kw">fi</span> telefôn
+    <span class="t-fn">ori</span>(k, <span class="t-string">&quot;:&quot;</span>, telefôn[k])
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>marka : Tecno
+taman : 85000
+lôn : azrag</pre></div></figure>
+<p><strong>12.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> adad <span class="t-op">=</span> {}
+<span class="t-kw">kulla</span> kilma <span class="t-kw">fi</span> <span class="t-fn">gassim</span>(<span class="t-string">&quot;shay sukkar shay laban shay sukkar&quot;</span>)
+    <span class="t-kw">kan</span> kilma <span class="t-kw">fi</span> adad
+        adad[kilma] <span class="t-op">+=</span> <span class="t-number">1</span>
+    <span class="t-kw">walla</span>
+        adad[kilma] <span class="t-op">=</span> <span class="t-number">1</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(adad)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>{'shay': 3, 'sukkar': 2, 'laban': 1}</pre></div></figure>
+<p><strong>13.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> zôj(n)
+    <span class="t-kw">rajja</span> n <span class="t-op">%</span> <span class="t-number">2</span> <span class="t-op">==</span> <span class="t-number">0</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(zôj(<span class="t-number">4</span>), zôj(<span class="t-number">7</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>sahi ghalat</pre></div></figure>
+<p><strong>13.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> mu'addal(liste)
+    <span class="t-kw">rajja</span> <span class="t-fn">jumla</span>(liste) <span class="t-op">/</span> <span class="t-fn">gadur</span>(liste)
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(mu'addal([<span class="t-number">10</span>, <span class="t-number">14</span>, <span class="t-number">15</span>]))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>13</pre></div></figure>
+<p><strong>13.3</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> aktar_min_tinên(a, b)
+    <span class="t-kw">kan</span> a <span class="t-op">&gt;</span> b
+        <span class="t-kw">rajja</span> a
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> b
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(aktar_min_tinên(<span class="t-number">3</span>, <span class="t-number">9</span>), aktar_min_tinên(<span class="t-number">12</span>, <span class="t-number">5</span>))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>9 12</pre></div></figure>
+<p><strong>13.4</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> fibonacci(n)
+    <span class="t-kw">kan</span> n <span class="t-op">&lt;</span> <span class="t-number">2</span>
+        <span class="t-kw">rajja</span> n
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> fibonacci(n <span class="t-op">-</span> <span class="t-number">1</span>) <span class="t-op">+</span> fibonacci(n <span class="t-op">-</span> <span class="t-number">2</span>)
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khalli</span> l <span class="t-op">=</span> []
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">0</span> <span class="t-kw">lahaddi</span> <span class="t-number">9</span>
+    <span class="t-fn">zid</span>(l, fibonacci(i))
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(l)</code></pre><div class="out"><span class="out-label">Résultat</span><pre>[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</pre></div></figure>
+<p><strong>14.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khidime</span> gassim_be(a, b)
+    <span class="t-kw">kan</span> b <span class="t-op">==</span> <span class="t-number">0</span>
+        <span class="t-kw">zagil</span> <span class="t-string">&quot;ma tagdar tigassim be sifir&quot;</span>
+    <span class="t-kw">khalas</span>
+    <span class="t-kw">rajja</span> a <span class="t-op">/</span> b
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">jarrib</span>
+    <span class="t-fn">ori</span>(gassim_be(<span class="t-number">10</span>, <span class="t-number">4</span>))
+    <span class="t-fn">ori</span>(gassim_be(<span class="t-number">10</span>, <span class="t-number">0</span>))
+<span class="t-kw">mushkila</span> m
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Mushkila:&quot;</span>, m)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>2.5
+Mushkila: ma tagdar tigassim be sifir</pre></div></figure>
+<p><strong>14.2</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">jarrib</span>
+    <span class="t-kw">khalli</span> n <span class="t-op">=</span> <span class="t-fn">nimra</span>(<span class="t-fn">asal</span>(<span class="t-string">&quot;Nimra: &quot;</span>))
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Shukran:&quot;</span>, n)
+<span class="t-kw">mushkila</span>
+    <span class="t-fn">ori</span>(<span class="t-string">&quot;Da ma nimra&quot;</span>)
+<span class="t-kw">khalas</span></code></pre><div class="out"><span class="out-label">Résultat</span><pre>Nimra: ashara
+Da ma nimra</pre></div></figure>
+<p><strong>15.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-fn">aktib</span>(<span class="t-string">&quot;journal.txt&quot;</span>, <span class="t-fn">al_yom</span>() <span class="t-op">+</span> <span class="t-string">&quot;\n&quot;</span>, <span class="t-const">sahi</span>)
+<span class="t-fn">ori</span>(<span class="t-fn">agri</span>(<span class="t-string">&quot;journal.txt&quot;</span>))</code></pre><div class="out"><span class="out-label">Exemple de résultat</span><pre>24/11/2026
+</pre></div></figure>
+<p><strong>15.2</strong> — Fichier <code>riyadiyât.klm</code> :</p>
+<figure class="prog"><figcaption>Fichier <code>riyadiyat.klm</code></figcaption><pre class="code"><code><span class="t-kw">khidime</span> murabba'(x)
+    <span class="t-kw">rajja</span> x <span class="t-op">*</span> x
+<span class="t-kw">khalas</span>
+
+<span class="t-kw">khidime</span> mu'addal(liste)
+    <span class="t-kw">rajja</span> <span class="t-fn">jumla</span>(liste) <span class="t-op">/</span> <span class="t-fn">gadur</span>(liste)
+<span class="t-kw">khalas</span></code></pre></figure>
+<p>Fichier principal :</p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">jib</span> <span class="t-string">&quot;riyadiyat&quot;</span>
+<span class="t-fn">ori</span>(murabba'(<span class="t-number">9</span>), mu'addal([<span class="t-number">2</span>, <span class="t-number">4</span>, <span class="t-number">9</span>]))</code></pre><div class="out"><span class="out-label">Résultat</span><pre>81 5</pre></div></figure>
+<p><strong>16.1</strong></p>
+<figure class="prog"><pre class="code"><code><span class="t-kw">khalli</span> sitta <span class="t-op">=</span> <span class="t-number">0</span>
+<span class="t-kw">kulla</span> i <span class="t-kw">fi</span> <span class="t-kw">min</span> <span class="t-number">1</span> <span class="t-kw">lahaddi</span> <span class="t-number">1000</span>
+    <span class="t-kw">kan</span> <span class="t-fn">sudfa</span>(<span class="t-number">1</span>, <span class="t-number">6</span>) <span class="t-op">==</span> <span class="t-number">6</span>
+        sitta <span class="t-op">+=</span> <span class="t-number">1</span>
+    <span class="t-kw">khalas</span>
+<span class="t-kw">khalas</span>
+<span class="t-fn">ori</span>(sitta, <span class="t-string">&quot;marra 6 min 1000&quot;</span>)</code></pre><div class="out"><span class="out-label">Exemple de résultat</span><pre>189 marra 6 min 1000</pre></div></figure>
+<h1 class="chapter" id="annexe-e-petit-lexique">Annexe E — Petit lexique</h1>
+<p>Les mots tchadiens utilisés dans les exemples de ce cours.</p>
+<table>
+<thead>
+<tr>
+<th>Mot</th>
+<th>Sens</th>
+<th></th>
+<th>Mot</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>usum</code></td>
+<td>nom</td>
+<td></td>
+<td><code>taman</code></td>
+<td>prix</td>
+</tr>
+<tr>
+<td><code>umur</code></td>
+<td>âge</td>
+<td></td>
+<td><code>gurûsh</code></td>
+<td>argent</td>
+</tr>
+<tr>
+<td><code>sana</code></td>
+<td>année</td>
+<td></td>
+<td><code>rasîd</code></td>
+<td>solde</td>
+</tr>
+<tr>
+<td><code>hille</code></td>
+<td>ville, village</td>
+<td></td>
+<td><code>jumla</code></td>
+<td>total</td>
+</tr>
+<tr>
+<td><code>bêt</code></td>
+<td>maison</td>
+<td></td>
+<td><code>kammiye</code></td>
+<td>quantité</td>
+</tr>
+<tr>
+<td><code>talib</code></td>
+<td>élève</td>
+<td></td>
+<td><code>dukkân</code></td>
+<td>boutique</td>
+</tr>
+<tr>
+<td><code>fasil</code></td>
+<td>classe</td>
+<td></td>
+<td><code>haja</code></td>
+<td>chose, article</td>
+</tr>
+<tr>
+<td><code>nugta</code></td>
+<td>note</td>
+<td></td>
+<td><code>khudâr</code></td>
+<td>légumes</td>
+</tr>
+<tr>
+<td><code>radd</code></td>
+<td>réponse</td>
+<td></td>
+<td><code>bada&#39;a</code></td>
+<td>marchandise</td>
+</tr>
+<tr>
+<td><code>natîja</code></td>
+<td>résultat</td>
+<td></td>
+<td><code>fâtûra</code></td>
+<td>facture</td>
+</tr>
+<tr>
+<td><code>marra</code></td>
+<td>fois</td>
+<td></td>
+<td><code>yôm</code></td>
+<td>jour</td>
+</tr>
+<tr>
+<td><code>kalimât</code></td>
+<td>mots</td>
+<td></td>
+<td><code>shahar</code></td>
+<td>mois</td>
+</tr>
+<tr>
+<td><code>satir</code></td>
+<td>ligne</td>
+<td></td>
+<td><code>harâra</code></td>
+<td>chaleur, température</td>
+</tr>
+<tr>
+<td><code>sirr</code></td>
+<td>secret</td>
+<td></td>
+<td><code>kabîr</code> / <code>saghayyar</code></td>
+<td>grand / petit</td>
+</tr>
+<tr>
+<td><code>jadîd</code></td>
+<td>nouveau</td>
+<td></td>
+<td><code>sameh</code></td>
+<td>bien, bon</td>
+</tr>
+<tr>
+<td><code>mushkila</code></td>
+<td>problème</td>
+<td></td>
+<td><code>mabrûk</code></td>
+<td>félicitations</td>
+</tr>
+</tbody></table>
+
+
+<p class="colophon">Kalam est un logiciel libre (licence MIT). Le code source, les exemples et l'extension VS Code sont sur GitHub : github.com/salah-barkai/kalam. Le terrain de jeu en ligne : salah-barkai.github.io/kalam.</p>
+</main>
+</body>
+</html>

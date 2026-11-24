@@ -1,0 +1,18 @@
+# Li'ib : khammin an-nimra (devine le nombre)
+khalli sirr = sudfa(1, 100)
+khalli marrât = 0
+
+ori("Ana fakkart fi nimra min 1 lahaddi 100. Khammin!")
+
+tulma sahi
+    khalli radd = nimra(asal("Nimritak: "))
+    marrât = marrât + 1
+    kan radd < sirr
+        ori("Zîd! (plus grand)")
+    walla kan radd > sirr
+        ori("Nagguss! (plus petit)")
+    walla
+        ori("Mabrûk! Ligît an-nimra be", marrât, "marrât.")
+        agif
+    khalas
+khalas

@@ -1,0 +1,22 @@
+# Adawât — petites fonctions utiles, importées avec : jib "adawat"
+
+khidime khatt(gadur_hana)
+    # Dessine une ligne de tirets
+    rajja "-" * gadur_hana
+khalas
+
+khidime riyal(nimra_hana)
+    # Affiche un montant en FCFA
+    rajja kitaba(nimra_hana) + " FCFA"
+khalas
+
+khidime asal_nimra(sual)
+    # Pose une question jusqu'à recevoir un vrai nombre
+    tulma sahi
+        jarrib
+            rajja nimra(asal(sual))
+        mushkila
+            ori("Da ma nimra, jarrib marra tânye.")
+        khalas
+    khalas
+khalas

@@ -1,0 +1,49 @@
+# Boucles, listes, fonctions — jawla fi Kalam
+
+# Khidime al-tinâdi nafisha : factorielle
+khidime factorielle(n)
+    kan n <= 1
+        rajja 1
+    khalas
+    rajja n * factorielle(n - 1)
+khalas
+
+kulla i fi min 1 lahaddi 5
+    ori(i, "! =", factorielle(i))
+khalas
+
+# Liste : al-khudâr fi s-sûg
+khalli khudar = ["bamya", "tamatim", "basal"]
+zid(khudar, "kawal")
+ori("Fi s-sûg indina", gadur(khudar), "khudâr:", lumm(khudar, ", "))
+
+# Dikt : at-taman (les prix en FCFA)
+khalli taman = {bamya: 500, tamatim: 300, basal: 250, kawal: 1000}
+khalli kull_al_taman = []
+kulla haja fi taman
+    zid(kull_al_taman, taman[haja])
+khalas
+ori("Al-jumla:", jumla(kull_al_taman), "FCFA —", "al-ghâli:", aktar(kull_al_taman))
+
+# Dôra tulma (tant que) ma'a agif (break) wa fut (continue)
+khalli n = 0
+tulma sahi
+    n = n + 1
+    kan n % 2 == 0
+        fut
+    walla kan n > 9
+        agif
+    khalas
+    ori("fard:", n)
+khalas
+
+# Khidime al-tâkhud khidime
+khidime sawwi_le_kull(liste, f)
+    khalli jadîd = []
+    kulla x fi liste
+        zid(jadîd, f(x))
+    khalas
+    rajja jadîd
+khalas
+
+ori(sawwi_le_kull([1, 2, 3, 4], khidime(x) rajja x * x khalas))

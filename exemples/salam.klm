@@ -1,0 +1,12 @@
+# Awwal barnâmij — premier programme en Kalam
+ori("Salam aleykum, ya nâs!")
+
+khalli usum = "Mahamat"
+khalli umur = 25
+ori("Usumi", usum, "wa umri", umur, "sana")
+
+kan umur >= 18
+    ori(usum + " kabîr")
+walla
+    ori(usum + " saghayyar")
+khalas

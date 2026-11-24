@@ -1,0 +1,34 @@
+# Imtihân — petit quiz sur le Tchad
+jib "adawat"
+
+khalli asila = [
+    {sual: "Al-asima hana Tchad shunu?", jawâb: "ndjamena"},
+    {sual: "Bahar al-kabîr fi Tchad usumah shunu?", jawâb: "tchad"},
+    {sual: "Tchad indaha kam lôn fi l-alam?", jawâb: "3"},
+    {sual: "Al-hille al-tâniye al-kabîre: Moundou walla Abéché?", jawâb: "moundou"},
+]
+
+khalbit(asila)
+khalli sahîhât = 0
+
+kulla s fi asila
+    khalli radd = saghayyar(naddif(asal(s.sual + " ")))
+    radd = ghayyir(radd, "'", "")
+    kan radd == s.jawâb
+        ori("  Sahi! 👏")
+        sahîhât += 1
+    walla
+        ori("  La, al-jawâb:", s.jawâb)
+    khalas
+khalas
+
+ori(khatt(30))
+khalli nisba = garrib(sahîhât * 100 / gadur(asila))
+ori("Inta jibt", sahîhât, "min", gadur(asila), "(" + nisba + "%)")
+kan nisba == 100
+    ori("Inta ustâz! 🏆")
+walla kan nisba >= 50
+    ori("Sameh, wa lâkin agri shuwayya!")
+walla
+    ori("Jarrib marra tânye, inta tagdar!")
+khalas
