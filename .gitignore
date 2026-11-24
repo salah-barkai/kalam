@@ -6,3 +6,4 @@ node_modules/
 dist/
 vscode-kalam/kalam.js
 examples/*.txt
+.claude/settings.local.json
